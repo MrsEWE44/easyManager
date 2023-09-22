@@ -1,0 +1,45 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.easymanager'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.easymanager"
+        minSdk 19
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+    }
+
+    // 自定义打包名称
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "easyManager_${buildType.name}.apk"
+        }
+    }
+
+    buildTypes {
+        release {
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    //引入apache开源压缩包依赖，如果需要使用xz、lzma,需要额外引入org.tukaani:xz依赖
+    implementation 'org.tukaani:xz:1.9'
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-compress
+    implementation 'org.apache.commons:commons-compress:1.14'
+
+//    implementation 'androidx.appcompat:appcompat:1.4.1'
+}

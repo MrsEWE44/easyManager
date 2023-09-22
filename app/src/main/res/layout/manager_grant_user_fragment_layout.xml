@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    >
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="vertical">
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:background="@drawable/text_underline"
+           android:orientation="horizontal">
+
+           <ImageView
+               android:layout_width="50dp"
+               android:layout_height="50dp"
+               android:background="@drawable/manager_grant_app_foreground">
+           </ImageView>
+
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:text="TEST SERVICE"
+               android:textSize="30dp"
+               android:id="@+id/mguflpeekservice"
+               ></TextView>
+
+       </LinearLayout>
+
+
+       <ListView
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:id="@+id/mgufllv"/>
+
+
+   </LinearLayout>
+
+</FrameLayout>
+
+
