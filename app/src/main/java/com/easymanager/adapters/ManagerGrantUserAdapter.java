@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class ManagerGrantUserAdapter extends BaseAdapter {
     public ManagerGrantUserAdapter(ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> switbs, Context context) {
         this.pkginfos = (ArrayList<PKGINFO>) pkginfos.clone();
-        this.switbs = (ArrayList<Boolean>) switbs.clone();
+        this.switbs = switbs;
         this.context = context;
         notifyDataSetChanged();
     }

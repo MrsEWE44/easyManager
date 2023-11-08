@@ -295,9 +295,7 @@ public class AppopsAPI extends baseAPI{
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                     iAppOpsService.setUidMode(opcode,uid,getModeInt(opmode));
                 }
-            }catch (Exception e){
-
-            }
+            }catch (Exception e){}
 
         }
     }

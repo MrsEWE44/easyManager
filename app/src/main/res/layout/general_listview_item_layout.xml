@@ -1,44 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:scaleX="1.7"
+        android:scaleY="1.7"
+        android:id="@+id/glilcb"></CheckBox>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
         >
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            >
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:focusable="false"
-                android:scaleX="1.7"
-                android:scaleY="1.7"
-                android:id="@+id/glilcb"></CheckBox>
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:focusable="false"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:id="@+id/gliltv"></TextView>
-
-        </LinearLayout>
 
         <TextView
+            android:focusable="false"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:id="@+id/gliltv"></TextView>
+
+        <TextView
+            android:focusable="false"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:id="@+id/gliltv2"/>
 
     </LinearLayout>
-
 
 </LinearLayout>

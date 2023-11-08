@@ -61,6 +61,7 @@ public class easyManagerAPI extends baseAPI {
         int opsmode = te.getOpsmode();
         String pkgname = te.getPkgname();
         String opmodestr = te.getOpmodestr();
+        killpkg(pkgname);
         switch (opsmode){
             case 10:
                 packageAPI.SetInactive(pkgname,opmodestr.equals("true")?true:false);

@@ -23,7 +23,7 @@ public class PKGINFOAdapter extends BaseAdapter {
     public PKGINFOAdapter(ArrayList<PKGINFO> pkginfos, Context context, ArrayList<Boolean> checkboxs) {
         this.pkginfos = (ArrayList<PKGINFO>) pkginfos.clone();
         this.context = context;
-        this.checkboxs = (ArrayList<Boolean>) checkboxs.clone();
+        this.checkboxs = checkboxs;
         notifyDataSetChanged();
     }
 
@@ -58,7 +58,8 @@ public class PKGINFOAdapter extends BaseAdapter {
         TextView text4 = convertView.findViewById(R.id.alvilappsize);
         TextView text5 = convertView.findViewById(R.id.alvilappuid);
         int size = pkginfos.size();
-        if(position < size){
+        int size1 = checkboxs.size();
+        if(size == size1 && position < size && size > 0 ){
             PKGINFO pkginfo = pkginfos.get(position);
             text.setText(pkginfo.getAppname());
             text2.setText(pkginfo.getPkgname());

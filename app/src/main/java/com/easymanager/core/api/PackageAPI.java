@@ -149,7 +149,9 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
     public int getPKGUID(String pkgname){
         IPackageManager iPackageManager = getIPackageManager();
-        if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.N){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            return iPackageManager.getPackageUid(pkgname,0L,getTranslatedUserId());
+        }else if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.N){
             return iPackageManager.getPackageUid(pkgname,0,getTranslatedUserId());
         }else{
             return iPackageManager.getPackageUid(pkgname,getTranslatedUserId());

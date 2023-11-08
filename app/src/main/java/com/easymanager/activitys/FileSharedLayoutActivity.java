@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.easymanager.R;
 import com.easymanager.entitys.PKGINFO;
@@ -143,7 +144,19 @@ public class FileSharedLayoutActivity extends Activity {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             for (int i1 = 0; i1 < checkboxs.size(); i1++) {
                                 if(checkboxs.get(i1)){
-                                    list.add(isFile?flist.get(i1):pkginfos.get(i1).getApkpath());
+                                    if(isFile){
+                                        String s = flist.get(i1);
+                                        if(s.equals("上一页")){
+                                            File file = new File(s);
+                                            if(file.isFile() || file.isDirectory()){
+                                                list.add(s);
+                                            }
+                                        }else{
+                                            list.add(s);
+                                        }
+                                    }else{
+                                        list.add(pkginfos.get(i1).getApkpath());
+                                    }
                                 }
                             }
                             du.showUsers(context,fsllv,list,checkboxs);
@@ -224,8 +237,10 @@ public class FileSharedLayoutActivity extends Activity {
         Collections.sort(flist, String::compareTo);
         if (flist.size() >0 && flist.get(0).length() > extstorage.length()) {
             flist.add(0, "上一页");
+            checkboxs.add(false);
         }else{
             flist.add( "上一页");
+            checkboxs.add(false);
         }
         fssdllv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -245,6 +260,15 @@ public class FileSharedLayoutActivity extends Activity {
                         getLocalFiles(extstorage, full_path, flist,checkboxs,fssdllv);
                     }
                 }
+            }
+        });
+        fssdllv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                View vvv = fssdllv.getChildAt(i);
+                TextView ttt = vvv.findViewById(R.id.gliltv);
+                Log.d("ttt",ttt.getText().toString());
+                return false;
             }
         });
         du.showUsers(context,fssdllv,flist,checkboxs);

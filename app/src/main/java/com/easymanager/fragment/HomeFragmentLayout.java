@@ -186,7 +186,7 @@ public class HomeFragmentLayout extends Fragment {
     };
 
     private void setBtColor(Button b , boolean needRoot , boolean needADB){
-        if(isADB){
+        if(isADB != null && isADB){
             if(needRoot && needADB){
                 b.setBackgroundColor(Color.YELLOW);
             }
@@ -197,7 +197,7 @@ public class HomeFragmentLayout extends Fragment {
 
         }
 
-        if(!isRoot && !isADB){
+        if(isRoot != null && !isRoot && isADB != null && !isADB){
             if(needADB || needRoot){
                b.setBackgroundColor(Color.RED);
             }

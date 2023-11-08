@@ -85,10 +85,10 @@ public class MainActivity extends Activity {
             }
         }else{
             isRoot = ee.isROOT();
-            if(!isRoot){
-                ee.activeRoot(this);
-                dialogUtils.showInfoMsg(this,"提示","当前是root环境，已经自动激活为root工作模式，请退出重新打开应用以生效.");
-            }
+//            if(!isRoot){
+//                ee.activeRoot(this);
+//                dialogUtils.showInfoMsg(this,"提示","当前是root环境，已经自动激活为root工作模式，请退出重新打开应用以生效.");
+//            }
         }
         if(isRoot!=null && isRoot){
             setTitle("easyManager [ ROOT ] ");

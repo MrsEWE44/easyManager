@@ -13,6 +13,17 @@ easyManager更推荐在ROOT模式下运行.
 
 [easyMangerSDK开发工具包](https://github.com/MrsEWE44/easyManagerSDK)
 
+- V1.1
+
+1.修复选择栏里选项无法生效问题
+
+2.修复文件共享路径无法展示完整内容问题
+
+3.修复权限修改无法在安卓13上正常使用问题
+
+4.修改版本号为1.1
+
+
 
 - V1.0
 

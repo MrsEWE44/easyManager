@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
@@ -20,7 +21,7 @@ public class GeneralAdapter extends BaseAdapter {
     public GeneralAdapter(ArrayList<String> list, Context context, ArrayList<Boolean> checkboxs) {
         this.list = (ArrayList<String>) list.clone();
         this.context = context;
-        this.checkboxs = (ArrayList<Boolean>) checkboxs.clone();
+        this.checkboxs = checkboxs;
         notifyDataSetChanged();
     }
 
@@ -81,6 +82,7 @@ public class GeneralAdapter extends BaseAdapter {
                 });
                 checkBox.setChecked(checkboxs.get(i));
             }
+
 
         }
         return view;
