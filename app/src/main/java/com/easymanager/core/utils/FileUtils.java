@@ -100,12 +100,12 @@ public class FileUtils {
     }
 
     public String getActiveADBScript(Context context){
-//                String str = "killall EAMADB\n" +
-//                "exec app_process -Djava.class.path=\""+context.getApplicationInfo().sourceDir+"\" /system/bin --nice-name=EAMADB "+ startAdbService.class.getName()+" >>/dev/null 2>&1 &\n" +
-//                "echo \"running ok [adb]\"";
-        String str = "killall EAMADB\n" +
-                "exec app_process -Djava.class.path=\""+context.getApplicationInfo().sourceDir+"\" /system/bin --nice-name=EAMADB "+ startAdbService.class.getName()+"\n" +
+                String str = "killall EAMADB\n" +
+                "exec app_process -Djava.class.path=\""+context.getApplicationInfo().sourceDir+"\" /system/bin --nice-name=EAMADB "+ startAdbService.class.getName()+" >>/dev/null 2>&1 &\n" +
                 "echo \"running ok [adb]\"";
+//        String str = "killall EAMADB\n" +
+//                "exec app_process -Djava.class.path=\""+context.getApplicationInfo().sourceDir+"\" /system/bin --nice-name=EAMADB "+ startAdbService.class.getName()+"\n" +
+//                "echo \"running ok [adb]\"";
         return str;
     }
 
