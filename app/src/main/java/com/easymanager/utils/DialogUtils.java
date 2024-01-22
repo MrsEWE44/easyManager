@@ -38,46 +38,45 @@ public class DialogUtils extends DialogBaseUtils {
 
     private PackageUtils packageUtils = new PackageUtils();
     private ProcessUtils processUtils = new ProcessUtils();
-    private TextUtils txtutils = new TextUtils();
 
     private FileTools ft = new FileTools();
 
     public DialogUtils(){}
 
     public void queryAllPKGSProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
-        queryPKGProcessDialog(context,activity,"正在获取所有应用列表(包括禁用,请稍后...)",lv1,pkginfos,checkboxs,0);
+        queryPKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_all_apps),lv1,pkginfos,checkboxs,0);
     }
 
     public void queryAllEnablePKGSProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
-        queryPKGProcessDialog(context,activity,"正在获取所有应用列表(请稍后...)",lv1,pkginfos,checkboxs,1);
+        queryPKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_all_apps2),lv1,pkginfos,checkboxs,1);
     }
 
     public void queryUserEnablePKGSProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
-        queryPKGProcessDialog(context,activity,"正在获取用户应用列表(请稍后...)",lv1,pkginfos,checkboxs,2);
+        queryPKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_user_apps2),lv1,pkginfos,checkboxs,2);
     }
 
     public void queryUserAllPKGSProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
-        queryPKGProcessDialog(context,activity,"正在获取用户应用列表(包括禁用,请稍后...)",lv1,pkginfos,checkboxs,3);
+        queryPKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_user_apps),lv1,pkginfos,checkboxs,3);
     }
 
     public void queryAllDisablePKGSProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
-        queryPKGProcessDialog(context,activity,"正在获取禁用应用列表(请稍后...)",lv1,pkginfos,checkboxs,4);
+        queryPKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_all_disable_apps),lv1,pkginfos,checkboxs,4);
     }
 
     public void queryPKGProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, Integer mode) {
-        queryPKGProcessDialog(context,activity,"正在获取本地应用列表(请稍后...)",lv1,pkginfos,checkboxs,mode);
+        queryPKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_local_apps),lv1,pkginfos,checkboxs,mode);
     }
 
     public void queryAllProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
-        queryPKGProcessDialog(context,activity,"正在获取所有后台应用列表(包括系统应用,请稍后...)",lv1,pkginfos,checkboxs,5);
+        queryPKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_all_process_app),lv1,pkginfos,checkboxs,5);
     }
 
     public void queryAllUserProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
-        queryPKGProcessDialog(context,activity,"正在获取用户后台应用列表(请稍后...)",lv1,pkginfos,checkboxs,6);
+        queryPKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_user_process_app),lv1,pkginfos,checkboxs,6);
     }
 
     public void findLocalImgDialog(Context context, Activity activity, ListView lv1 , ArrayList<String> strings, ArrayList<Boolean> checkboxs){
-        ProgressDialog show = showMyDialog(context,"正在扫描本地镜像文件(请稍后...)");
+        ProgressDialog show = showMyDialog(context,tu.getLanguageString(context,R.string.scanner_local_img));
         Handler handler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
@@ -105,7 +104,7 @@ public class DialogUtils extends DialogBaseUtils {
     }
 
     public void runCMDDialog(Context context, String cmdstr){
-        ProgressDialog show = showMyDialog(context,"正在执行命令(请稍后...)");
+        ProgressDialog show = showMyDialog(context,tu.getLanguageString(context,R.string.execute_cmd));
         Handler handler = dismissDialogHandler(0,show);
         new Thread(new Runnable() {
             @Override
@@ -182,19 +181,19 @@ public class DialogUtils extends DialogBaseUtils {
     }
 
     public void showAppInfoPermissionProcessDialog(Context context,Activity activity,ListView aillv1,ArrayList<String> list ,ArrayList<Boolean> checkboxs , ArrayList<Boolean> switbs,String pkgname, String uid){
-        showAppInfoProcessDialog(context,activity,"正在获取该应用权限...",aillv1,list,checkboxs,switbs,pkgname, AppInfoEnums.IS_PERMISSION,uid,AppInfoEnums.GET_PERMISSIOSN);
+        showAppInfoProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_app_permission),aillv1,list,checkboxs,switbs,pkgname, AppInfoEnums.IS_PERMISSION,uid,AppInfoEnums.GET_PERMISSIOSN);
     }
 
     public void showAppInfoServiceProcessDialog(Context context,Activity activity,ListView aillv1,ArrayList<String> list ,ArrayList<Boolean> checkboxs , ArrayList<Boolean> switbs,String pkgname, String uid){
-        showAppInfoProcessDialog(context,activity,"正在获取该应用服务...",aillv1,list,checkboxs,switbs,pkgname, AppInfoEnums.IS_COMPENT_OR_PACKAGE,uid,AppInfoEnums.GET_SERVICES);
+        showAppInfoProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_app_service),aillv1,list,checkboxs,switbs,pkgname, AppInfoEnums.IS_COMPENT_OR_PACKAGE,uid,AppInfoEnums.GET_SERVICES);
     }
 
     public void showAppInfoActivityProcessDialog(Context context,Activity activity,ListView aillv1,ArrayList<String> list ,ArrayList<Boolean> checkboxs , ArrayList<Boolean> switbs,String pkgname, String uid){
-        showAppInfoProcessDialog(context,activity,"正在获取该应用活动项...",aillv1,list,checkboxs,switbs,pkgname, AppInfoEnums.IS_COMPENT_OR_PACKAGE,uid,AppInfoEnums.GET_ACTIVITYS);
+        showAppInfoProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_app_activity),aillv1,list,checkboxs,switbs,pkgname, AppInfoEnums.IS_COMPENT_OR_PACKAGE,uid,AppInfoEnums.GET_ACTIVITYS);
     }
 
     public void showAppInfoReceiverProcessDialog(Context context,Activity activity,ListView aillv1,ArrayList<String> list ,ArrayList<Boolean> checkboxs , ArrayList<Boolean> switbs,String pkgname, String uid){
-        showAppInfoProcessDialog(context,activity,"正在获取该应用广播接收器...",aillv1,list,checkboxs,switbs,pkgname, AppInfoEnums.IS_COMPENT_OR_PACKAGE,uid,AppInfoEnums.GET_RECEIVERS);
+        showAppInfoProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_app_receiver),aillv1,list,checkboxs,switbs,pkgname, AppInfoEnums.IS_COMPENT_OR_PACKAGE,uid,AppInfoEnums.GET_RECEIVERS);
     }
 
     public void showAppInfoProcessDialog(Context context , Activity activity , String msg , ListView lv1,ArrayList<String> list ,ArrayList<Boolean> checkboxs , ArrayList<Boolean> switbs , String pkgname , int mode , String uid,int mode2){
@@ -307,48 +306,48 @@ public class DialogUtils extends DialogBaseUtils {
 
         String title = "title" , msg = "msg";
         if(appPermission == AppManagerEnum.APP_PERMISSION){
-            title="当前正在应用权限更改,请稍后...";
-            msg="目前正在应用权限更改的应用为:  ";
+            title=tu.getLanguageString(context,R.string.apply_app_permission_title);
+            msg=tu.getLanguageString(context,R.string.apply_app_permission_msg);
         }
 
         if(appPermission == AppManagerEnum.APP_DISABLE_COMPENT){
-            title="当前正在应用组件或者应用启用状态更改,请稍后...";
-            msg="目前正在应用组件或者应用启用状态更改的应用为:  ";
+            title=tu.getLanguageString(context,R.string.apply_app_compat_title);
+            msg=tu.getLanguageString(context,R.string.apply_app_compat_msg);
         }
 
         if(appPermission == AppManagerEnum.APP_FIREWALL){
-            title="当前正在应用联网状态更改,请稍后...";
-            msg="目前正在应用联网状态更改的应用为:  ";
+            title=tu.getLanguageString(context,R.string.apply_app_network_title);
+            msg=tu.getLanguageString(context,R.string.apply_app_network_msg);
         }
 
         if(appPermission == AppManagerEnum.APP_INSTALL_LOCAL_FILE){
-            title="当前正在安装应用,请稍后...";
-            msg="目前正在安装的应用为:  ";
+            title=tu.getLanguageString(context,R.string.apply_app_install_title);
+            msg=tu.getLanguageString(context,R.string.apply_app_install_msg);
         }
 
         if(appPermission == AppManagerEnum.APP_UNINSTALL){
-            title="当前正在卸载应用,请稍后...";
-            msg="目前正在卸载的应用为:  ";
+            title=tu.getLanguageString(context,R.string.apply_app_uninstall_title);
+            msg=tu.getLanguageString(context,R.string.apply_app_uninstall_msg);
         }
 
         if(appPermission == AppManagerEnum.APP_RESTORY){
-            title="当前正在恢复应用,请稍后...";
-            msg="目前正在恢复的应用为:  ";
+            title=tu.getLanguageString(context,R.string.apply_app_restory_title);
+            msg=tu.getLanguageString(context,R.string.apply_app_restory_msg);
         }
 
         if(appPermission == AppManagerEnum.APP_BACKUP){
-            title="当前正在备份应用,请稍后...";
-            msg="目前正在备份的应用为:  ";
+            title=tu.getLanguageString(context,R.string.apply_app_backup_title);
+            msg=tu.getLanguageString(context,R.string.apply_app_backup_msg);
         }
 
         if(appPermission == AppManagerEnum.APP_CLEAN_PROCESS){
-            title="当前正在清理后台,请稍后...";
-            msg="目前正在清理的应用为:  ";
+            title=tu.getLanguageString(context,R.string.apply_app_process_title);
+            msg=tu.getLanguageString(context,R.string.apply_app_process_msg);
         }
 
         if(appPermission == AppManagerEnum.APP_DUMP){
-            title="当前正在提取应用,请稍后...";
-            msg="目前正在提取的应用为:  ";
+            title=tu.getLanguageString(context,R.string.apply_app_dump_title);
+            msg=tu.getLanguageString(context,R.string.apply_app_dump_msg);
         }
 
         showProcessBarDialogByCMD(context,list,appPermission,APP_PERMIS_INDEX,opt_str,title,msg);
@@ -452,7 +451,7 @@ public class DialogUtils extends DialogBaseUtils {
     }
 
     public void showIndexOfPKGSDialog(Context context , Activity activity, ListView lv1 , EditText editText , ArrayList<PKGINFO> pkginfos, ArrayList<String> strList, ArrayList<Boolean> checkboxs) {
-        showIndexOfPKGSDialog(context,activity,lv1,"正在搜索(请稍后....)",editText,pkginfos,strList,checkboxs);
+        showIndexOfPKGSDialog(context,activity,lv1,tu.getLanguageString(context,R.string.now_search_ing_msg),editText,pkginfos,strList,checkboxs);
     }
 
     public void showIndexOfPKGSDialog(Context context , Activity activity,ListView lv1,String msg , EditText editText , ArrayList<PKGINFO> pkginfos,ArrayList<String> strList,ArrayList<Boolean> checkboxs) {
@@ -478,9 +477,9 @@ public class DialogUtils extends DialogBaseUtils {
             @Override
             public void run() {
                 if(strList == null){
-                    pkginfos.addAll(txtutils.indexOfPKGS(activity,searchStr,pkginfos,checkboxs,0));
+                    pkginfos.addAll(tu.indexOfPKGS(activity,searchStr,pkginfos,checkboxs,0));
                 }else{
-                    txtutils.indexOfLIST(strList,checkboxs,null,searchStr);
+                    tu.indexOfLIST(strList,checkboxs,null,searchStr);
                 }
                 sendHandlerMSG(handler,0);
             }
@@ -490,7 +489,7 @@ public class DialogUtils extends DialogBaseUtils {
 
     public void showProcessSearchViewDialog(Context context,Activity activity,ListView lv,ArrayList<PKGINFO> pkginfos,ArrayList<String> strList,ArrayList<Boolean> checkboxs){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("提示");
+        builder.setTitle(tu.getLanguageString(context,R.string.tips));
         View vvv = LayoutInflater.from(context).inflate(R.layout.search_view_layout, null);
         SearchView svlsv = vvv.findViewById(R.id.svlsv);
         ListView svllv = vvv.findViewById(R.id.svllv);
@@ -511,7 +510,7 @@ public class DialogUtils extends DialogBaseUtils {
             @Override
             public boolean onQueryTextChange(String s) {
                 if(!s.isEmpty()){
-                    showIndexOfPKGSDialog(context,activity,svllv,"正在搜索...",s,pkginfos,strList,checkboxs);
+                    showIndexOfPKGSDialog(context,activity,svllv,tu.getLanguageString(context,R.string.now_search_ing_msg),s,pkginfos,strList,checkboxs);
                 }else{
                     queryAllProcessDialog(context,activity,svllv,pkginfos,checkboxs);
                 }
@@ -522,7 +521,7 @@ public class DialogUtils extends DialogBaseUtils {
 
     public void showSearchViewDialog(Context context,Activity activity,ListView lv,ArrayList<PKGINFO> pkginfos,ArrayList<String> strList,ArrayList<Boolean> checkboxs){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("提示");
+        builder.setTitle(tu.getLanguageString(context,R.string.tips));
         View vvv = LayoutInflater.from(context).inflate(R.layout.search_view_layout, null);
         SearchView svlsv = vvv.findViewById(R.id.svlsv);
         ListView svllv = vvv.findViewById(R.id.svllv);
@@ -543,7 +542,7 @@ public class DialogUtils extends DialogBaseUtils {
             @Override
             public boolean onQueryTextChange(String s) {
                 if(!s.isEmpty()){
-                    showIndexOfPKGSDialog(context,activity,svllv,"正在搜索...",s,pkginfos,strList,checkboxs);
+                    showIndexOfPKGSDialog(context,activity,svllv,tu.getLanguageString(context,R.string.now_search_ing_msg),s,pkginfos,strList,checkboxs);
                 }else{
                     queryAllPKGSProcessDialog(context,activity,svllv,pkginfos,checkboxs);
                 }
@@ -564,7 +563,7 @@ public class DialogUtils extends DialogBaseUtils {
                     case 1:
                         // 隐藏当前下载对话框
                         permittedDismissDialog(alertDialog);
-                        showInfoMsg(context,"提示","已运行完毕,请手动刷新.");
+                        showInfoMsg(context,tu.getLanguageString(context,R.string.tips),tu.getLanguageString(context,R.string.its_ok_msg));
                         break;
                     case 2:
                         PKGINFO pkginfo = (PKGINFO) msg.obj;
@@ -581,7 +580,7 @@ public class DialogUtils extends DialogBaseUtils {
                         break;
                     case 6:
                         permittedDismissDialog(alertDialog);
-                        showInfoMsg(context,"错误",msg.obj.toString());
+                        showInfoMsg(context,tu.getLanguageString(context,R.string.error_tips),msg.obj.toString());
                         break;
                 }
             }
@@ -607,7 +606,7 @@ public class DialogUtils extends DialogBaseUtils {
 
     public void showAppInfoSearchViewDialog(Context context, Activity activity, int app_info_mode,int app_info_mode2, String pkgname, String uid, ListView aillv1, ArrayList<String> list, ArrayList<Boolean> checkboxs, ArrayList<Boolean> switbs) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("提示");
+        builder.setTitle(tu.getLanguageString(context,R.string.tips));
         View vvv = LayoutInflater.from(context).inflate(R.layout.search_view_layout, null);
         SearchView svlsv = vvv.findViewById(R.id.svlsv);
         ListView svllv = vvv.findViewById(R.id.svllv);
@@ -628,7 +627,7 @@ public class DialogUtils extends DialogBaseUtils {
             @Override
             public boolean onQueryTextChange(String s) {
                 if(!s.isEmpty()){
-                    showIndexOfAppInfoDialog(context,activity,svllv,"正在搜索...",s,pkgname,app_info_mode,uid,list,checkboxs,switbs);
+                    showIndexOfAppInfoDialog(context,activity,svllv,tu.getLanguageString(context,R.string.now_search_ing_msg),s,pkgname,app_info_mode,uid,list,checkboxs,switbs);
                 }else{
                     if(app_info_mode2 == AppInfoEnums.GET_ACTIVITYS){
                         showAppInfoActivityProcessDialog(context,activity,aillv1,list,checkboxs,switbs,pkgname,uid);
@@ -668,7 +667,7 @@ public class DialogUtils extends DialogBaseUtils {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                txtutils.indexOfLIST(list,checkboxs,switbs,s1);
+                tu.indexOfLIST(list,checkboxs,switbs,s1);
                 sendHandlerMSG(handler,0);
             }
         }).start();
@@ -676,12 +675,12 @@ public class DialogUtils extends DialogBaseUtils {
     }
 
     public void queryLocalBackupProcessDialog(Context context, Activity activity, ListView apllv1, ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
-        queryPKGProcessDialog(context,activity,"正在扫描本地备份文件(请稍后...)",apllv1,pkginfos,checkboxs,7);
+        queryPKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.scan_local_backup_file_msg),apllv1,pkginfos,checkboxs,7);
     }
 
     public void showRestorySearchViewDialog(Context context, Activity activity, ListView apllv1, ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("提示");
+        builder.setTitle(tu.getLanguageString(context,R.string.tips));
         View vvv = LayoutInflater.from(context).inflate(R.layout.search_view_layout, null);
         SearchView svlsv = vvv.findViewById(R.id.svlsv);
         ListView svllv = vvv.findViewById(R.id.svllv);
@@ -702,7 +701,7 @@ public class DialogUtils extends DialogBaseUtils {
             @Override
             public boolean onQueryTextChange(String s) {
                 if(!s.isEmpty()){
-                    showIndexOfPKGSDialog(context,activity,svllv,"正在搜索...",s,pkginfos,null,checkboxs);
+                    showIndexOfPKGSDialog(context,activity,svllv,tu.getLanguageString(context,R.string.now_search_ing_msg),s,pkginfos,null,checkboxs);
                 }else{
                     queryLocalBackupProcessDialog(context,activity,svllv,pkginfos,checkboxs);
                 }

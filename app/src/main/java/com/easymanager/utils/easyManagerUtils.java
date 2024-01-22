@@ -33,19 +33,9 @@ public class easyManagerUtils {
         CMD cmd = new CMD(cmdstr);
     }
 
-    public void dead(boolean isRoot){
-        String cmdstr = "killall EAMADB;";
-        if(isROOT() || isADB()){
-            try {
-                runCMD(cmdstr);
-            }catch (Exception e){
-
-            }
-        }
-
-        if(isRoot){
-            new CMD(cmdstr);
-        }
+    public void dead(){
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,null,easyManagerEnums.DEAD);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
     }
 
 
@@ -65,14 +55,13 @@ public class easyManagerUtils {
     }
 
     public boolean checkBool(easyManagerClientEntity adben2){
-        easyManagerServiceEntity serviceEntity = putOptionOnServer(adben2);
-        boolean a = false;
         try{
-            a =  (boolean) serviceEntity.getObject();
+            easyManagerServiceEntity serviceEntity = putOptionOnServer(adben2);
+            return  (boolean) serviceEntity.getObject();
         }catch (Exception e){
             e.printStackTrace();
+            return false;
         }
-        return a;
     }
 
     public CMD runCMD(String cmdstr){

@@ -9,8 +9,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class adbClient {
-
-    private final int PORT = 56997;
     private SocketListener listener;
 
     private easyManagerServiceEntity adbEn;
@@ -23,7 +21,7 @@ public class adbClient {
                 Socket socket = new Socket();
                 ObjectOutputStream oos;
                 try {
-                    socket.connect(new InetSocketAddress("127.0.0.1", PORT));
+                    socket.connect(new InetSocketAddress("127.0.0.1", adbService.PORT));
                     oos = new ObjectOutputStream(socket.getOutputStream());
                     // 发送指令
                     oos.writeObject(adee2);

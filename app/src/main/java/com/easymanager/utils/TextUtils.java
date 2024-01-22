@@ -6,6 +6,7 @@ import android.content.Context;
 import android.widget.Toast;
 
 
+import com.easymanager.R;
 import com.easymanager.entitys.PKGINFO;
 
 import java.util.ArrayList;
@@ -20,9 +21,12 @@ public class TextUtils {
     public void copyText(Context context, String str){
         ClipboardManager cpm = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         cpm.setText(str);
-        Toast.makeText(context, "已复制", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, getLanguageString(context, R.string.is_copy_ok), Toast.LENGTH_SHORT).show();
     }
 
+    public String getLanguageString(Context context , int id){
+        return context.getResources().getString(id);
+    }
 
     //搜索列表匹配项
     public ArrayList<PKGINFO> indexOfPKGS(Activity activity, String findStr, ArrayList<PKGINFO> pkginfos , ArrayList<Boolean> checkboxs, Integer types){

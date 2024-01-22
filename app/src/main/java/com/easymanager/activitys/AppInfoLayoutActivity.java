@@ -24,6 +24,7 @@ import com.easymanager.utils.HelpDialogUtils;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
 import com.easymanager.utils.PackageUtils;
+import com.easymanager.utils.TextUtils;
 
 import java.util.ArrayList;
 
@@ -51,7 +52,6 @@ public class AppInfoLayoutActivity extends Activity {
 
     private String uid,pkgname;
 
-    private String[] menus= {"勾选","未勾选","全选"};
 
     private int menus_index = 0;
     private int mode =-1;
@@ -89,7 +89,7 @@ public class AppInfoLayoutActivity extends Activity {
         ailsp1 = findViewById(R.id.ailsp1);
         ailbt1 = findViewById(R.id.ailbt1);
         aillv1 = findViewById(R.id.aillv1);
-        ailsp1.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, menus));
+        ailsp1.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, getAppChoicesOPT()));
         PKGINFO pkginfo = new PackageUtils().getPKGINFO(context, pkgname);
         ailappicon.setImageDrawable(pkginfo.getAppicon());
         ailappname.setText(pkginfo.getAppname());
@@ -97,9 +97,10 @@ public class AppInfoLayoutActivity extends Activity {
         ailappversion.setText(pkginfo.getAppversionname());
         ailappsize.setText(getSize(pkginfo.getFilesize(),0));
         if(!isRoot){
-            du.showInfoMsg(context,"警告","该界面必须要root工作模式才能正常工作!!!");
+            du.showInfoMsg(context,getLanStr(R.string.warning_tips),getLanStr(R.string.need_root_msg));
         }else{
             btClicked();
+            new HelpDialogUtils().showHelp(context,HelpDialogUtils.APP_INFO_HELP,mode);
         }
     }
 
@@ -164,7 +165,7 @@ public class AppInfoLayoutActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        new OtherTools().addMenuBase(menu,AppManagerEnum.APP_INFO_LAYOUT);
+        new OtherTools().addMenuBase(this,menu,AppManagerEnum.APP_INFO_LAYOUT);
         getMenuInflater().inflate(R.menu.main,menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -215,4 +216,11 @@ public class AppInfoLayoutActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+    private String getLanStr(int id){
+        return du.tu.getLanguageString(context,id);
+    }
+    private String[] getAppChoicesOPT(){
+        return new String[]{getLanStr(R.string.spin_item_selected),getLanStr(R.string.spin_item_no_selected),getLanStr(R.string.spin_item_all_selected)};
+    }
+
 }

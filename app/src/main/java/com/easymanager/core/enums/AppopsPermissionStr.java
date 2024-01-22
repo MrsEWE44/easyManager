@@ -77,6 +77,7 @@ public class AppopsPermissionStr {
         ops.add(AppOpsManager.OPSTR_MOCK_LOCATION);
         ops.add(AppOpsManager.OPSTR_MONITOR_HIGH_POWER_LOCATION);
         ops.add(AppOpsManager.OPSTR_MONITOR_LOCATION);
+        ops.add(AppOpsManager.OPSTR_GPS);
     }
 
     public void getCalendarPermissionStr(ArrayList<String> ops){
@@ -93,6 +94,10 @@ public class AppopsPermissionStr {
         ops.add("android:audio_bluetooth_volume");
         ops.add(AppOpsManager.OPSTR_BODY_SENSORS);
         ops.add("android:body_sensors");
+        ops.add("android:body_sensors_background");
+        ops.add(AppOpsManager.OPSTR_ACTIVITY_RECOGNITION);
+        ops.add("android:activity_recognition");
+        ops.add(AppOpsManager.OPSTR_VIBRATE);
     }
 
     public void getNotificationPermissionStr(ArrayList<String> ops){
@@ -100,4 +105,31 @@ public class AppopsPermissionStr {
         ops.add("android:post_notification");
     }
 
+    public void getFigerprintPermissionStr(ArrayList<String> ops) {
+        ops.add(AppOpsManager.OPSTR_USE_FINGERPRINT);
+        ops.add(AppOpsManager.OPSTR_USE_BIOMETRIC);
+    }
+
+    public void getAlertWindowPermissionStr(ArrayList<String> ops) {
+        ops.add(AppOpsManager.OPSTR_SYSTEM_ALERT_WINDOW);
+        ops.add(AppOpsManager.OPSTR_TOAST_WINDOW);
+    }
+
+    public void getAccessibilityPermissionStr(ArrayList<String> ops) {
+        ops.add(AppOpsManager.OPSTR_AUDIO_ACCESSIBILITY_VOLUME);
+        ops.add(AppOpsManager.OPSTR_BIND_ACCESSIBILITY_SERVICE);
+        ops.add(AppOpsManager.OPSTR_ACCESS_ACCESSIBILITY);
+    }
+
+    public void getAccountPermissionStr(ArrayList<String> ops) {
+        ops.add(AppOpsManager.OPSTR_GET_ACCOUNTS);
+    }
+
+    public void getWriteSettingsPermissionStr(ArrayList<String> ops) {
+        ops.add(AppOpsManager.OPSTR_WRITE_SETTINGS);
+    }
+
+    public void getDeviceIdentifiersPermissionStr(ArrayList<String> ops) {
+        ops.add(AppOpsManager.OPSTR_READ_DEVICE_IDENTIFIERS);
+    }
 }

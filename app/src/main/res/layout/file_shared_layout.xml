@@ -14,7 +14,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:hint="共享地址"
+            android:hint="@string/edit_hint_share_address"
             android:id="@+id/fsisharedip"/>
 
         <EditText
@@ -23,7 +23,7 @@
             android:layout_weight="1"
             android:inputType="number"
             android:maxLength="6"
-            android:hint="共享地址的的端口"
+            android:hint="@string/edit_hint_share_port"
             android:id="@+id/fsisharedport"/>
     </LinearLayout>
 
@@ -36,14 +36,14 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="添加共享文件"
+            android:text="@string/button_add_share_file"
             android:id="@+id/fsladdfile"/>
 
         <Button
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="添加共享应用"
+            android:text="@string/button_add_share_app"
             android:id="@+id/fsladdapp"/>
 
     </LinearLayout>
@@ -51,7 +51,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="开始共享"
+        android:text="@string/button_start_share"
         android:id="@+id/fslstartshared"/>
 
     <ListView

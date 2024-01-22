@@ -72,7 +72,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:id="@+id/ailbt1"
-            android:text="应用更改"/>
+            android:text="@string/button_apply_chagne"/>
 
 
     </LinearLayout>

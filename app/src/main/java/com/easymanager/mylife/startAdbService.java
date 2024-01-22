@@ -21,7 +21,7 @@ public class startAdbService {
             public void run() {
                 new adbService(new adbService.SocketListener() {
                     @Override
-                    public CMD sendCMD(String cmdstr, boolean isRoot) {
+                    public CMD sendCMD(String cmdstr) {
                         if(cmdstr != null){
                             return new CMD(cmdstr,managerAPI.isRoot());
                         }
@@ -148,6 +148,8 @@ public class startAdbService {
                                 return managerAPI.isRoot();
                             }else if(adbEntity2.getEasyManagerMode() == easyManagerEnums.GET_SERVER_STATUS){
                                 return true;
+                            }else if(adbEntity2.getEasyManagerMode() == easyManagerEnums.DEAD){
+                                    System.exit(0);
                             }else {
                                 return new String("please put requestpkg val .");
                             }

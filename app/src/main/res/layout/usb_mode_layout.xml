@@ -8,7 +8,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="扫描本地镜像文件"
+        android:text="@string/usb_button_scan_local_img"
         android:id="@+id/umlscanbt"/>
 
     <LinearLayout
@@ -26,7 +26,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="挂载"
+            android:text="@string/usb_button_mount_img"
             android:id="@+id/umlmountbt"/>
 
     </LinearLayout>

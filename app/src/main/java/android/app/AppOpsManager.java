@@ -240,6 +240,13 @@ public class AppOpsManager {
     public static int strOpToOp(String op) {
         return -1;
     }
+    public static int permissionToOpCode(String permission){
+        return -1;
+    };
+
+    public static String opToPermission(int op){
+        return null;
+    }
 
     public static String permissionToOp(String permission) {
         return null;
@@ -250,6 +257,14 @@ public class AppOpsManager {
     }
 
     public int checkOpNoThrow( String op, int uid, String packageName) {
+        return -1;
+    }
+
+    public int unsafeCheckOp(String op, int uid, String packageName){
+        return  -1;
+    }
+
+    public int checkOp( String op, int uid,  String packageName){
         return -1;
     }
 

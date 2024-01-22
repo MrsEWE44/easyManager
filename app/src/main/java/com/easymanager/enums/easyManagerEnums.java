@@ -3,6 +3,7 @@ package com.easymanager.enums;
 public class easyManagerEnums {
 
     public final static  int IS_ROOT=0;
+    public final static  int DEAD=9008;
     public final static  int IS_ADB=1;
     public final static  int GET_SYSTEM_SERVICE=2000;
     public final static  int KILL_PROCESS=2;

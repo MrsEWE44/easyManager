@@ -1,5 +1,7 @@
 package com.easymanager.mylife;
 
+import android.os.StrictMode;
+
 import com.easymanager.core.entity.easyManagerClientEntity;
 import com.easymanager.core.entity.easyManagerServiceEntity;
 import com.easymanager.core.utils.CMD;
@@ -14,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 public class adbService {
 
-    public final static int PORT = 56997;
+    public final static int PORT = 43557;
     private SocketListener listener;
 
     public adbService(SocketListener listener) {
@@ -58,7 +60,7 @@ public class adbService {
                 // 通过流读取内容
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                 easyManagerClientEntity adbee2 = (easyManagerClientEntity) ois.readObject();
-                cmd = listener.sendCMD(adbee2.getCmdstr(),false);
+                cmd = listener.sendCMD(adbee2.getCmdstr());
                 o = listener.doSomeThing(adbee2);
                 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                 easyManagerServiceEntity a = new easyManagerServiceEntity(cmd,o);
@@ -69,14 +71,13 @@ public class adbService {
                 //需要实现appops的功能
             } catch (Exception e) {
                 e.printStackTrace();
-                System.out.println("socket connection error：" + e.getStackTrace().toString());
             }
         }
     }
 
     public interface SocketListener{
 
-        CMD sendCMD(String cmdstr,boolean isRoot);
+        CMD sendCMD(String cmdstr);
 
         Object doSomeThing(easyManagerClientEntity adbEntity2);
 

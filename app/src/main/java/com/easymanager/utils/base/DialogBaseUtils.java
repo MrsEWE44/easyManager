@@ -6,16 +6,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.widget.TextView;
 
+import com.easymanager.R;
+import com.easymanager.utils.TextUtils;
+
 import java.lang.reflect.Field;
 
 public class DialogBaseUtils {
 
+    public TextUtils tu = new TextUtils();
     //显示一个弹窗
     public void showInfoMsg(Context con,String title , String msg){
         AlertDialog.Builder ab = new AlertDialog.Builder(con);
         ab.setTitle(title);
         ab.setMessage(msg);
-        ab.setNegativeButton("确定", new DialogInterface.OnClickListener() {
+        ab.setNegativeButton(tu.getLanguageString(con, R.string.dialog_sure_text), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();
@@ -56,7 +60,7 @@ public class DialogBaseUtils {
     }
 
     public void showLowMemDialog(Context context){
-        showLowMemDialog(context,"警告","当前设备配置较低,运行此页面功能会出现问题!");
+        showLowMemDialog(context,tu.getLanguageString(context,R.string.warning_tips),tu.getLanguageString(context,R.string.low_mem_device));
     }
 
     public void showLowMemDialog(Context context,String title , String msg){

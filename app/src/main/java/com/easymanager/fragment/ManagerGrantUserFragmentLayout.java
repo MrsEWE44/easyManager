@@ -50,12 +50,13 @@ public class ManagerGrantUserFragmentLayout extends Fragment {
         mguflpeekservice = vie.findViewById(R.id.mguflpeekservice);
         mgufllv = vie.findViewById(R.id.mgufllv);
         easyManagerUtils ee = new easyManagerUtils();
-        mguflpeekservice.setText("当前服务 " +(ee.getServerStatus()?"正在运行"+(ee.isROOT()?" [ ROOT ] ":" [ ADB ] ")+"...":"还没启动"));
+        mguflpeekservice.setText("Now Service " +(ee.getServerStatus()?" is running in "+(ee.isROOT()?" [ ROOT ] ":" [ ADB ] ")+"...":"not Start"));
         if(ee.getServerStatus()){
             Context context = getActivity().getApplicationContext();
             PackageUtils pkgutils = new PackageUtils();
             DialogUtils du  = new DialogUtils();
-            ProgressDialog show = du.showMyDialog(getActivity(),"正在读取授权信息");
+
+            ProgressDialog show = du.showMyDialog(getActivity(),"Read Auth...");
             Handler handler = new Handler(){
                 @Override
                 public void handleMessage(Message msg) {

@@ -63,10 +63,10 @@ public class easyManagerAPI extends baseAPI {
         String opmodestr = te.getOpmodestr();
         killpkg(pkgname);
         switch (opsmode){
-            case 10:
+            case 16:
                 packageAPI.SetInactive(pkgname,opmodestr.equals("true")?true:false);
                 break;
-            case 11:
+            case 17:
                 packageAPI.SetStandbyBucket(pkgname, opmodestr);
                 break;
             default:
@@ -92,10 +92,30 @@ public class easyManagerAPI extends baseAPI {
     }
 
     public void revokeRuntimePermission(String pkgname , String permission_str){
-        packageAPI.revokeRuntimePermission(pkgname,permission_str);
+        try {
+            packageAPI.revokeRuntimePermission(pkgname,permission_str);
+        }catch (Exception e){
+            appopsAPI.setPermissionStr(pkgname,permission_str,false);
+        }
+
+//        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.N){
+//            packageAPI.revokeRuntimePermission(pkgname,permission_str);
+//        }else{
+//            appopsAPI.setPermissionStr(pkgname,permission_str,false);
+//        }
     }
     public void grantRuntimePermission(String pkgname , String permission_str){
-        packageAPI.grantRuntimePermission(pkgname,permission_str);
+        try {
+            packageAPI.grantRuntimePermission(pkgname,permission_str);
+        }catch (Exception e){
+            appopsAPI.setPermissionStr(pkgname,permission_str,true);
+        }
+
+//        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.N){
+//            packageAPI.grantRuntimePermission(pkgname,permission_str);
+//        }else{
+//            appopsAPI.setPermissionStr(pkgname,permission_str,true);
+//        }
     }
 
     public void CompressOrDecompressFile(String dirPath , String outPath , int mode){
@@ -139,7 +159,7 @@ public class easyManagerAPI extends baseAPI {
             String mode = s[0].trim();
             String fileEnd = s[1].trim();
             String sdpath = s[2].trim();
-            String backup_dir_path = sdpath+"/easyManager/backup/";
+            String backup_dir_path = sdpath+"/easyManager/backup";
             String pkg_out_dir_path = backup_dir_path+"/"+pkgname;
             decompressFileOnBackup(fileEnd,backup_dir_path,backup_dir_path,pkgname);
             if(mode.equals("full")){
@@ -173,24 +193,36 @@ public class easyManagerAPI extends baseAPI {
     }
 
     public void restoryData(int uid , String pkgname , String fileEnd , String sdpath , String pkg_out_dir_path ){
-        String data_path1="/data/data/";
-        String data_path2="/proc/1/cwd/data/data/";
-        String data_user_path = "/data/user/"+uid+"/";
+        String data_path1="/data/data";
+        String data_path2="/proc/1/cwd/data/data";
+        String data_user_path = "/data/user/"+uid;
         String sdandroidpath=sdpath+"/Android";
-        String sddatapath = sdandroidpath+"/data/";
-        String sdobbpath = sdandroidpath+"/obb/";
+        String sddatapath = sdandroidpath+"/data";
+        String sdobbpath = sdandroidpath+"/obb";
+        String pkg_data_path1 = data_path1+"/"+pkgname;
+        String pkg_data_path2 = data_path2+"/"+pkgname;
+        String pkg_data_user_path = data_user_path+"/"+pkgname;
         int pkguid = packageAPI.getPKGUID(pkgname);
         if(uid > 0){
             decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_user_path,"data");
             setMode(data_user_path+"/"+pkgname,pkguid);
         }else {
-            File file = new File(data_path1);
+            File file = new File(pkg_data_path1);
+            File file2 = new File(pkg_data_path2);
+            File file3 = new File(pkg_data_user_path);
             if(file.exists()){
                 decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_path1,"data");
-                setMode(data_path1+"/"+pkgname,pkguid);
-            }else {
+                setMode(pkg_data_path1,pkguid);
+            }
+            else if(file2.exists()){
                 decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_path2,"data");
-                setMode(data_path2+"/"+pkgname,pkguid);
+                setMode(pkg_data_path2,pkguid);
+            }
+            else if(file3.exists()){
+                decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_user_path,"data");
+                setMode(pkg_data_user_path,pkguid);
+            }else{
+                System.err.println("restoryData : " + uid + " -- " + pkguid + " -- " + pkgname + " -- " + fileEnd + " -- " + new File(data_path1).exists());
             }
         }
         decompressFileOnBackup(fileEnd,pkg_out_dir_path,sddatapath,"sddata");
@@ -386,7 +418,7 @@ public class easyManagerAPI extends baseAPI {
     }
 
     public String getCachePathOnXML(){
-        return  ft.getSDPath()+"/easyManager";
+        return  "/data/local/tmp/easyManager";
     }
 
     public String getGrantUserConfigName(){

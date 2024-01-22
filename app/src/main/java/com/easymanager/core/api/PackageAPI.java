@@ -13,7 +13,6 @@ import android.content.IntentSender;
 import android.content.pm.IPackageDeleteObserver;
 import android.content.pm.IPackageInstallObserver;
 import android.content.pm.IPackageInstaller;
-import android.content.pm.IPackageInstallerSession;
 import android.content.pm.IPackageManager;
 import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
@@ -22,34 +21,25 @@ import android.content.pm.VersionedPackage;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.FileBridge;
 import android.os.IBinder;
-import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
-import android.os.SystemProperties;
 import android.permission.IPermissionManager;
 
 import com.easymanager.core.server.Singleton;
 import com.easymanager.core.server.easyManagerBinderWrapper;
 import com.easymanager.core.server.easyManagerPortService;
 
-import org.apache.commons.compress.utils.IOUtils;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -165,7 +155,10 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
 
     public void InstallAPK(String apkPath ){
-        InstallAPK(apkPath,getTranslatedUserId());
+        try{
+            InstallAPK(apkPath,getTranslatedUserId());
+        }catch (Throwable e){}
+
     }
 
     public int getTranslatedUserId(){

@@ -2,30 +2,25 @@ package com.easymanager.activitys;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.easymanager.R;
 import com.easymanager.entitys.PKGINFO;
-import com.easymanager.enums.AppInfoEnums;
 import com.easymanager.enums.AppManagerEnum;
 import com.easymanager.utils.DialogUtils;
 import com.easymanager.utils.FileTools;
@@ -34,13 +29,12 @@ import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
 import com.easymanager.utils.PackageUtils;
 import com.easymanager.utils.StringTools;
+import com.easymanager.utils.TextUtils;
 import com.easymanager.utils.easyManagerUtils;
 import com.easymanager.utils.permissionRequest;
 
 import java.io.File;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class AppManagerLayoutActivity extends Activity {
 
@@ -56,25 +50,12 @@ public class AppManagerLayoutActivity extends Activity {
     private Activity activity;
     private Boolean isRoot , isADB;
     private String uid;
-    private String APP_PERMIS[] = {"通话/短信相关", "存储","剪切板","电池优化","后台运行","摄像头/麦克风","定位","日历","传感器扫描","通知","强制应用待机","应用待机活动"};
-    private String APP_PERMIS_OPT1[] = {"默认", "拒绝","允许","仅在运行时允许"};
-    private String APP_PERMIS_OPT1_VALUES[] = {"default", "ignore","allow","foreground"};
-
-    private String APP_PERMIS_OPT2[] = {"活跃", "工作集","常用","极少使用","受限"};
+    private String APP_PERMIS_OPT1_VALUES[] = {"default", "ignore","deny","allow","foreground"};
     private String APP_PERMIS_OPT2_VALUES[] = {"active", "working_set","frequent","rare","restricted"};
-    private String APP_PERMIS_OPT3[] = {"允许","拒绝"};
     private String APP_PERMIS_OPT3_VALUES[] = {"true","false"};
-    private String APP_DISABLE_OR_ENABLE_OPT[] = {"启用","禁用"};
-    private String APP_FIREWALL_OPT[] = {"允许联网","禁止联网"};
-    private String APP_INSTALL_LOCAL_FILE_OPT[] = {"选择本地安装包文件","选择安装包本地文件夹"};
-    private String APP_DUMP_OPT[] = {"以包名保存","以应用名字保存","以当前时间保存"};
-    private String APP_BACKUP_AND_RESTORY_OPT[] = {"数据+应用","仅数据","仅应用"};
     private String APP_BACKUP_AND_RESTORY_OPT2[] = {"tar.xz","tar.gz","tar.bz"};
     private String APP_BACKUP_AND_RESTORY_OPT_VALUES[] = {"full","data","apk"};
     private String APP_BACKUP_AND_RESTORY_OPT2_VALUES[] = {"txz","tgz","tbz"};
-
-    private String APP_CHOICES[] = {"勾选","未勾选","全选"};
-
     private int APP_CHOICES_INDEX = 0, APP_PERMIS_INDEX = 0 , APP_PERMIS_OPT_INDEX = 0, APP_PERMIS_MODE= 0 ;
 
     private boolean install_mode = false;
@@ -82,6 +63,7 @@ public class AppManagerLayoutActivity extends Activity {
     private FileTools ft = new FileTools();
 
     private PackageUtils packageUtils = new PackageUtils();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,58 +87,59 @@ public class AppManagerLayoutActivity extends Activity {
         amlsp2 = findViewById(R.id.amlsp2);
         amlsp3 = findViewById(R.id.amlsp3);
         apllv1 = findViewById(R.id.apllv1);
-        amlsp1.setAdapter(getSpinnerAdapter(APP_PERMIS));
-        amlsp3.setAdapter(getSpinnerAdapter(APP_CHOICES));
+        amlsp1.setAdapter(getSpinnerAdapter(getAppPermis()));
+        amlsp3.setAdapter(getSpinnerAdapter(getAppChoicesOPT()));
         if(mode == AppManagerEnum.APP_PERMISSION){
-            amlsp2.setAdapter(getSpinnerAdapter(APP_PERMIS_OPT1));
+            amlsp2.setAdapter(getSpinnerAdapter(getAppPermisOPT1()));
         }
         if(mode == AppManagerEnum.APP_DISABLE_COMPENT){
             amlsp1.setEnabled(false);
-            amlsp2.setAdapter(getSpinnerAdapter(APP_DISABLE_OR_ENABLE_OPT));
+            amlsp2.setAdapter(getSpinnerAdapter(getAppDisableOrEnableOPT()));
         }
 
         if(mode == AppManagerEnum.APP_FIREWALL){
             amlsp1.setEnabled(false);
-            amlsp2.setAdapter(getSpinnerAdapter(APP_FIREWALL_OPT));
+            amlsp2.setAdapter(getSpinnerAdapter(getAppFirewallOPT()));
         }
 
         if(mode == AppManagerEnum.APP_INSTALL_LOCAL_FILE){
             amlsp1.setEnabled(false);
-            amlsp2.setAdapter(getSpinnerAdapter(APP_INSTALL_LOCAL_FILE_OPT));
-            amlapplybt.setText("选择");
+            amlsp2.setAdapter(getSpinnerAdapter(getAppInstallLocalFileOPT()));
+            amlapplybt.setText(getLanStr(R.string.button_select));
             install_mode=true;
         }
 
         if(mode == AppManagerEnum.APP_DUMP){
             amlsp1.setEnabled(false);
-            amlsp2.setAdapter(getSpinnerAdapter(APP_DUMP_OPT));
-            amlapplybt.setText("提取应用");
+            amlsp2.setAdapter(getSpinnerAdapter(getAppDumpOPT()));
+            amlapplybt.setText(getLanStr(R.string.button_dump_app));
         }
 
         if(mode == AppManagerEnum.APP_UNINSTALL){
             amlsp1.setEnabled(false);
             amlsp2.setEnabled(false);
-            amlapplybt.setText("卸载应用");
+            amlapplybt.setText(getLanStr(R.string.button_del_app));
         }
 
         if(mode == AppManagerEnum.APP_CLEAN_PROCESS){
             amlsp1.setEnabled(false);
             amlsp2.setEnabled(false);
-            amlapplybt.setText("清理");
+            amlapplybt.setText(getLanStr(R.string.button_clean));
         }
 
         if(mode == AppManagerEnum.APP_BACKUP){
-            amlsp1.setAdapter(getSpinnerAdapter(APP_BACKUP_AND_RESTORY_OPT));
+            amlsp1.setAdapter(getSpinnerAdapter(getAppBackupAndRestoryOPT()));
             amlsp2.setAdapter(getSpinnerAdapter(APP_BACKUP_AND_RESTORY_OPT2));
-            amlapplybt.setText("备份");
+            amlapplybt.setText(getLanStr(R.string.button_backup));
         }
 
         if(mode == AppManagerEnum.APP_RESTORY){
-            amlsp1.setAdapter(getSpinnerAdapter(APP_BACKUP_AND_RESTORY_OPT));
+            amlsp1.setAdapter(getSpinnerAdapter(getAppBackupAndRestoryOPT()));
             amlsp2.setAdapter(getSpinnerAdapter(APP_BACKUP_AND_RESTORY_OPT2));
-            amlapplybt.setText("恢复");
+            amlapplybt.setText(getLanStr(R.string.button_restory));
         }
         btClicked();
+        new HelpDialogUtils().showHelp(context,HelpDialogUtils.APP_MANAGE_HELP,mode);
     }
 
     private void btClicked(){
@@ -230,7 +213,7 @@ public class AppManagerLayoutActivity extends Activity {
                             opt_str = APP_PERMIS_OPT2_VALUES[APP_PERMIS_OPT_INDEX];
                         }
                         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
-                            du.showInfoMsg(context,"提示","不支持安卓5以下设备");
+                            du.showInfoMsg(context,getLanStr(R.string.tips),getLanStr(R.string.not_support_5));
                         }else{
                             du.showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_PERMISSION,APP_PERMIS_INDEX,opt_str);
                         }
@@ -259,7 +242,7 @@ public class AppManagerLayoutActivity extends Activity {
                             if(ee.isROOT()){
                                 ee.activeRoot(context);
                             }else {
-                                du.showInfoMsg(context,"错误","当前是安卓6以下，卸载软件会被终止掉后台服务，请手动重新激活(root模式下可以忽略该问题)");
+                                du.showInfoMsg(context,getLanStr(R.string.error_tips),getLanStr(R.string.del_app_tips_6));
                             }
                         }
                     }
@@ -296,7 +279,7 @@ public class AppManagerLayoutActivity extends Activity {
                     intent.putExtra("isADB",isADB);
                     startActivity(intent);
                 } catch (PackageManager.NameNotFoundException e) {
-                    Toast.makeText(context, "未安装该应用", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, getLanStr(R.string.not_installed_app), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -312,15 +295,15 @@ public class AppManagerLayoutActivity extends Activity {
                     case 0:
                         APP_PERMIS_INDEX = i;
                         if(mode == AppManagerEnum.APP_PERMISSION){
-                            if(APP_PERMIS_INDEX == 10){
+                            if(APP_PERMIS_INDEX == 16){
                                 APP_PERMIS_MODE=1;
-                                amlsp2.setAdapter(getSpinnerAdapter(APP_PERMIS_OPT3));
-                            }else if(APP_PERMIS_INDEX == 11){
+                                amlsp2.setAdapter(getSpinnerAdapter(getAppPermisOPT3()));
+                            }else if(APP_PERMIS_INDEX == 17){
                                 APP_PERMIS_MODE=2;
-                                amlsp2.setAdapter(getSpinnerAdapter(APP_PERMIS_OPT2));
+                                amlsp2.setAdapter(getSpinnerAdapter(getAppPermisOPT2()));
                             }else{
                                 APP_PERMIS_MODE=0;
-                                amlsp2.setAdapter(getSpinnerAdapter(APP_PERMIS_OPT1));
+                                amlsp2.setAdapter(getSpinnerAdapter(getAppPermisOPT1()));
                             }
                         }
                         break;
@@ -344,7 +327,7 @@ public class AppManagerLayoutActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         OtherTools otherTools = new OtherTools();
-        otherTools.addMenuBase(menu,mode);
+        otherTools.addMenuBase(this,menu,mode);
         getMenuInflater().inflate(R.menu.main,menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -413,12 +396,12 @@ public class AppManagerLayoutActivity extends Activity {
 
     private void selectLocalFile(){
         permissionRequest.getExternalStorageManager(context);
-        ft.execFileSelect(context,activity,"请选择要安装的文件");
+        ft.execFileSelect(context,activity,getLanStr(R.string.choice_install_file));
     }
 
     private void selectLocalDir(){
         permissionRequest.getExternalStorageManager(context);
-        ft.execDirSelect(context,activity,"请选择要安装的文件");
+        ft.execDirSelect(context,activity,getLanStr(R.string.choice_install_file));
     }
 
     private void addPKGINFO(PackageManager pm, Uri uri , String storage){
@@ -447,8 +430,9 @@ public class AppManagerLayoutActivity extends Activity {
             pkginfos.add(pkginfo) ;
             checkboxs.add(false);
         }else if(nameType.equals("apks")){
+            String ss = getLanStr(R.string.unknow_msg);
             Drawable d = context.getResources().getDrawable(R.drawable.manager_grant_app_foreground);
-            pkginfos.add(new PKGINFO(st.getPathByLastName(filePath),"未知",filePath,"未知","未知", d,new File(filePath).length()));
+            pkginfos.add(new PKGINFO(st.getPathByLastName(filePath),ss,filePath,ss,ss, d,new File(filePath).length()));
             checkboxs.add(false);
         }
     }
@@ -475,7 +459,7 @@ public class AppManagerLayoutActivity extends Activity {
             du.showPKGS(context,apllv1,pkginfos,checkboxs);
             if(pkginfos.size() > 0){
                 install_mode = false;
-                amlapplybt.setText("安装");
+                amlapplybt.setText(getLanStr(R.string.try_install_app));
             }
         }
 
@@ -508,13 +492,64 @@ public class AppManagerLayoutActivity extends Activity {
                         e.printStackTrace();
                     }
                 }else{
-                    du.showInfoMsg(context,"错误","该功能需要adb或者root权限才能使用!!!!");
+                    du.showInfoMsg(context,getLanStr(R.string.error_tips),getLanStr(R.string.need_root_or_adb_msg));
                 }
                 if(pkginfos.size() > 0){
                     install_mode = false;
-                    amlapplybt.setText("安装");
+                    amlapplybt.setText(getLanStr(R.string.try_install_app));
                 }
             }
         }
     }
+
+    private String getLanStr(int id){
+        return du.tu.getLanguageString(context,id);
+    }
+
+    private String[] getAppPermis(){
+        return new String[]{getLanStr(R.string.spin_item_phone_sms)
+        ,getLanStr(R.string.spin_item_storage),getLanStr(R.string.spin_item_clipboard)
+        ,getLanStr(R.string.spin_item_battery),getLanStr(R.string.spin_item_background)
+        ,getLanStr(R.string.spin_item_camera_microphone),getLanStr(R.string.spin_item_location)
+        ,getLanStr(R.string.spin_item_calendar),getLanStr(R.string.spin_item_sensor)
+        ,getLanStr(R.string.spin_item_notify),getLanStr(R.string.spin_item_biometrics)
+        ,getLanStr(R.string.spin_item_alert),getLanStr(R.string.spin_item_accessibility)
+        ,getLanStr(R.string.spin_item_account),getLanStr(R.string.spin_item_write_settings)
+        ,getLanStr(R.string.spin_item_read_device_id),getLanStr(R.string.spin_item_app_standby)
+        ,getLanStr(R.string.spin_item_app_standby_activity)};
+    }
+
+    private String[] getAppPermisOPT1(){
+        return new String[]{getLanStr(R.string.spin_item_opt1_default),getLanStr(R.string.spin_item_opt1_ignore)
+        ,getLanStr(R.string.spin_item_opt1_deny),getLanStr(R.string.spin_item_opt1_allow),getLanStr(R.string.spin_item_opt1_foreground)};
+    }
+
+    private String[] getAppPermisOPT2(){
+        return new String[]{getLanStr(R.string.spin_item_opt2_active),getLanStr(R.string.spin_item_opt2_work)
+        ,getLanStr(R.string.spin_item_opt2_frequent),getLanStr(R.string.spin_item_opt2_rare),getLanStr(R.string.spin_item_opt2_restricted)};
+    }
+
+    private String[] getAppPermisOPT3(){
+        return new String[]{getLanStr(R.string.spin_item_opt3_allow),getLanStr(R.string.spin_item_opt3_denial)};
+    }
+
+    private String[] getAppDisableOrEnableOPT(){
+        return new String[]{getLanStr(R.string.spin_item_enable),getLanStr(R.string.spin_item_disable)};
+    }
+    private String[] getAppFirewallOPT(){
+        return new String[]{getLanStr(R.string.spin_item_network_enable),getLanStr(R.string.spin_item_network_disable)};
+    }
+    private String[] getAppInstallLocalFileOPT(){
+        return new String[]{getLanStr(R.string.spin_item_select_local_file),getLanStr(R.string.spin_item_select_local_dir)};
+    }
+    private String[] getAppDumpOPT(){
+        return new String[]{getLanStr(R.string.spin_item_dump_pkgname),getLanStr(R.string.spin_item_dump_appname),getLanStr(R.string.spin_item_dump_timename)};
+    }
+    private String[] getAppBackupAndRestoryOPT(){
+        return new String[]{getLanStr(R.string.spin_item_app_and_data),getLanStr(R.string.spin_item_data),getLanStr(R.string.spin_item_app)};
+    }
+    private String[] getAppChoicesOPT(){
+        return new String[]{getLanStr(R.string.spin_item_selected),getLanStr(R.string.spin_item_no_selected),getLanStr(R.string.spin_item_all_selected)};
+    }
+
 }

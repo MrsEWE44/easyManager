@@ -7,7 +7,7 @@
     <SearchView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:queryHint="请输入搜索内容"
+        android:queryHint="@string/query_hint_str"
         android:imeOptions="actionSearch"
         android:iconifiedByDefault="false"
         android:id="@+id/svlsv"/>

@@ -21,6 +21,7 @@ import com.easymanager.utils.DialogUtils;
 import com.easymanager.utils.HelpDialogUtils;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
+import com.easymanager.utils.TextUtils;
 
 public class CreateImgLayoutActivity extends Activity {
 
@@ -72,6 +73,7 @@ public class CreateImgLayoutActivity extends Activity {
         cilnametype = findViewById(R.id.cilnametype);
         cilsizetype = findViewById(R.id.cilsizetype);
         cilcreateimg = findViewById(R.id.cilcreateimg);
+        String disable_msg = getLanStr(R.string.stop_edit);
         if(mode == AppManagerEnum.CREATE_IMG){
             cilnametype.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, FILE_NAME_TYPE));
             cilsizetype.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, FILE_SIZE_TYPE));
@@ -80,33 +82,32 @@ public class CreateImgLayoutActivity extends Activity {
         if(mode == AppManagerEnum.SET_NTP){
             cilsizetype.setEnabled(false);
             cilsize.setEnabled(false);
-            cilsize.setText("当前状态不可用");
-            cilfilename.setHint("输入自定义ntp服务器地址");
-            cilcreateimg.setText("应用ntp服务器更改");
+            cilsize.setText(disable_msg);
+            cilfilename.setHint(getLanStr(R.string.input_custom_ntp_service));
+            cilcreateimg.setText(getLanStr(R.string.apply_ntp_service));
             cilnametype.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, ntp_services));
         }
 
         if(mode == AppManagerEnum.SET_RATE){
             cilnametype.setEnabled(false);
             cilfilename.setEnabled(false);
-            cilfilename.setText("当前状态不可用");
-            cilsize.setHint("请输入刷新率值48-165数字");
-            cilcreateimg.setText("应用系统刷新率更改");
+            cilfilename.setText(disable_msg);
+            cilsize.setHint(getLanStr(R.string.input_custom_rate));
+            cilcreateimg.setText(getLanStr(R.string.apply_rate));
             cilsizetype.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, refresh_rates));
         }
 
         if(mode == AppManagerEnum.DEL_X){
             cilsizetype.setEnabled(false);
             cilsize.setEnabled(false);
-            cilsize.setText("当前状态不可用");
-            cilfilename.setText("当前状态不可用");
+            cilsize.setText(disable_msg);
+            cilfilename.setText(disable_msg);
             cilnametype.setEnabled(false);
             cilfilename.setEnabled(false);
-            cilcreateimg.setText("去掉网络X标记");
+            cilcreateimg.setText(getLanStr(R.string.apply_del_x));
         }
-
-
         btClicked();
+        new HelpDialogUtils().showHelp(context,HelpDialogUtils.APP_MANAGE_HELP,mode);
     }
 
     private void btClicked() {
@@ -118,7 +119,7 @@ public class CreateImgLayoutActivity extends Activity {
                     String filename = cilfilename.getText().toString();
                     String filesize = cilsize.getText().toString();
                     if(filename.isEmpty() || filesize.isEmpty()){
-                        du.showInfoMsg(context,"警告","请完善空缺位置!!!");
+                        du.showInfoMsg(context,getLanStr(R.string.warning_tips),getLanStr(R.string.fix_vacant));
                     }else{
                         String outpath = Environment.getExternalStorageDirectory().toString()+"/"+filename+"."+FILE_NAME_TYPE[FILE_NAME_TYPE_INDEX];
                         String cmdstr = "dd if=/dev/zero of="+  outpath+" bs=1"+FILE_SIZE_TYPE_VALUES[FILE_SIZE_TYPE_INDEX]+" count="+filesize;
@@ -203,7 +204,7 @@ public class CreateImgLayoutActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         OtherTools otherTools = new OtherTools();
-        otherTools.addMenuBase(menu,mode);
+        otherTools.addMenuBase(this,menu,mode);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -227,5 +228,8 @@ public class CreateImgLayoutActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    private String getLanStr(int id){
+        return du.tu.getLanguageString(context,id);
+    }
 
 }

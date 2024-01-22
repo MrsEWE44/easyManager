@@ -30,7 +30,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="应用管理"
+                android:text="@string/text_home_app_manage"
                 android:textSize="20dp"
                 ></TextView>
 
@@ -50,7 +50,7 @@
                     android:layout_width="fill_parent"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="权限配置"
+                    android:text="@string/button_home_permission"
                     android:id="@+id/hflappopsbt">
                 </Button>
 
@@ -58,7 +58,7 @@
                     android:layout_width="fill_parent"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="冻结/禁用"
+                    android:text="@string/button_home_disable"
                     android:id="@+id/hflappdisable">
                 </Button>
 
@@ -66,7 +66,7 @@
                     android:layout_width="fill_parent"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="联网配置"
+                    android:text="@string/button_home_network"
                     android:id="@+id/hflfirewall">
                 </Button>
 
@@ -83,7 +83,7 @@
                     android:layout_width="fill_parent"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="安装本地文件"
+                    android:text="@string/button_home_install_local_file"
                     android:id="@+id/hflinlocalapk">
                 </Button>
 
@@ -91,7 +91,7 @@
                     android:layout_width="fill_parent"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="提取应用"
+                    android:text="@string/button_home_dump_app"
                     android:id="@+id/hfldumpapp">
                 </Button>
 
@@ -99,7 +99,7 @@
                     android:layout_width="fill_parent"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="卸载应用"
+                    android:text="@string/button_home_uninstall"
                     android:id="@+id/hfldelapp">
                 </Button>
 
@@ -126,7 +126,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="后台管理"
+                android:text="@string/text_home_process_manage"
                 android:textSize="20dp"
                 ></TextView>
 
@@ -135,7 +135,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="后台清理"
+            android:text="@string/button_home_process_clean"
             android:id="@+id/hflcleanprocess"></Button>
 
 
@@ -155,7 +155,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="备份/恢复"
+                android:text="@string/text_home_backup_and_restory_manage"
                 android:textSize="20dp"
                 ></TextView>
 
@@ -175,7 +175,7 @@
                     android:layout_width="fill_parent"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="软件备份"
+                    android:text="@string/button_home_backup"
                     android:id="@+id/hflbackupapp">
                 </Button>
 
@@ -183,7 +183,7 @@
                     android:layout_width="fill_parent"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="软件恢复"
+                    android:text="@string/button_home_restory"
                     android:id="@+id/hflrestoryapp">
                 </Button>
 
@@ -270,7 +270,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="U盘模式"
+                android:text="@string/text_home_usb_flash_drive_mode"
                 android:textSize="20dp"
                 ></TextView>
 
@@ -290,7 +290,7 @@
                     android:layout_width="fill_parent"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="挂载本地镜像文件"
+                    android:text="@string/button_home_use_usb_mode"
                     android:id="@+id/hflmountlocalimg">
                 </Button>
 
@@ -298,7 +298,7 @@
                     android:layout_width="fill_parent"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="创建镜像文件"
+                    android:text="@string/button_home_create_usb_img_file"
                     android:id="@+id/hflcreateimg">
                 </Button>
 
@@ -406,7 +406,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="其它工具"
+                android:text="@string/text_home_other_tool"
                 android:textSize="20dp"
                 ></TextView>
 
@@ -426,7 +426,7 @@
                     android:layout_width="fill_parent"
                     android:layout_weight="1"
                     android:layout_height="fill_parent"
-                    android:text="设置ntp服务器"
+                    android:text="@string/button_home_set_ntp"
                     android:id="@+id/hflsetntp">
                 </Button>
 
@@ -434,7 +434,7 @@
                     android:layout_width="fill_parent"
                     android:layout_weight="1"
                     android:layout_height="fill_parent"
-                    android:text="修改刷新率"
+                    android:text="@string/button_home_set_rate"
                     android:id="@+id/hflsetrate">
                 </Button>
 
@@ -450,7 +450,7 @@
                     android:layout_width="fill_parent"
                     android:layout_weight="1"
                     android:layout_height="fill_parent"
-                    android:text="去掉信号X"
+                    android:text="@string/button_home_del_x"
                     android:id="@+id/hfldelx">
                 </Button>
 
@@ -458,7 +458,7 @@
                     android:layout_width="fill_parent"
                     android:layout_weight="1"
                     android:layout_height="fill_parent"
-                    android:text="文件共享"
+                    android:text="@string/button_home_file_share"
                     android:id="@+id/hflfileshared">
                 </Button>
 

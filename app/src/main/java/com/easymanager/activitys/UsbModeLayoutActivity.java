@@ -15,8 +15,6 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.easymanager.R;
-import com.easymanager.core.utils.CMD;
-import com.easymanager.enums.AppManagerEnum;
 import com.easymanager.utils.DialogUtils;
 import com.easymanager.utils.HelpDialogUtils;
 import com.easymanager.utils.MyActivityManager;
@@ -40,8 +38,6 @@ public class UsbModeLayoutActivity extends Activity {
     private boolean isRoot,isADB;
 
     private int mode;
-
-    private String MOUNT_MODE[] = {"自动挂载模式","模式1","模式2","模式3"};
 
     private int MOUNT_MODE_INDEX=0;
 
@@ -71,9 +67,9 @@ public class UsbModeLayoutActivity extends Activity {
         umlmountbt = findViewById(R.id.umlmountbt);
         umlsp = findViewById(R.id.umlsp);
         umllv = findViewById(R.id.umllv);
-        umlsp.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, MOUNT_MODE));
+        umlsp.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, getMountModeOPT()));
         btClicked();
-
+        new HelpDialogUtils().showHelp(context,HelpDialogUtils.APP_MANAGE_HELP,mode);
     }
 
     private void btClicked() {
@@ -131,7 +127,7 @@ public class UsbModeLayoutActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         OtherTools otherTools = new OtherTools();
-        otherTools.addMenuBase(menu,mode);
+        otherTools.addMenuBase(this,menu,mode);
         getMenuInflater().inflate(R.menu.main,menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -184,6 +180,13 @@ public class UsbModeLayoutActivity extends Activity {
 
         }
     }
+    private String[] getMountModeOPT(){
+        return new String[]{getLanStr(R.string.mount_local_img_item_auto),getLanStr(R.string.mount_local_img_item_mode1)
+        ,getLanStr(R.string.mount_local_img_item_mode2),getLanStr(R.string.mount_local_img_item_mode3)};
+    }
 
+    private String getLanStr(int id){
+        return du.tu.getLanguageString(context,id);
+    }
 
 }

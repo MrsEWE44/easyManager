@@ -25,6 +25,12 @@ public class AppopsAPI extends baseAPI{
     public final static int Calendar = 7;
     public final static int SENSORSSCAN = 8;
     public final static int Notification = 9;
+    public final static int Fingerprint = 10;
+    public final static int AlertWindow = 11;
+    public final static int Accessibility = 12;
+    public final static int Account = 13;
+    public final static int WriteSettings = 14;
+    public final static int DeviceIdentifiers = 15;
 
     public final static int MODE_ALLOW = 0;
     public final static int MODE_DEFAULT = 1;
@@ -34,186 +40,11 @@ public class AppopsAPI extends baseAPI{
     private static final Map<String, IAppOpsService> I_APP_OPS_SERVICE_CACHE = new HashMap<>();
     private PackageAPI packageAPI = new PackageAPI();
 
-    public void SetInactive(String pkgname,boolean b){
-        packageAPI.SetInactive(pkgname,b);
-    }
-
-    public void SetStandbyBucket(String pkgname,String op){
-        packageAPI.SetStandbyBucket(pkgname, op);
-    }
-
-    public void setModeCore(String pkgname,int mode,int mode2){
-        String modestr = getSetModeStr(mode);
-        setModeCore(pkgname,modestr,mode2);
-    }
-
     public void setModeCore(String pkgname,String modestr,int mode2){
         for (String op : getOPS(getAppopsMode(mode2))) {
             SetMode(pkgname,op,modestr);
         }
     }
-
-
-    public void setNotificationOnAllow(String pkgname){
-        setModeCore(pkgname,0,Notification);
-    }
-
-    public void setNotificationOnDefault(String pkgname){
-        setModeCore(pkgname,1,Notification);
-    }
-
-    public void setNotificationOnIgnore(String pkgname){
-        setModeCore(pkgname,2,Notification);
-    }
-
-    public void setNotificationOnForeground(String pkgname){
-        setModeCore(pkgname,3,Notification);
-    }
-
-    public void setSENSORSSCANOnAllow(String pkgname){
-        setModeCore(pkgname,0,SENSORSSCAN);
-    }
-
-    public void setSENSORSSCANOnDefault(String pkgname){
-        setModeCore(pkgname,1,SENSORSSCAN);
-    }
-
-    public void setSENSORSSCANOnIgnore(String pkgname){
-        setModeCore(pkgname,2,SENSORSSCAN);
-    }
-
-    public void setSENSORSSCANOnForeground(String pkgname){
-        setModeCore(pkgname,3,SENSORSSCAN);
-    }
-
-    public void setCalendarOnAllow(String pkgname){
-        setModeCore(pkgname,0,Calendar);
-    }
-
-    public void setCalendarOnDefault(String pkgname){
-        setModeCore(pkgname,1,Calendar);
-    }
-
-    public void setCalendarOnIgnore(String pkgname){
-        setModeCore(pkgname,2,Calendar);
-    }
-
-    public void setCalendarOnForeground(String pkgname){
-        setModeCore(pkgname,3,Calendar);
-    }
-
-    public void setLocationOnAllow(String pkgname){
-        setModeCore(pkgname,0,Location);
-    }
-
-    public void setLocationOnDefault(String pkgname){
-        setModeCore(pkgname,1,Location);
-    }
-
-    public void setLocationOnIgnore(String pkgname){
-        setModeCore(pkgname,2,Location);
-    }
-
-    public void setLocationOnForeground(String pkgname){
-        setModeCore(pkgname,3,Location);
-    }
-
-    public void setCameraAndAudioOnAllow(String pkgname){
-        setModeCore(pkgname,0,CameraAndAudio);
-    }
-
-    public void setCameraAndAudioOnDefault(String pkgname){
-        setModeCore(pkgname,1,CameraAndAudio);
-    }
-
-    public void setCameraAndAudioOnIgnore(String pkgname){
-        setModeCore(pkgname,2,CameraAndAudio);
-    }
-
-    public void setCameraAndAudioOnForeground(String pkgname){
-        setModeCore(pkgname,3,CameraAndAudio);
-    }
-
-    public void setRunInBackgroudOnAllow(String pkgname){
-        setModeCore(pkgname,0,RunInBackgroud);
-    }
-
-    public void setRunInBackgroudOnDefault(String pkgname){
-        setModeCore(pkgname,1,RunInBackgroud);
-    }
-
-    public void setRunInBackgroudOnIgnore(String pkgname){
-        setModeCore(pkgname,2,RunInBackgroud);
-    }
-
-    public void setRunInBackgroudOnForeground(String pkgname){
-        setModeCore(pkgname,3,RunInBackgroud);
-    }
-
-    public void setRunAnyInBackgroudOnAllow(String pkgname){
-        setModeCore(pkgname,0,RunAnyInBackgroud);
-    }
-
-    public void setRunAnyInBackgroudOnDefault(String pkgname){
-        setModeCore(pkgname,1,RunAnyInBackgroud);
-    }
-
-    public void setRunAnyInBackgroudOnIgnore(String pkgname){
-        setModeCore(pkgname,2,RunAnyInBackgroud);
-    }
-
-    public void setRunAnyInBackgroudOnForeground(String pkgname){
-        setModeCore(pkgname,3,RunAnyInBackgroud);
-    }
-
-    public void setClipboardOnAllow(String pkgname){
-        setModeCore(pkgname,0,Clipboard);
-    }
-
-    public void setClipboardOnDefault(String pkgname){
-        setModeCore(pkgname,1,Clipboard);
-    }
-
-    public void setClipboardOnIgnore(String pkgname){
-        setModeCore(pkgname,2,Clipboard);
-    }
-
-    public void setClipboardOnForeground(String pkgname){
-        setModeCore(pkgname,3,Clipboard);
-    }
-
-    public void setStorageOnAllow(String pkgname){
-        setModeCore(pkgname,0,Storage);
-    }
-
-    public void setStorageOnDefault(String pkgname){
-        setModeCore(pkgname,1,Storage);
-    }
-
-    public void setStorageOnIgnore(String pkgname){
-        setModeCore(pkgname,2,Storage);
-    }
-
-    public void setStorageOnForeground(String pkgname){
-        setModeCore(pkgname,3,Storage);
-    }
-
-    public void setPhoneAndSMSOnAllow(String pkgname){
-        setModeCore(pkgname,0,PhoneAndSMS);
-    }
-
-    public void setPhoneAndSMSOnDefault(String pkgname){
-        setModeCore(pkgname,1,PhoneAndSMS);
-    }
-
-    public void setPhoneAndSMSOnIgnore(String pkgname){
-        setModeCore(pkgname,2,PhoneAndSMS);
-    }
-
-    public void setPhoneAndSMSOnForeground(String pkgname){
-        setModeCore(pkgname,3,PhoneAndSMS);
-    }
-
 
     public int getAppopsMode(int APP_PERMIS_INDEX){
         if(APP_PERMIS_INDEX == 0){
@@ -254,6 +85,30 @@ public class AppopsAPI extends baseAPI{
 
         if(APP_PERMIS_INDEX == 9){
             return Notification;
+        }
+
+        if(APP_PERMIS_INDEX == 10){
+            return Fingerprint;
+        }
+
+        if(APP_PERMIS_INDEX == 11){
+            return AlertWindow;
+        }
+
+        if(APP_PERMIS_INDEX == 12){
+            return Accessibility;
+        }
+
+        if(APP_PERMIS_INDEX == 13){
+            return Account;
+        }
+
+        if(APP_PERMIS_INDEX == 14){
+            return WriteSettings;
+        }
+
+        if(APP_PERMIS_INDEX == 15){
+            return DeviceIdentifiers;
         }
 
         return -1;
@@ -304,6 +159,9 @@ public class AppopsAPI extends baseAPI{
     public int getModeInt(String modestr){
         if(modestr.equals("allow")){
             return AppOpsManager.MODE_ALLOWED;
+        }
+        if(modestr.equals("deny")){
+            return AppOpsManager.MODE_ERRORED;
         }
 
         if(modestr.equals("ignore")){
@@ -360,7 +218,42 @@ public class AppopsAPI extends baseAPI{
         if(mode == Notification){
             permissionStr.getNotificationPermissionStr(ops);
         }
+
+        if(mode == Fingerprint){
+            permissionStr.getFigerprintPermissionStr(ops);
+        }
+        if(mode == AlertWindow){
+            permissionStr.getAlertWindowPermissionStr(ops);
+        }
+
+        if(mode == Accessibility){
+            permissionStr.getAccessibilityPermissionStr(ops);
+        }
+
+        if(mode == Account){
+            permissionStr.getAccountPermissionStr(ops);
+        }
+
+        if(mode == WriteSettings){
+            permissionStr.getWriteSettingsPermissionStr(ops);
+        }
+
+        if(mode == DeviceIdentifiers){
+            permissionStr.getDeviceIdentifiersPermissionStr(ops);
+        }
+
         return ops;
     }
 
+
+    public void setPermissionStr(String pkgname, String permission_str, boolean b) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            int opCode = AppOpsManager.permissionToOpCode(permission_str);
+            if(opCode > -1){
+                SetMode(pkgname,AppOpsManager.opToPermission(opCode), b? "allow":"ignore");
+            }
+
+        }
+
+    }
 }

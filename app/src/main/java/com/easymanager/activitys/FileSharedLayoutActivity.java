@@ -28,6 +28,7 @@ import com.easymanager.utils.HelpDialogUtils;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
 import com.easymanager.utils.PackageUtils;
+import com.easymanager.utils.TextUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -81,13 +82,14 @@ public class FileSharedLayoutActivity extends Activity {
         fslstartshared = findViewById(R.id.fslstartshared);
         fsllv = findViewById(R.id.fsllv);
         clickBt();
+        new HelpDialogUtils().showHelp(context,HelpDialogUtils.APP_MANAGE_HELP,mode);
     }
 
     private void clickBt() {
         String ip = getIpAddress();
         fsisharedip.setFocusableInTouchMode(false);
         fsisharedip.setText(ip);
-        fsisharedport.setHint("默认端口为: " + default_port);
+        fsisharedport.setHint(getLanStr(R.string.default_port) + default_port);
 
 
         fslstartshared.setOnClickListener(new View.OnClickListener() {
@@ -97,7 +99,7 @@ public class FileSharedLayoutActivity extends Activity {
                 view.post(new Runnable() {
                     @Override
                     public void run() {
-                        fslstartshared.setText("当前正在运行文件共享");
+                        fslstartshared.setText(getLanStr(R.string.now_is_file_share));
                         new HttpServer().start(activity);
                     }
                 });
@@ -129,8 +131,8 @@ public class FileSharedLayoutActivity extends Activity {
         AlertDialog.Builder ab = new AlertDialog.Builder(context);
         View view2 = getLayoutInflater().inflate(R.layout.file_shared_select_dialog_layout, null);
         ListView fssdllv = view2.findViewById(R.id.fssdllv);
-        String str = isFile?"文件":"应用";
-        ProgressDialog show = du.showMyDialog(context,  "正在获取本地"+str+",请稍后(可能会出现无响应，请耐心等待)....");
+        String str = isFile?getLanStr(R.string.is_share_file_msg):getLanStr(R.string.is_share_app_msg);
+        ProgressDialog show = du.showMyDialog(context,  getLanStr(R.string.now_get_ing_head)+str+getLanStr(R.string.now_get_ing_end));
         Handler handler = new Handler() {
             @Override
             public void handleMessage( Message msg) {
@@ -138,15 +140,15 @@ public class FileSharedLayoutActivity extends Activity {
                     show.dismiss();
 
                     ab.setView(view2);
-                    ab.setTitle("选择"+str);
-                    ab.setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                    ab.setTitle(getLanStr(R.string.dialog_choice_text)+str);
+                    ab.setNegativeButton(getLanStr(R.string.dialog_sure_text), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             for (int i1 = 0; i1 < checkboxs.size(); i1++) {
                                 if(checkboxs.get(i1)){
                                     if(isFile){
                                         String s = flist.get(i1);
-                                        if(s.equals("上一页")){
+                                        if(s.equals(getLanStr(R.string.file_share_previous_text))){
                                             File file = new File(s);
                                             if(file.isFile() || file.isDirectory()){
                                                 list.add(s);
@@ -162,7 +164,7 @@ public class FileSharedLayoutActivity extends Activity {
                             du.showUsers(context,fsllv,list,checkboxs);
                         }
                     });
-                    ab.setPositiveButton("取消", new DialogInterface.OnClickListener() {
+                    ab.setPositiveButton(getLanStr(R.string.dialog_cancel_text), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.cancel();
@@ -236,10 +238,10 @@ public class FileSharedLayoutActivity extends Activity {
         }
         Collections.sort(flist, String::compareTo);
         if (flist.size() >0 && flist.get(0).length() > extstorage.length()) {
-            flist.add(0, "上一页");
+            flist.add(0, getLanStr(R.string.file_share_previous_text));
             checkboxs.add(false);
         }else{
-            flist.add( "上一页");
+            flist.add(getLanStr(R.string.file_share_previous_text));
             checkboxs.add(false);
         }
         fssdllv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -247,7 +249,7 @@ public class FileSharedLayoutActivity extends Activity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String full_path = flist.get(i);
                 File file = new File(full_path);
-                if (file.getName().indexOf("上一页") != -1) {
+                if (file.getName().indexOf(getLanStr(R.string.file_share_previous_text)) != -1) {
                     File file2 = new File(path==null?extstorage:path);
                     String paaa = file2.getParent();
                     if(paaa.equals(extstorage)){
@@ -277,7 +279,7 @@ public class FileSharedLayoutActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         OtherTools otherTools = new OtherTools();
-        otherTools.addMenuBase(menu,mode);
+        otherTools.addMenuBase(this,menu,mode);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -398,12 +400,12 @@ public class FileSharedLayoutActivity extends Activity {
                                                 Integer index = Integer.valueOf(parm.trim());
                                                 String data = isFirst ? list.get(index) : tempList.get(index);
                                                 //判断是否点击的“上一页”
-                                                if(data.equals("上一页") && extstorage.equals(parenPath)){
+                                                if(data.equals(getLanStr(R.string.file_share_previous_text)) && extstorage.equals(parenPath)){
                                                     tempList.clear();
                                                     tempList.addAll(list);
                                                     returnFileList(list, httpStatus, socket);
                                                 }else{
-                                                    if (data.equals("上一页")) {
+                                                    if (data.equals(getLanStr(R.string.file_share_previous_text))) {
                                                         data = parenPath;
                                                     }
                                                     data = data.replaceAll("//", "/");
@@ -421,9 +423,9 @@ public class FileSharedLayoutActivity extends Activity {
                                                         Collections.sort(tempList, String::compareTo);
 
                                                         if (tempList.size() >0 && tempList.get(0).length() > extstorage.length()) {
-                                                            tempList.add(0, "上一页");
+                                                            tempList.add(0, getLanStr(R.string.file_share_previous_text));
                                                         }else{
-                                                            tempList.add( "上一页");
+                                                            tempList.add(getLanStr(R.string.file_share_previous_text));
                                                         }
                                                         parenPath = file.getParent();
                                                         returnFileList(tempList, httpStatus, socket);
@@ -455,7 +457,7 @@ public class FileSharedLayoutActivity extends Activity {
                                                     }
                                                 }
                                             } else {
-                                                returnText(httpStatus, socket, "参数错误.");
+                                                returnText(httpStatus, socket, getLanStr(R.string.parm_error));
                                             }
 
                                         } else {
@@ -484,14 +486,14 @@ public class FileSharedLayoutActivity extends Activity {
             StringBuilder sb = new StringBuilder();
             sb.append(htmlhead);
             if (slist.size() < 1) {
-                sb.append("<h1>还没有选择文件哦!</h1>");
+                sb.append("<h1>"+getLanStr(R.string.file_share_not_select_file)+"</h1>");
             } else {
                 for (int i = 0; i < slist.size(); i++) {
                     File file = new File(slist.get(i));
-                    if (file.isDirectory() || file.toString().equals("上一页")) {
+                    if (file.isDirectory() || file.toString().equals(getLanStr(R.string.file_share_previous_text))) {
                         sb.append("<div><table border=\"1\"><td><a href=\"" + "http://" + ipAndPort + "/easyManager?file=" + i + "\" <h1>" + file.getName() + "</h1></a></td></table></div>");
                     } else {
-                        sb.append("<div><table border=\"1\"><td>" + file.getName() + "</td><td>" + new FileTools().getSize(file.length(), 0) + "</td><td><button onclick=\"bt(" + i + ")\">下载</button></td></table></div>");
+                        sb.append("<div><table border=\"1\"><td>" + file.getName() + "</td><td>" + new FileTools().getSize(file.length(), 0) + "</td><td><button onclick=\"bt(" + i + ")\">"+getLanStr(R.string.file_share_start_download)+"</button></td></table></div>");
                     }
                 }
             }
@@ -514,7 +516,9 @@ public class FileSharedLayoutActivity extends Activity {
 
     }
 
-
+    private String getLanStr(int id){
+        return du.tu.getLanguageString(context,id);
+    }
 
 
 

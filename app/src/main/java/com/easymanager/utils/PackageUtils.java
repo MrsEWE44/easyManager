@@ -10,14 +10,11 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
 import android.os.Build;
-import android.util.Log;
 
 import com.easymanager.entitys.PKGINFO;
 
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -229,22 +226,19 @@ public class PackageUtils {
             for (String permission : packageInfo.requestedPermissions) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     String permissionToOp = AppOpsManager.permissionToOp(permission);
+                    list.add(permission);
+                    checkboxs.add(false);
                     if(permissionToOp != null){
-                        list.add(permission);
-                        checkboxs.add(false);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            if((opsManager.unsafeCheckOpNoThrow(permissionToOp, android.os.Process.myUid(),packageInfo.packageName) == AppOpsManager.MODE_ALLOWED)){
-                                switbs.add(true);
-                            }else{
-                                switbs.add(false);
-                            }
-                        }else{
-                            if((opsManager.checkOpNoThrow(permissionToOp,android.os.Process.myUid(),packageInfo.packageName) == AppOpsManager.MODE_ALLOWED)){
-                                switbs.add(true);
-                            }else{
-                                switbs.add(false);
-                            }
+                        int checkop = -1;
+                        int myuid = android.os.Process.myUid();
+                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                            checkop = opsManager.unsafeCheckOp(permissionToOp,myuid,packageInfo.packageName);
+                        }else {
+                            checkop = opsManager.checkOp(permissionToOp,myuid,packageInfo.packageName);
                         }
+                        switbs.add(checkop == AppOpsManager.MODE_ALLOWED);
+                    }else{
+                        switbs.add(false);
                     }
                 }
             }
