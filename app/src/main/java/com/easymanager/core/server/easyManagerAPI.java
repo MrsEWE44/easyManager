@@ -254,7 +254,7 @@ public class easyManagerAPI extends baseAPI {
         }
         File sdobbpathFile = new File(sdobbpath);
         if(sdobbpathFile.exists()){
-            compressFileByBackup(fileEnd,sddatapath,outbackuppkgdir,"sdobb");
+            compressFileByBackup(fileEnd,sdobbpath,outbackuppkgdir,"sdobb");
         }
     }
 

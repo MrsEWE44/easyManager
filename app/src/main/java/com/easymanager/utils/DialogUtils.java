@@ -410,8 +410,7 @@ public class DialogUtils extends DialogBaseUtils {
                             }
                             break;
                         case AppManagerEnum.APP_DUMP:
-                            File externalCacheDir = context.getExternalCacheDir();
-                            String s = externalCacheDir.getPath() + "/dump";
+                            String s = sdpath+"/easyManager/dump";
                             File file = new File(s);
                             if(!file.exists()){
                                 file.mkdirs();
