@@ -47,6 +47,10 @@ public interface IPackageManager extends IInterface {
 
     void setComponentEnabledSettings(List<PackageManager.ComponentEnabledSetting> settings, int userId);
 
+    void setComponentEnabledSetting(ComponentName componentName, int newState,int flags, int userId, String callingPackage);
+
+    void setComponentEnabledSettings(List<PackageManager.ComponentEnabledSetting> settings, int userId, String callingPackage);
+
     int getComponentEnabledSetting(ComponentName componentName, int userId);
 
     void setApplicationEnabledSetting(String packageName,int newState, int flags,int userId, String callingPackage);

@@ -174,10 +174,9 @@ public class UsbModeLayoutActivity extends Activity {
     private String autoMode(String filePath){
         int sdkInt = Build.VERSION.SDK_INT;
         if (sdkInt >= Build.VERSION_CODES.P) {
-            return "cd "+config_path1+" && echo -n 'msc' >configs/b.1/strings/0x409/configuration &&  rm -rf configs/b.1/f* && ln -s functions/mass_storage.0 configs/b.1/f1 && echo -n '"+filePath+"' >configs/b.1/f1/lun.0/file && setprop sys.usb.config mass_storage ";
+            return mode2(filePath);
         }else {
-            return "cd "+config_path2 +" && echo -n 0 > enable && echo -n '"+filePath+"' > f_mass_storage/lun/file && echo -n 'mass_storage' >functions && echo -n 1 >enable";
-
+            return mode3(filePath);
         }
     }
     private String[] getMountModeOPT(){

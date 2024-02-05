@@ -15,6 +15,15 @@ easyManager的工作原理借鉴了Shizuku、AppOps,与它们两个类似,easyMa
 
 [easyMangerSDK开发工具包](https://github.com/MrsEWE44/easyManagerSDK)
 
+- V1.2.2
+
+1.修复应用组件禁用失败问题
+
+2.提升target至34
+
+3.修改版本号为1.2.2
+
+
 - V1.2.1
 
 1.修复备份时无法备份obb问题

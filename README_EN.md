@@ -15,6 +15,15 @@ Moreover, the interface open to the public by EasyManager has been tested and su
 
 [easyMangerSDK Development Kit](https://github.com/MrsEWE44/easyManagerSDK)
 
+- V1.2.2
+
+1.Fix the problem of failure to disable application components
+
+2.Update target to 34
+
+3.Modify the version number to 1.2.2
+
+
 - V1.2.1
 
 1.Fix the problem that obb cannot be backed up during backup

@@ -429,8 +429,11 @@ public class PackageAPI extends  baseAPI implements Serializable {
             iPackageManager.setApplicationEnabledSetting(pkgname_or_compname,state,0,translatedUserId,"shell:" + getMyuid());
 //            System.out.println("Package "+pkgname_or_compname + " new state : " +enabledSettingToString(iPackageManager.getApplicationEnabledSetting(pkgname_or_compname,translatedUserId)));
         }else{
-            iPackageManager.setComponentEnabledSetting(componentName, state, 0, translatedUserId);
-//            System.out.println("Component "+componentName.toShortString()+ " new state : "+ iPackageManager.getComponentEnabledSetting(componentName,translatedUserId));
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU){
+                iPackageManager.setComponentEnabledSetting(componentName,state,0,translatedUserId,"shell:" + getMyuid());
+            }else{
+                iPackageManager.setComponentEnabledSetting(componentName, state, 0, translatedUserId);
+            }
         }
 
     }
