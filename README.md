@@ -15,6 +15,13 @@ easyManager的工作原理借鉴了Shizuku、AppOps,与它们两个类似,easyMa
 
 [easyMangerSDK开发工具包](https://github.com/MrsEWE44/easyManagerSDK)
 
+- V1.2.2a
+
+1.修复安装本地apk文件无法正确显示应用图标问题
+
+2.修改版本号为1.2.2a
+
+
 - V1.2.2
 
 1.修复应用组件禁用失败问题

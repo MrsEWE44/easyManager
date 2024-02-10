@@ -57,12 +57,14 @@ public class PackageUtils {
     public PKGINFO getPKGINFO(Context context , String pkgname){
         PackageManager packageManager = getPackageManager(context);
         PackageInfo packageInfo = getPackageInfo(packageManager, pkgname, 0);
-        return getPKGINFO(packageManager,packageInfo);
+        return getPKGINFO(packageManager,packageInfo,packageInfo.applicationInfo.sourceDir);
     }
 
-    public PKGINFO getPKGINFO(PackageManager packageManager,PackageInfo packageInfo ){
+    public PKGINFO getPKGINFO(PackageManager packageManager,PackageInfo packageInfo , String filePath){
         try {
             ApplicationInfo applicationInfo = packageInfo.applicationInfo;
+            applicationInfo.sourceDir=filePath;
+            applicationInfo.publicSourceDir = filePath;
             Long filesieze = applicationInfo.sourceDir==null? 0: new File(applicationInfo.sourceDir).length();
             return new PKGINFO(applicationInfo.packageName, applicationInfo.loadLabel(packageManager).toString(), applicationInfo.sourceDir,applicationInfo.uid+"",packageInfo.versionName, applicationInfo.loadIcon(packageManager),filesieze) ;
         }catch (Exception e){
@@ -74,7 +76,7 @@ public class PackageUtils {
         if(checkboxs != null){
             checkboxs.add(false);
         }
-        pkginfos.add(getPKGINFO(packageManager,packageInfo));
+        pkginfos.add(getPKGINFO(packageManager,packageInfo,packageInfo.applicationInfo.sourceDir));
     }
 
     public void checkBoxsHashMap(HashMap<String,PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, PackageInfo packageInfo, PackageManager packageManager){

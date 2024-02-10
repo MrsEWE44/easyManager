@@ -418,7 +418,7 @@ public class AppManagerLayoutActivity extends Activity {
         String nameType = st.getPathByLastNameType(filePath);
         if(nameType.equals("apk")){
             PackageInfo packageInfo = pm.getPackageArchiveInfo(filePath, PackageManager.GET_ACTIVITIES);
-            PKGINFO pkginfo = packageUtils.getPKGINFO(pm, packageInfo);
+            PKGINFO pkginfo = packageUtils.getPKGINFO(pm, packageInfo,filePath);
             if(pkginfo == null){
                 File file = new File(filePath);
                 if(file.exists()){

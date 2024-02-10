@@ -15,6 +15,13 @@ Moreover, the interface open to the public by EasyManager has been tested and su
 
 [easyMangerSDK Development Kit](https://github.com/MrsEWE44/easyManagerSDK)
 
+- V1.2.2a
+
+1.Fix the install local apk file not show apk icon.
+
+2.Modify the version number to 1.2.2a
+
+
 - V1.2.2
 
 1.Fix the problem of failure to disable application components
