@@ -1,5 +1,6 @@
 package com.easymanager.mylife;
 
+import android.content.ComponentName;
 import android.os.Looper;
 import android.os.Process;
 
@@ -39,76 +40,86 @@ public class startAdbService {
                                             return managerAPI.isRoot();
                                         case easyManagerEnums.IS_ADB:
                                             return managerAPI.isADB();
+                                        case easyManagerEnums.APP_FIREWALL:
+                                            if(managerAPI.isRoot()){
+                                                int pkguid = managerAPI.getPKGUID(entity.getPkgname(), entity.getUid());
+                                                String  disable_cmd = "iptables -I OUTPUT -m owner --uid-owner "+pkguid+" -j DROP";
+                                                String  enable_cmd = "iptables -I OUTPUT -m owner --uid-owner "+pkguid+" -j ACCEPT";
+                                                CMD cmd = sendCMD(entity.getOpsmode()==0 ? enable_cmd : disable_cmd);
+                                            }else {
+                                                return getActiveROOT();
+                                            }
+                                            break;
                                         case easyManagerEnums.GET_SYSTEM_SERVICE:
                                             return managerAPI.getSystemService(entity.getPkgname());
                                         case easyManagerEnums.KILL_PROCESS:
                                             if(managerAPI.isRoot() || managerAPI.isADB()){
-                                                managerAPI.killpkg(entity.getPkgname());
+                                                managerAPI.killpkg(entity.getPkgname(),entity.getUid());
                                             }else {
-                                                return new String("not permisson use !! please active adb or root mode !!");
+                                                return getActiveADB();
                                             }
                                             break;
                                         case easyManagerEnums.SET_APPOPS:
                                             if(managerAPI.isRoot() || managerAPI.isADB()){
                                                 managerAPI.setAppopsMode(entity);
                                             }else {
-                                                return new String("not permisson use !! please active adb or root mode !!");
+                                                return getActiveADB();
                                             }
                                             break;
                                         case easyManagerEnums.INSTALL_APK:
                                             if(managerAPI.isRoot() || managerAPI.isADB()){
-                                                managerAPI.installAPK(entity.getPkgname());
+                                                managerAPI.installAPK(entity.getPkgname(),entity.getUid());
                                             }else {
-                                                return new String("not permisson use !! please active adb or root mode !!");
+                                                return getActiveADB();
                                             }
                                             break;
                                         case easyManagerEnums.UNINSTALL_APK:
                                             if(managerAPI.isRoot() || managerAPI.isADB()){
-                                                managerAPI.uninstallApp(entity.getPkgname());
+                                                managerAPI.uninstallApp(entity.getPkgname(),entity.getUid());
                                             }else {
-                                                return new String("not permisson use !! please active adb or root mode !!");
+                                                return getActiveADB();
                                             }
                                             break;
                                         case easyManagerEnums.SET_COMPONENT_OR_PACKAGE_ENABLE_STATE:
                                             if(managerAPI.isRoot()){
-                                                managerAPI.setComponentOrPackageEnabledState(entity.getPkgname(),entity.getOpsmode());
+                                                managerAPI.setComponentOrPackageEnabledState(entity.getPkgname(),entity.getOpsmode(),entity.getUid());
                                             }else {
-                                                return new String("not permisson use !! please active root mode !!");
+                                                return getActiveROOT();
                                             }
                                             break;
                                         case easyManagerEnums.SET_PACKAGE_HIDE_STATE:
                                             if(managerAPI.isRoot()){
-                                                managerAPI.setPackageHideState(entity.getPkgname(),entity.getOpsmode()==0);
+                                                managerAPI.setPackageHideState(entity.getPkgname(),entity.getOpsmode()==0,entity.getUid());
                                             }else {
-                                                return new String("not permisson use !! please active root mode !!");
+                                                return getActiveROOT();
                                             }
                                             break;
                                         case easyManagerEnums.SET_PACKAGE_REVOKE_RUNTIME_PERMISSION:
                                             if(managerAPI.isRoot() || managerAPI.isADB()){
-                                                managerAPI.revokeRuntimePermission(entity.getPkgname(), entity.getOpmodestr());
+                                                managerAPI.revokeRuntimePermission(entity.getPkgname(), entity.getOpmodestr(),entity.getUid());
                                             }else {
-                                                return new String("not permisson use !! please active adb or root mode !!");
+                                                return getActiveADB();
                                             }
                                             break;
                                         case easyManagerEnums.SET_PACKAGE_GRANT_RUNTIME_PERMISSION:
                                             if(managerAPI.isRoot() || managerAPI.isADB()){
-                                                managerAPI.grantRuntimePermission(entity.getPkgname(),entity.getOpmodestr());
+                                                managerAPI.grantRuntimePermission(entity.getPkgname(),entity.getOpmodestr(),entity.getUid());
                                             }else {
-                                                return new String("not permisson use !! please active adb or root mode !!");
+                                                return getActiveADB();
                                             }
                                             break;
                                         case easyManagerEnums.BACKUP_APK:
                                             if(managerAPI.isRoot()){
-                                                managerAPI.backupApk(entity.getPkgname(), entity.getOpsmode(), entity.getOpmodestr());
+                                                managerAPI.backupApk(entity.getPkgname(), entity.getUid(), entity.getOpmodestr());
                                             }else {
-                                                return new String("not permisson use !! please active root mode !!");
+                                                return getActiveROOT();
                                             }
                                             break;
                                         case easyManagerEnums.RESTORY_APK:
                                             if(managerAPI.isRoot()){
-                                                managerAPI.restoryApp(entity.getPkgname(), entity.getOpsmode(), entity.getOpmodestr());
+                                                managerAPI.restoryApp(entity.getPkgname(), entity.getUid(), entity.getOpmodestr());
                                             }else {
-                                                return new String("not permisson use !! please active root mode !!");
+                                                return getActiveROOT();
                                             }
                                             break;
                                         case easyManagerEnums.GRANT_USER:
@@ -126,12 +137,57 @@ public class startAdbService {
                                                 String modestr = entity.getOpmodestr();
                                                 String[] split = modestr.split("---");
                                                 if(split  != null && split.length > 0){
-                                                    managerAPI.setAppopsModeCore(entity.getPkgname(), split[0], split[1]);
+                                                    managerAPI.setAppopsModeCore(entity.getPkgname(), split[0], split[1],entity.getUid());
                                                 }
                                             }else {
-                                                return new String("not permisson use !! please active adb or root mode !!");
+                                                return getActiveADB();
                                             }
                                             break;
+                                        case easyManagerEnums.APP_CLONE:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                managerAPI.createAppClone();
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                            break;
+                                        case easyManagerEnums.APP_CLONE_REMOVE:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                managerAPI.removeAppClone(entity.getUid());
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                            break;
+                                        case easyManagerEnums.QUERY_PACKAGES_UID:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                return managerAPI.getInstalledPackages(entity.getUid());
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                        case easyManagerEnums.GET_PACKAGEINFO_UID:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                return managerAPI.getMyPackageInfo(entity.getPkgname(), entity.getUid());
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                        case easyManagerEnums.START_USER_ID:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                managerAPI.startUser(entity.getUid());
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                            break;
+                                        case easyManagerEnums.GET_COMPONENT_ENABLED_SETTING:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                return managerAPI.getComponentEnabledSetting(new ComponentName(entity.getPkgname(),entity.getOpmodestr()),entity.getUid());
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                        case easyManagerEnums.CHECK_OP:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                return managerAPI.checkOp(entity.getOpmodestr(), entity.getPkgname(), entity.getUid());
+                                            }else {
+                                                return getActiveADB();
+                                            }
 
                                     }
                                 }else {
@@ -150,7 +206,19 @@ public class startAdbService {
                                 return true;
                             }else if(adbEntity2.getEasyManagerMode() == easyManagerEnums.DEAD){
                                     System.exit(0);
-                            }else {
+                            }else if(adbEntity2.getEasyManagerMode() == easyManagerEnums.GET_CURRENT_USER_ID) {
+                                    if(managerAPI.isRoot() || managerAPI.isADB()){
+                                        return managerAPI.getCurrentUserID();
+                                    }else {
+                                        return getActiveADB();
+                                    }
+                            }else if(adbEntity2.getEasyManagerMode() == easyManagerEnums.APP_CLONE_GETUSERS){
+                                    if(managerAPI.isRoot() || managerAPI.isADB()){
+                                        return managerAPI.getUsers();
+                                    }else {
+                                        return getActiveADB();
+                                    }
+                            }else{
                                 return new String("please put requestpkg val .");
                             }
                         }
@@ -163,5 +231,13 @@ public class startAdbService {
         }).start();
         Looper.loop();
     }
+
+    private static  String getActiveADB(){
+        return "not permisson use !! please active adb or root mode !!";
+    }
+    private static   String getActiveROOT(){
+        return "not permisson use !! please active root mode !!";
+    }
+
 
 }

@@ -16,7 +16,7 @@ import com.easymanager.fragment.HelpFragmentLayout;
 import com.easymanager.fragment.HomeFragmentLayout;
 import com.easymanager.fragment.ManagerGrantUserFragmentLayout;
 import com.easymanager.utils.FileTools;
-import com.easymanager.utils.HelpDialogUtils;
+import com.easymanager.utils.dialog.HelpDialogUtils;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.ShellUtils;
 import com.easymanager.utils.TextUtils;
@@ -28,6 +28,7 @@ public class MainActivity extends Activity {
 
     private Boolean isRoot,isADB;
 
+    private int uid;
     private easyManagerUtils ee = new easyManagerUtils();
     private HelpDialogUtils dialogUtils = new HelpDialogUtils();
 
@@ -38,6 +39,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         MyActivityManager.getIns().add(this);
+        uid = getIntent().getIntExtra("uid",0);
         amiv1 =findViewById(R.id.amiv1);
         amiv2 =findViewById(R.id.amiv2);
         amiv3 =findViewById(R.id.amiv3);
@@ -99,11 +101,11 @@ public class MainActivity extends Activity {
         }
 
         if(isRoot!=null && isRoot){
-            setTitle("easyManager [ ROOT ] ");
+            setTitle("easyManager [ ROOT ] [ "+uid+" ]");
         }else if(isADB!=null && isADB){
-            setTitle("easyManager [ ADB ] ");
+            setTitle("easyManager [ ADB ] [ "+uid+" ]");
         }else{
-            setTitle("easyManager [ General ] ");
+            setTitle("easyManager [ General ] [ "+uid+" ]");
         }
 
         if(isRoot || isADB){
@@ -133,7 +135,7 @@ public class MainActivity extends Activity {
                     amiv3.setSelected(false);
                 }
                 if(id == R.id.amiv2){
-                    fragment = new HomeFragmentLayout(isRoot,isADB);
+                    fragment = new HomeFragmentLayout(isRoot,isADB,uid);
                     amiv1.setSelected(false);
                     amiv3.setSelected(false);
                 }

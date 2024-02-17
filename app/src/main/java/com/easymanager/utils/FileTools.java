@@ -71,13 +71,13 @@ public class FileTools extends FileUtils {
     }
 
     // 目标SD路径：/storage/emulated/0
-    public String getSDPath(){
+    public String getSDPath(Integer uid){
         String sdPath = "";
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            String path = "/storage/emulated/0/Android";
+            String path = "/storage/emulated/"+uid+"/Android";
             File file = new File(path);
             if(file.exists()){
-                sdPath = "/storage/emulated/0";
+                sdPath = "/storage/emulated/"+uid;
             }
         }else {
             String path = "/storage/emulated/legacy/Android";

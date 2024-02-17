@@ -17,11 +17,10 @@ import android.widget.Spinner;
 
 import com.easymanager.R;
 import com.easymanager.enums.AppManagerEnum;
-import com.easymanager.utils.DialogUtils;
-import com.easymanager.utils.HelpDialogUtils;
+import com.easymanager.utils.base.DialogUtils;
+import com.easymanager.utils.dialog.HelpDialogUtils;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
-import com.easymanager.utils.TextUtils;
 
 public class CreateImgLayoutActivity extends Activity {
 

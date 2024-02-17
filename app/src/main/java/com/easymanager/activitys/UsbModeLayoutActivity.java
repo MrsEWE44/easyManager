@@ -15,11 +15,10 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.easymanager.R;
-import com.easymanager.utils.DialogUtils;
-import com.easymanager.utils.HelpDialogUtils;
+import com.easymanager.utils.base.AppCloneUtils;
+import com.easymanager.utils.dialog.HelpDialogUtils;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
-import com.easymanager.utils.easyManagerUtils;
 
 import java.util.ArrayList;
 
@@ -41,7 +40,8 @@ public class UsbModeLayoutActivity extends Activity {
 
     private int MOUNT_MODE_INDEX=0;
 
-    private DialogUtils du = new DialogUtils();
+    private AppCloneUtils acu = new AppCloneUtils();
+
 
     private final static String config_path1 = "/config/usb_gadget/g1";
     private final static String config_path2="/sys/class/android_usb/android0";
@@ -73,7 +73,6 @@ public class UsbModeLayoutActivity extends Activity {
     }
 
     private void btClicked() {
-        easyManagerUtils eu = new easyManagerUtils();
         umlmountbt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,16 +82,16 @@ public class UsbModeLayoutActivity extends Activity {
                         String s = list.get(i);
                         switch (MOUNT_MODE_INDEX){
                             case 0 :
-                                eu.runCMD(autoMode(s));
+                                acu.runCMD(autoMode(s));
                                 break;
                             case 1:
-                                eu.runCMD(mode1(s));
+                                acu.runCMD(mode1(s));
                                 break;
                             case 2:
-                                eu.runCMD(mode2(s));
+                                acu.runCMD(mode2(s));
                                 break;
                             case 3:
-                                eu.runCMD(mode3(s));
+                                acu.runCMD(mode3(s));
                                 break;
                         }
                         break;
@@ -106,7 +105,7 @@ public class UsbModeLayoutActivity extends Activity {
         umlscanbt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                du.findLocalImgDialog(context,activity,umllv,list,checkboxs);
+                acu.getUd().findLocalImgDialog(context,activity,umllv,list,checkboxs);
             }
         });
 
@@ -138,7 +137,7 @@ public class UsbModeLayoutActivity extends Activity {
         int itemId = item.getItemId();
 
         if(itemId == R.id.actionbarsearch){
-            du.showSearchViewDialog(context,activity,umllv,null,list,checkboxs);
+            acu.getSd().showSearchViewDialog(context,activity,umllv,null,list,checkboxs,acu.getCurrentUserID());
         }
         if(itemId == android.R.id.home){
             activity.onBackPressed();
@@ -185,7 +184,7 @@ public class UsbModeLayoutActivity extends Activity {
     }
 
     private String getLanStr(int id){
-        return du.tu.getLanguageString(context,id);
+        return acu.getTU().getLanguageString(context,id);
     }
 
 }

@@ -13,6 +13,8 @@ import java.io.Serializable;
 
 public class PKGINFO implements Serializable {
 
+    public PKGINFO(){}
+
     public PKGINFO(String pkgname, String appname, String apkpath, String apkuid, String appversionname, Drawable appicon, Long filesize) {
         this.pkgname = pkgname;
         this.appname = appname;

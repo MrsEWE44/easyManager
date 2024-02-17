@@ -3,6 +3,7 @@ package com.easymanager.utils;
 import android.content.Context;
 import android.os.IBinder;
 
+import com.easymanager.entitys.MyPackageInfo;
 import com.easymanager.core.entity.TransmissionEntity;
 import com.easymanager.core.entity.easyManagerClientEntity;
 import com.easymanager.core.entity.easyManagerServiceEntity;
@@ -13,6 +14,7 @@ import com.easymanager.mylife.adbClient;
 import com.easymanager.mylife.startAdbService;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class easyManagerUtils {
 
@@ -50,7 +52,7 @@ public class easyManagerUtils {
     }
 
     public IBinder getSystemServer(String serverName,Context context){
-        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,new TransmissionEntity(serverName,null,context.getPackageName(),0),easyManagerEnums.GET_SYSTEM_SERVICE);
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,new TransmissionEntity(serverName,null,context.getPackageName(),0,getCurrentUserID()),easyManagerEnums.GET_SYSTEM_SERVICE);
         return (IBinder) putOptionOnServer(adben2).getObject();
     }
 
@@ -115,10 +117,9 @@ public class easyManagerUtils {
         easyManagerServiceEntity eee = putOptionOnServer(adben2);
     }
 
-    public void setFirewallState(int pkguid , boolean isEnable){
-        String  disable_cmd = "iptables -I OUTPUT -m owner --uid-owner "+pkguid+" -j DROP";
-        String  enable_cmd = "iptables -I OUTPUT -m owner --uid-owner "+pkguid+" -j ACCEPT";
-        CMD cmd = runCMD(isEnable ? enable_cmd : disable_cmd);
+    public void setFirewallState(TransmissionEntity entity){
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.APP_FIREWALL);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
     }
 
     public void dumpAPK(String apksourcepath,String outpath){
@@ -137,29 +138,88 @@ public class easyManagerUtils {
     }
 
     public void requestGrantUser(Context context){
-        TransmissionEntity entity = new TransmissionEntity(context.getPackageName(), context.getFilesDir().toString(), context.getPackageName(), -1);
+        TransmissionEntity entity = new TransmissionEntity(context.getPackageName(), context.getFilesDir().toString(), context.getPackageName(), -1,getCurrentUserID());
         easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.GRANT_USER);
         easyManagerServiceEntity eee = putOptionOnServer(adben2);
     }
 
     public void changeGrantUserState(String pkg){
-        TransmissionEntity entity = new TransmissionEntity(pkg, null, "com.easymanager", -1);
+        TransmissionEntity entity = new TransmissionEntity(pkg, null, "com.easymanager", -1,getCurrentUserID());
         easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.CHANGE_USER);
         easyManagerServiceEntity eee = putOptionOnServer(adben2);
     }
 
     public Boolean getServerStatus(){
-        TransmissionEntity entity = new TransmissionEntity(null,null,null,1);
-        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.GET_SERVER_STATUS);
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,null,easyManagerEnums.GET_SERVER_STATUS);
         return checkBool(adben2);
     }
 
     public HashMap<String,Integer> getGrantUsers(Context context){
-        TransmissionEntity entity = new TransmissionEntity(context.getPackageName(), context.getFilesDir().toString(), context.getPackageName(), -1);
+        TransmissionEntity entity = new TransmissionEntity(context.getPackageName(), context.getFilesDir().toString(), context.getPackageName(), -1,getCurrentUserID());
         easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.GET_GRANT_USERS);
         easyManagerServiceEntity eee = putOptionOnServer(adben2);
         return (HashMap<String,Integer>) eee.getObject();
     }
 
+
+    public void createAppClone(Context context) {
+        TransmissionEntity entity = new TransmissionEntity(null,null,context.getPackageName(),0,getCurrentUserID());
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.APP_CLONE);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+    }
+
+    public void removeAppClone(Context context , int removeuid) {
+        TransmissionEntity entity = new TransmissionEntity(null,null,context.getPackageName(),0,removeuid);
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.APP_CLONE_REMOVE);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+    }
+
+    public void startAppClone(Context context , int startuid) {
+        TransmissionEntity entity = new TransmissionEntity(null,null,context.getPackageName(),0,startuid);
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.START_USER_ID);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+    }
+
+    public String[] getAppCloneUsers() {
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,null,easyManagerEnums.APP_CLONE_GETUSERS);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+        try {
+            return (String[]) eee.getObject();
+        }catch (Exception e){
+            return new String[]{"0"};
+        }
+    }
+
+    public List<MyPackageInfo> getInstalledPackages(TransmissionEntity entity){
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.QUERY_PACKAGES_UID);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+        return (List<MyPackageInfo>) eee.getObject();
+    }
+
+    public MyPackageInfo getMyPackageInfo(TransmissionEntity entity){
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.GET_PACKAGEINFO_UID);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+        return (MyPackageInfo) eee.getObject();
+    }
+
+    public int getCurrentUserID(){
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,null,easyManagerEnums.GET_CURRENT_USER_ID);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+        return (Integer) eee.getObject();
+    }
+
+    public int getComponentEnabledSetting(Context context , String pkgname,String componentName,int uid){
+        TransmissionEntity transmissionEntity = new TransmissionEntity(pkgname, componentName, context.getPackageName(), 0, uid);
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.GET_COMPONENT_ENABLED_SETTING);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+        return (Integer) eee.getObject();
+    }
+
+    public int checkOp(Context context , String pkgname,String opstr,int uid){
+        TransmissionEntity transmissionEntity = new TransmissionEntity(pkgname, opstr, context.getPackageName(), 0, uid);
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.CHECK_OP);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+        return (Integer) eee.getObject();
+    }
 
 }

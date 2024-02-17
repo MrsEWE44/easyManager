@@ -1,11 +1,9 @@
 <resources>
     <string name="app_name">easyManager</string>
     <string name="tips">提示</string>
-    <string name="isrootmodestr">当前是root环境，已经自动激活为root工作模式.</string>
+    <string name="isrootmodestr">当前是root环境,已经自动激活为root工作模式.</string>
     <string name="general_tips">提示 [普通模式]</string>
-    <string name="general_tips_str_head">当前环境无法正常使用该软件\n
-请通过adb运行下面脚本，激活adb模式:\n
- sh </string>
+    <string name="general_tips_str_head">"当前环境无法正常使用该软件.(如果你是低版本安卓,在使用root授权的时候,请换成magisk,不然只能使用adb模式,而无法激活root模式)\n\n请通过adb运行下面脚本，激活adb模式:\n\n sh  "</string>
     <string name="general_tips_str_end">\n
 \n激活脚本运行成功后，请从软件右上角点击退出，再重新打开。\n
 </string>
@@ -80,18 +78,7 @@
     </string>
 
 
-    <string name="show_help_getAppDumpHELP">
-        该界面主要是用来提取本地应用安装文件的,这里做的一切操作,都是在API实现.\n\n
-
-        1.右上角的菜单栏,可以获取到当前用户对应状态下的应用.\n
-        2.右边有个选项,可以选择以包名、应用名字、当前时间来保存提取出来的文件.提取出来的文件默认放在内部存储下的/Android/data/com.easymanager/cache/dump文件夹里面.看系统情况,不一定是即时生效.\n
-        3.左下角有个选项,你可以批量选择或者单选应用来进行操作.\n
-        4.右下角是生效用的按钮,你点击它就可以让勾选或者未勾选中的应用生效你选择的规则.\n
-        5.当你点击应用的时候,它会跳转到应用详情界面,这部分要root模式才能使用.\n
-        6.上面菜单旁边是一个搜索按钮,可以搜索当前检索出来的应用列表,按回车就会把搜索结果同步到检索列表.\n
-        7.点击最左上角的图标,会回退到上一级菜单.\n\n
-
-    </string>
+    <string name="show_help_getAppDumpHELP">"\n        该界面主要是用来提取本地应用安装文件的,这里做的一切操作,都是在API实现.\n\n\n\n        1.右上角的菜单栏,可以获取到当前用户对应状态下的应用.\n\n        2.右边有个选项,可以选择以包名、应用名字、当前时间来保存提取出来的文件.提取出来的文件默认放在内部存储下的/easyManager/dump文件夹里面.看系统情况,不一定是即时生效.\n\n        3.左下角有个选项,你可以批量选择或者单选应用来进行操作.\n\n        4.右下角是生效用的按钮,你点击它就可以让勾选或者未勾选中的应用生效你选择的规则.\n\n        5.当你点击应用的时候,它会跳转到应用详情界面,这部分要root模式才能使用.\n\n        6.上面菜单旁边是一个搜索按钮,可以搜索当前检索出来的应用列表,按回车就会把搜索结果同步到检索列表.\n\n        7.点击最左上角的图标,会回退到上一级菜单.\n\n\n\n    "</string>
 
     <string name="show_help_getUninstallHELP">
         该界面主要是用来卸载本地应用的,这里做的一切操作,都是在IPackageManager服务实现.\n\n
@@ -210,6 +197,44 @@
 
     </string>
 
+
+    <string name="show_help_getAppCloneHELP">
+        该界面主要是用来进行应用分身的,因为自安卓5以后,谷歌对安卓的多用户机制进行了重大改革,支持在主用户下启动其它用户的应用.\n\n
+
+        1.右上角的菜单栏,可以获取到当前用户对应状态下的应用.\n
+        2.上面编辑框,可以填入一个数值,用于生成对应数量的分身应用.\n
+        3.右下角有个选项,你可以批量选择或者单选应用来进行分身.\n
+        4.下面是生效用的按钮,你点击它就可以让勾选或者未勾选中的应用进行分身操作.\n
+        5.上面菜单旁边是一个搜索按钮,可以搜索当前检索出来的应用列表,按回车就会把搜索结果同步到检索列表.\n
+        6.点击最左上角的图标,会回退到上一级菜单.\n\n
+
+    </string>
+
+
+    <string name="show_help_getAppCloneManagerHELP">
+        该界面主要是用来管理应用分身的,因为自安卓5以后,谷歌对安卓的多用户机制进行了重大改革,支持在主用户下启动其它用户的应用.\n\n
+
+        1.右上角的菜单栏,可以获取到对应的内容.\n
+        2.左下角有个选项,用于选择从分身里面进行添加或者删除操作.\n
+        3.右下角有个选项,你可以批量选择或者单选应用和分身来执行添加或者删除操作.\n
+        4.下面是生效用的按钮,你点击它就可以让勾选或者未勾选中的应用或者分身执行对应操作.\n
+        5.上面菜单旁边是一个搜索按钮,可以搜索当前检索出来的应用列表,按回车就会把搜索结果同步到检索列表.\n
+        6.点击最左上角的图标,会回退到上一级菜单.\n\n
+
+    </string>
+
+    <string name="show_help_getAppCloneRemoveHELP">
+        该界面主要是用来删除应用分身的,因为自安卓5以后,谷歌对安卓的多用户机制进行了重大改革,支持在主用户下启动其它用户的应用.\n\n
+
+        1.右上角的菜单栏,可以获取本地的分身用户UID.\n
+        2.右下角有个选项,你可以批量选择或者单选分身进行删除操作.\n
+        3.下面是生效用的按钮,你点击它就可以让勾选或者未勾选中的分身进行删除.\n
+        4.上面菜单旁边是一个搜索按钮,不要点击它.\n
+        5.点击最左上角的图标,会回退到上一级菜单.\n\n
+
+    </string>
+
+
     <string name="show_help_getMainHelp">
         easyManager是一个安卓系统管理工具，具备轻量化、功能核心化、简洁化的优点，同时也允许与第三方应用授权共享api接口.\n\n
 
@@ -245,23 +270,23 @@
     <string name="get_app_activity">正在获取该应用活动项...</string>
     <string name="get_app_receiver">正在获取该应用广播接收器...</string>
     <string name="apply_app_permission_title">当前正在应用权限更改,请稍后...</string>
-    <string name="apply_app_permission_msg">目前正在应用权限更改的应用为:  </string>
+    <string name="apply_app_permission_msg">目前正在应用权限更改的应用为: %s </string>
     <string name="apply_app_compat_title">当前正在应用组件或者应用启用状态更改,请稍后...</string>
-    <string name="apply_app_compat_msg">目前正在应用组件或者应用启用状态更改的应用为:  </string>
+    <string name="apply_app_compat_msg">目前正在应用组件或者应用启用状态更改的应用为: %s </string>
     <string name="apply_app_network_title">当前正在应用联网状态更改,请稍后...</string>
-    <string name="apply_app_network_msg">目前正在应用联网状态更改的应用为:  </string>
+    <string name="apply_app_network_msg">目前正在应用联网状态更改的应用为: %s </string>
     <string name="apply_app_install_title">当前正在安装应用,请稍后...</string>
-    <string name="apply_app_install_msg">目前正在安装的应用为:  </string>
+    <string name="apply_app_install_msg">目前正在安装的应用为: %s </string>
     <string name="apply_app_uninstall_title">当前正在卸载应用,请稍后...</string>
-    <string name="apply_app_uninstall_msg">目前正在卸载的应用为:  </string>
+    <string name="apply_app_uninstall_msg">目前正在卸载的应用为: %s </string>
     <string name="apply_app_restory_title">当前正在恢复应用,请稍后...</string>
-    <string name="apply_app_restory_msg">目前正在恢复的应用为:  </string>
+    <string name="apply_app_restory_msg">目前正在恢复的应用为: %s </string>
     <string name="apply_app_backup_title">当前正在备份应用,请稍后...</string>
-    <string name="apply_app_backup_msg">目前正在备份的应用为:  </string>
+    <string name="apply_app_backup_msg">目前正在备份的应用为: %s </string>
     <string name="apply_app_process_title">当前正在清理后台,请稍后...</string>
-    <string name="apply_app_process_msg">目前正在清理的后台应用为:  </string>
+    <string name="apply_app_process_msg">目前正在清理的后台应用为: %s </string>
     <string name="apply_app_dump_title">当前正在提取应用,请稍后...</string>
-    <string name="apply_app_dump_msg">目前正在提取的应用为:  </string>
+    <string name="apply_app_dump_msg">目前正在提取的应用为: %s </string>
     <string name="now_search_ing_msg">正在搜索(请稍后....)</string>
     <string name="its_ok_msg">已运行完毕,请手动刷新.</string>
     <string name="error_tips">错误</string>
@@ -407,5 +432,35 @@
     <string name="help_question_2_reply">easyManager支持adb与root两种模式运行,正如你所见到,它也支持将自己私有API公开给任何一个通过授权的应用访问.\n它现在提供应用的批量权限管理、后台进程清理、软件静默安装/卸载、单个应用服务/活动/广播/权限管理、应用网络管控、备份与恢复、文件共享等功能.\n它提供大量一键功能,你只需要看完帮助文档,然后选择对应的规则,最后点击那个大大的按钮,它就可以完成你的预期.\n</string>
     <string name="help_question_3_reply">easyManager的工作原理借鉴了Shizuku、AppOps,与它们两个类似,easyManager也需要开启一个单独的后台进程到shell或者root shell里面,才能正常工作.\n通过Socket进行TCP通信,执行对应的操作.\n</string>
     <string name="help_question_4_reply">跟Shizuku不同的是,easyManager向下拓展了安卓4.4低版本的支持,同时对外也提供对应的SDK开发包工具,任何接入SDK的第三方程序,都可以通过SDK来使用easyManager完整的、私有的功能函数接口,大部分常用的功能都不需要开发者再次实现,easyManager已经全部封装好了,开发者只需要关注界面交互部分.\n并且,easyManager对外开放的接口是经过测试的,支持安卓4.4-安卓14,它们工作稳定而且正常.</string>
+    <string name="app_clone_menu">应用分身</string>
+    <string name="app_clone_button">应用分身</string>
+    <string name="app_clone_manager_button">分身管理</string>
+    <string name="app_clone_delete_button">分身删除</string>
+    <string name="app_clone_input_size_hint_str">请输入需要开启的数量,默认设置最高为1024个</string>
+    <string name="app_clone_button_default_str">应用</string>
+    <string name="app_clone_button_start_clone_str">开始分身</string>
+    <string name="app_clone_button_manager_clone_change_str">应用修改</string>
+    <string name="app_clone_button_delete_clone_str">删除分身</string>
+    <string name="app_clone_create_clone_title">现在正在创建新的分身(请稍后...)</string>
+    <string name="app_clone_create_clone_msg">目前正在创建第 %s 个分身</string>
+    <string name="app_clone_manager_clone_mode_str1">添加</string>
+    <string name="app_clone_manager_clone_mode_str2">删除</string>
+    <string name="app_clone_delete_clone_title">正在删除分身,请稍后...</string>
+    <string name="app_clone_delete_clone_msg">目前正在删除的分身为: %s </string>
+    <string name="app_clone_manager_clone_title">正在给分身 %s 应用,请稍后...</string>
+    <string name="app_clone_manager_clone_msg">目前正在 %s 的应用为: %s </string>
+    <string name="app_clone_manager_clone_start_users_msg">正在启动分身用户,请稍后...</string>
+    <string name="app_clone_manager_clone_query_users_msg">正在获取本地分身用户,请稍后...</string>
+    <string name="now_server_check_msg">当前服务 %s </string>
+    <string name="now_server_check_running_msg">正在以 %s 模式运行</string>
+    <string name="now_server_check_dead_msg">没有启动</string>
+    <string name="now_server_read_auth_msg">正在获取本地授权信息...</string>
+    <string name="show_clone_user_installed_app">显示分身用户已安装应用</string>
+    <string name="show_clone_user_all_installed_app">显示分身用户所有应用</string>
+    <string name="show_clone_user_uid">显示分身用户UID</string>
+    <string name="show_start_app_clone_user">启动分身用户</string>
+
+
+
 
 </resources>

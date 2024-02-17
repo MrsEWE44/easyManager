@@ -2,15 +2,16 @@ package com.easymanager.utils;
 
 import android.app.Activity;
 import android.app.AppOpsManager;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ServiceInfo;
 import android.os.Build;
 
+import com.easymanager.entitys.MyActivityInfo;
+import com.easymanager.entitys.MyApplicationInfo;
+import com.easymanager.entitys.MyPackageInfo;
+import com.easymanager.core.entity.TransmissionEntity;
 import com.easymanager.entitys.PKGINFO;
 
 import java.io.File;
@@ -28,6 +29,8 @@ public class PackageUtils {
     public  Integer QUERY_ALL_DISABLE_PKG=1;
     public  Integer QUERY_ALL_DEFAULT_PKG=4;
 
+    private easyManagerUtils ee = new easyManagerUtils();
+
     public PackageUtils(){}
 
     //查询当前机主安装的应用
@@ -36,16 +39,45 @@ public class PackageUtils {
         queryPKGSCore(activity,pkginfos,checkboxs,types,QUERY_ALL_DEFAULT_PKG);
     }
 
+    public void queryPKGSByUID(int uid ,Activity activity, ArrayList<PKGINFO> pkginfos , ArrayList<Boolean> checkboxs){
+        clearList(pkginfos,checkboxs);
+        queryPKGSCoreByUID(uid,activity,pkginfos,checkboxs,false,false,false,false);
+    }
+
+    public void querySystemPKGSByUID(int uid ,Activity activity, ArrayList<PKGINFO> pkginfos , ArrayList<Boolean> checkboxs){
+        clearList(pkginfos,checkboxs);
+        queryPKGSCoreByUID(uid,activity,pkginfos,checkboxs,false,false,true,false);
+    }
+
+    public void querySystemEnablePKGSByUID(int uid ,Activity activity, ArrayList<PKGINFO> pkginfos , ArrayList<Boolean> checkboxs){
+        clearList(pkginfos,checkboxs);
+        queryPKGSCoreByUID(uid,activity,pkginfos,checkboxs,false,true,true,false);
+    }
+
+    public void querySystemDisablePKGSByUID(int uid ,Activity activity, ArrayList<PKGINFO> pkginfos , ArrayList<Boolean> checkboxs){
+        clearList(pkginfos,checkboxs);
+        queryPKGSCoreByUID(uid,activity,pkginfos,checkboxs,true,false,true,false);
+    }
+
     //查询当前机主安装的应用,用户部分
     public void queryUserPKGS(Activity activity, ArrayList<PKGINFO> pkginfos , ArrayList<Boolean> checkboxs,Integer types){
         clearList(pkginfos,checkboxs);
         queryPKGSCore(activity,pkginfos,checkboxs,types,QUERY_ALL_USER_PKG);
     }
 
+    public void queryUserPKGSByUID(int uid ,Activity activity, ArrayList<PKGINFO> pkginfos , ArrayList<Boolean> checkboxs){
+        clearList(pkginfos,checkboxs);
+        queryPKGSCoreByUID(uid,activity,pkginfos,checkboxs,false,false,false,true);
+    }
+
     //查询当前机主安装的应用,用户启用部分
     public void queryUserEnablePKGS(Activity activity, ArrayList<PKGINFO> pkginfos , ArrayList<Boolean> checkboxs,Integer types){
         clearList(pkginfos,checkboxs);
         queryPKGSCore(activity,pkginfos,checkboxs,types,QUERY_ALL_USER_ENABLE_PKG);
+    }
+    public void queryUserEnablePKGSByUID(int uid ,Activity activity, ArrayList<PKGINFO> pkginfos , ArrayList<Boolean> checkboxs){
+        clearList(pkginfos,checkboxs);
+        queryPKGSCoreByUID(uid,activity,pkginfos,checkboxs,false,true,false,true);
     }
 
     //查询当前机主安装的应用,禁用部分
@@ -54,9 +86,14 @@ public class PackageUtils {
         queryPKGSCore(activity,pkginfos,checkboxs,types,QUERY_ALL_DISABLE_PKG);
     }
 
+    public void queryDisablePKGSByUID(int uid ,Activity activity, ArrayList<PKGINFO> pkginfos , ArrayList<Boolean> checkboxs){
+        clearList(pkginfos,checkboxs);
+        queryPKGSCoreByUID(uid,activity,pkginfos,checkboxs,true,false,false,false);
+    }
+
     public PKGINFO getPKGINFO(Context context , String pkgname){
         PackageManager packageManager = getPackageManager(context);
-        PackageInfo packageInfo = getPackageInfo(packageManager, pkgname, 0);
+        PackageInfo packageInfo = getPackageInfo(context, pkgname, 0);
         return getPKGINFO(packageManager,packageInfo,packageInfo.applicationInfo.sourceDir);
     }
 
@@ -72,20 +109,20 @@ public class PackageUtils {
         }
     }
 
+    public PKGINFO getPKGINFOByUID(PackageManager packageManager,String pkgname){
+        try {
+            PackageInfo packageInfo = packageManager.getPackageInfo(pkgname, 0);
+            return getPKGINFO(packageManager,packageInfo,packageInfo.applicationInfo.sourceDir);
+        }catch (Exception e){
+            return null;
+        }
+    }
+
     public void checkBoxs(ArrayList<PKGINFO> pkginfos,ArrayList<Boolean> checkboxs,PackageInfo packageInfo,PackageManager packageManager){
         if(checkboxs != null){
             checkboxs.add(false);
         }
         pkginfos.add(getPKGINFO(packageManager,packageInfo,packageInfo.applicationInfo.sourceDir));
-    }
-
-    public void checkBoxsHashMap(HashMap<String,PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, PackageInfo packageInfo, PackageManager packageManager){
-        if(checkboxs != null){
-            checkboxs.add(false);
-        }
-        ApplicationInfo applicationInfo = packageInfo.applicationInfo;
-        pkginfos.put(applicationInfo.packageName,
-                new PKGINFO(applicationInfo.packageName, applicationInfo.loadLabel(packageManager).toString(), applicationInfo.sourceDir,applicationInfo.uid+"",packageInfo.versionName, applicationInfo.loadIcon(packageManager),new File(applicationInfo.sourceDir).length())) ;
     }
 
     public int getPkgUid(Context context , String pkgname){
@@ -146,10 +183,38 @@ public class PackageUtils {
         sortPKGINFOS(pkginfos);
     }
 
+    public void queryPKGSCoreByUID(int uid,Activity activity , ArrayList<PKGINFO> pkginfos , ArrayList<Boolean> checkboxs,boolean listDisabled , boolean listEnabled ,boolean listSystem ,boolean listThirdParty  ){
+        List<MyPackageInfo> installedPackages = ee.getInstalledPackages(new TransmissionEntity(null,null,activity.getPackageName(),0,uid));
+        for (MyPackageInfo packageInfo : installedPackages) {
+            MyApplicationInfo myapplicationInfo = packageInfo.myapplicationInfo;
+            boolean isSystem = (myapplicationInfo.flags&ApplicationInfo.FLAG_SYSTEM) != 0;
+            if ((!listDisabled || !myapplicationInfo.enabled) &&
+                    (!listEnabled || myapplicationInfo.enabled) &&
+                    (!listSystem || isSystem) &&
+                    (!listThirdParty || !isSystem)) {
+                appInfoAdd(activity.getPackageManager(),packageInfo,pkginfos,checkboxs);
+            }
+        }
+        sortPKGINFOS(pkginfos);
+    }
+
+    public void appInfoAdd(PackageManager packageManager,MyPackageInfo packageInfo, ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
+        if(checkboxs != null){
+            checkboxs.add(false);
+        }
+        pkginfos.add(getPKGINFOByUID(packageManager,packageInfo.packageName));
+    }
+
+
     //查询当前机主安装的应用,启用部分
     public void queryEnablePKGS(Activity activity, ArrayList<PKGINFO> pkginfos , ArrayList<Boolean> checkboxs,Integer types){
         clearList(pkginfos,checkboxs);
         queryPKGSCore(activity,pkginfos,checkboxs,types,QUERY_ALL_ENABLE_PKG);
+    }
+    //查询当前机主安装的应用,启用部分
+    public void queryEnablePKGSByUID(int uid ,Activity activity, ArrayList<PKGINFO> pkginfos , ArrayList<Boolean> checkboxs){
+        clearList(pkginfos,checkboxs);
+        queryPKGSCoreByUID(uid,activity,pkginfos,checkboxs,false,true,false,false);
     }
 
     public void clearList(ArrayList<PKGINFO> pkginfos , ArrayList<Boolean> checkboxs){
@@ -183,35 +248,64 @@ public class PackageUtils {
         return null;
     }
 
-    public PackageInfo getPackageInfo(Context context , String pkgname , Integer mode) {
+    public PackageInfo getPackageInfo(Context context,String pkgname , Integer mode) {
         return getPackageInfo(getPackageManager(context),pkgname,mode);
     }
 
-    public void getPKGActivitys(Context context , String pkgname, ArrayList<String> list , ArrayList<Boolean> checkboxs,ArrayList<Boolean> switbs) {
+    //app组件禁用是会同步到主用户的,因为应用主程序不会额外重新安装，只会在对应的其它分身用户那里新建一个数据缓存文件夹
+    public void getPKGInfoCore(Context context , String pkgname, ArrayList<String> list , ArrayList<Boolean> checkboxs,ArrayList<Boolean> switbs,Integer mode,Integer uid){
         clearList(list,checkboxs,switbs);
-        PackageManager packageManager = getPackageManager(context);
-        PackageInfo packageInfo = getPackageInfo(packageManager,pkgname,0);
-        if(packageInfo.activities != null){
+        MyPackageInfo myPackageInfo = ee.getMyPackageInfo(new TransmissionEntity(pkgname, null, context.getPackageName(), 0, uid));
+        if(myPackageInfo != null){
             ArrayList<String> mainActivityList = new ArrayList<>();
             ArrayList<String> otherActivityList = new ArrayList<>();
-            for (ActivityInfo activity : packageInfo.activities) {
-                int enabledSetting = packageManager.getComponentEnabledSetting(new ComponentName(packageInfo.packageName, activity.name));
-                if(activity.exported){
-                    mainActivityList.add(activity.name);
-                }else{
-                    otherActivityList.add(activity.name);
+            if(mode == 0 || mode == 2 || mode == 3){
+                MyActivityInfo[] aa = myPackageInfo.getMyActivityInfos();
+                if(mode ==2){
+                    aa = myPackageInfo.getMyServices();
                 }
-                if(enabledSetting == PackageManager.COMPONENT_ENABLED_STATE_DISABLED){
-                    switbs.add(false);
-                }else {
-                    switbs.add(true);
+
+                if(mode == 3){
+                    aa = myPackageInfo.getMyReceivers();
                 }
-                checkboxs.add(false);
+
+                if(aa != null){
+                    for (MyActivityInfo activity : aa) {
+                        int enabledSetting = ee.getComponentEnabledSetting(context,pkgname,activity.name,uid);
+                        if(activity.isExported()){
+                            mainActivityList.add(activity.name);
+                        }else{
+                            otherActivityList.add(activity.name);
+                        }
+                        switbs.add(!(enabledSetting == PackageManager.COMPONENT_ENABLED_STATE_DISABLED));
+                        checkboxs.add(false);
+                    }
+                }
+            }
+
+            if(mode == 1 && myPackageInfo.requestedPermissions != null){
+                for (String permission : myPackageInfo.requestedPermissions) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        String permissionToOp = AppOpsManager.permissionToOp(permission);
+                        checkboxs.add(false);
+                        if(permissionToOp != null){
+                            int checkop = ee.checkOp(context,pkgname,permissionToOp,uid);
+                            switbs.add(checkop == AppOpsManager.MODE_ALLOWED);
+                            otherActivityList.add(permission);
+                        }else{
+                            mainActivityList.add(permission);
+                            switbs.add(false);
+                        }
+                    }
+                }
             }
             list.addAll(mainActivityList);
             list.addAll(otherActivityList);
         }
+    }
 
+    public void getPKGActivitys(Context context , String pkgname, ArrayList<String> list , ArrayList<Boolean> checkboxs,ArrayList<Boolean> switbs,Integer uid) {
+        getPKGInfoCore(context,pkgname,list,checkboxs,switbs,0,uid);
     }
 
     public void clearList(ArrayList<String> list, ArrayList<Boolean> checkboxs, ArrayList<Boolean> switbs) {
@@ -220,75 +314,16 @@ public class PackageUtils {
         switbs.clear();
     }
 
-    public void getPKGPermission(Context context , String pkgname, ArrayList<String> list , ArrayList<Boolean> checkboxs,ArrayList<Boolean> switbs) {
-        clearList(list,checkboxs,switbs);
-        PackageInfo packageInfo = getPackageInfo(context,pkgname,0);
-        if(packageInfo.requestedPermissions != null){
-            AppOpsManager opsManager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
-            for (String permission : packageInfo.requestedPermissions) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    String permissionToOp = AppOpsManager.permissionToOp(permission);
-                    list.add(permission);
-                    checkboxs.add(false);
-                    if(permissionToOp != null){
-                        int checkop = -1;
-                        int myuid = android.os.Process.myUid();
-                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-                            checkop = opsManager.unsafeCheckOp(permissionToOp,myuid,packageInfo.packageName);
-                        }else {
-                            checkop = opsManager.checkOp(permissionToOp,myuid,packageInfo.packageName);
-                        }
-                        switbs.add(checkop == AppOpsManager.MODE_ALLOWED);
-                    }else{
-                        switbs.add(false);
-                    }
-                }
-            }
-        }
-
+    public void getPKGPermission(Context context , String pkgname, ArrayList<String> list , ArrayList<Boolean> checkboxs,ArrayList<Boolean> switbs,Integer uid) {
+        getPKGInfoCore(context,pkgname,list,checkboxs,switbs,1, uid);
     }
 
-    public void getPKGServices(Context context , String pkgname, ArrayList<String> list , ArrayList<Boolean> checkboxs,ArrayList<Boolean> switbs){
-        clearList(list,checkboxs,switbs);
-        PackageManager packageManager = getPackageManager(context);
-        PackageInfo packageInfo = getPackageInfo(packageManager, pkgname, 0);
-        ApplicationInfo applicationInfo = packageInfo.applicationInfo;
-        PackageInfo archiveInfo = packageManager.getPackageArchiveInfo(applicationInfo.sourceDir, PackageManager.GET_SERVICES);
-        if(archiveInfo.services != null){
-            for (ServiceInfo service : archiveInfo.services) {
-                ComponentName componentName = new ComponentName(packageInfo.packageName, service.name);
-                int enabledSetting = packageManager.getComponentEnabledSetting(componentName);
-                if(enabledSetting == PackageManager.COMPONENT_ENABLED_STATE_DISABLED){
-                    switbs.add(false);
-                }else{
-                    switbs.add(true);
-                }
-                list.add(service.name);
-                checkboxs.add(false);
-            }
-        }
+    public void getPKGServices(Context context , String pkgname, ArrayList<String> list , ArrayList<Boolean> checkboxs,ArrayList<Boolean> switbs,Integer uid){
+        getPKGInfoCore(context,pkgname,list,checkboxs,switbs,2,uid);
     }
 
-    public void getPKGReceivers(Context context , String pkgname, ArrayList<String> list , ArrayList<Boolean> checkboxs,ArrayList<Boolean> switbs){
-        clearList(list,checkboxs,switbs);
-        PackageManager packageManager = getPackageManager(context);
-        PackageInfo packageInfo = getPackageInfo(packageManager, pkgname, 0);
-        ApplicationInfo applicationInfo = packageInfo.applicationInfo;
-        PackageInfo archiveInfo = packageManager.getPackageArchiveInfo(applicationInfo.sourceDir, PackageManager.GET_RECEIVERS);
-        if(archiveInfo.receivers != null){
-            for (ActivityInfo receiver : archiveInfo.receivers) {
-                ComponentName componentName = new ComponentName(packageInfo.packageName, receiver.name);
-                int enabledSetting = packageManager.getComponentEnabledSetting(componentName);
-                if(enabledSetting == PackageManager.COMPONENT_ENABLED_STATE_DISABLED){
-                    switbs.add(false);
-                }else{
-                    switbs.add(true);
-                }
-                list.add(receiver.name);
-                checkboxs.add(false);
-            }
-
-        }
+    public void getPKGReceivers(Context context , String pkgname, ArrayList<String> list , ArrayList<Boolean> checkboxs,ArrayList<Boolean> switbs,Integer uid){
+        getPKGInfoCore(context,pkgname,list,checkboxs,switbs,3,uid);
     }
 
 }

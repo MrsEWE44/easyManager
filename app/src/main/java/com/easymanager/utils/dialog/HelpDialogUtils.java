@@ -1,4 +1,4 @@
-package com.easymanager.utils;
+package com.easymanager.utils.dialog;
 
 import android.content.Context;
 
@@ -64,6 +64,15 @@ public class HelpDialogUtils extends DialogBaseUtils {
                     break;
                 case AppManagerEnum.FILE_SHARED:
                     msg = tu.getLanguageString(context,R.string.show_help_getFileSharedHELP);
+                    break;
+                case AppManagerEnum.APP_CLONE:
+                    msg = tu.getLanguageString(context,R.string.show_help_getAppCloneHELP);
+                    break;
+                case AppManagerEnum.APP_CLONE_MANAGE:
+                    msg = tu.getLanguageString(context,R.string.show_help_getAppCloneManagerHELP);
+                    break;
+                case AppManagerEnum.APP_CLONE_REMOVE:
+                    msg = tu.getLanguageString(context,R.string.show_help_getAppCloneRemoveHELP);
                     break;
             }
             showInfoMsg(context,tu.getLanguageString(context, R.string.show_help_title),msg);

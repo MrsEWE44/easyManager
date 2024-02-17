@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.easymanager.R;
 import com.easymanager.adapters.ManagerGrantUserAdapter;
 import com.easymanager.entitys.PKGINFO;
-import com.easymanager.utils.DialogUtils;
+import com.easymanager.utils.base.DialogUtils;
 import com.easymanager.utils.PackageUtils;
 import com.easymanager.utils.easyManagerUtils;
 
@@ -47,16 +47,16 @@ public class ManagerGrantUserFragmentLayout extends Fragment {
     }
 
     private void initBt(View vie) {
+        PackageUtils pkgutils = new PackageUtils();
+        DialogUtils du  = new DialogUtils();
+        Context context = getActivity().getApplicationContext();
         mguflpeekservice = vie.findViewById(R.id.mguflpeekservice);
         mgufllv = vie.findViewById(R.id.mgufllv);
         easyManagerUtils ee = new easyManagerUtils();
-        mguflpeekservice.setText("Now Service " +(ee.getServerStatus()?" is running in "+(ee.isROOT()?" [ ROOT ] ":" [ ADB ] ")+"...":"not Start"));
+        String msg = String.format(du.tu.getLanguageString(context,R.string.now_server_check_msg),(ee.getServerStatus()?String.format(du.tu.getLanguageString(context,R.string.now_server_check_running_msg),(ee.isROOT()?" [ ROOT ] ":" [ ADB ] ")):du.tu.getLanguageString(context,R.string.now_server_check_dead_msg)));
+        mguflpeekservice.setText(msg);
         if(ee.getServerStatus()){
-            Context context = getActivity().getApplicationContext();
-            PackageUtils pkgutils = new PackageUtils();
-            DialogUtils du  = new DialogUtils();
-
-            ProgressDialog show = du.showMyDialog(getActivity(),"Read Auth...");
+            ProgressDialog show = du.showMyDialog(getActivity(),du.tu.getLanguageString(context,R.string.now_server_read_auth_msg));
             Handler handler = new Handler(){
                 @Override
                 public void handleMessage(Message msg) {

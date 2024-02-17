@@ -23,21 +23,23 @@ import java.util.ArrayList;
 public class AppInfoAdapter extends BaseAdapter {
 
 
-    public AppInfoAdapter(ArrayList<String> list, Context context, ArrayList<Boolean> checkboxs, ArrayList<Boolean> switbs, String pkgname, int mode,String uid) {
+    public AppInfoAdapter(ArrayList<String> list, Context context, ArrayList<Boolean> checkboxs, ArrayList<Boolean> switbs, String pkgname, int mode,Integer uid) {
         this.list = (ArrayList<String>) list.clone();
         this.context = context;
         this.checkboxs = checkboxs;
         this.switbs = switbs;
         this.pkgname = pkgname;
         this.mode = mode;
+        this.uid = uid;
         notifyDataSetChanged();
     }
 
     private ArrayList<String> list;
     private Context context;
     private ArrayList<Boolean> checkboxs,switbs;
-    private String pkgname,uid ;
+    private String pkgname ;
     private int mode;
+    private Integer uid;
 
     @Override
     public int getCount() {
@@ -71,7 +73,7 @@ public class AppInfoAdapter extends BaseAdapter {
 //                CMD cmd = new CMD(new appopsCmdStr().getRunAppopsBySwtichCMD(b, mode, pkgname, pkgcate, uid));
                 easyManagerUtils eu = new easyManagerUtils();
                 if(mode == AppInfoEnums.IS_PERMISSION){
-                    TransmissionEntity transmissionEntity = new TransmissionEntity(pkgname, pkgcate, context.getPackageName(), 0);
+                    TransmissionEntity transmissionEntity = new TransmissionEntity(pkgname, pkgcate, context.getPackageName(), 0,uid);
                     if(b){
                         eu.grantRuntimePermission(transmissionEntity);
                     }else {
@@ -79,7 +81,7 @@ public class AppInfoAdapter extends BaseAdapter {
                     }
                 }
                 if(mode == AppInfoEnums.IS_COMPENT_OR_PACKAGE){
-                    eu.setComponentOrPackageEnabledState(new TransmissionEntity(pkgname+"/"+pkgcate,pkgcate, context.getPackageName(), b? PackageAPI.COMPONENT_ENABLED_STATE_ENABLED:PackageAPI.COMPONENT_ENABLED_STATE_DISABLED));
+                    eu.setComponentOrPackageEnabledState(new TransmissionEntity(pkgname+"/"+pkgcate,pkgcate, context.getPackageName(), b? PackageAPI.COMPONENT_ENABLED_STATE_ENABLED:PackageAPI.COMPONENT_ENABLED_STATE_DISABLED,Integer.valueOf(uid)));
                 }
 
             }

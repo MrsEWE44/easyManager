@@ -22,14 +22,13 @@ import android.widget.Toast;
 import com.easymanager.R;
 import com.easymanager.entitys.PKGINFO;
 import com.easymanager.enums.AppManagerEnum;
-import com.easymanager.utils.DialogUtils;
 import com.easymanager.utils.FileTools;
-import com.easymanager.utils.HelpDialogUtils;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
 import com.easymanager.utils.PackageUtils;
 import com.easymanager.utils.StringTools;
-import com.easymanager.utils.TextUtils;
+import com.easymanager.utils.base.AppCloneUtils;
+import com.easymanager.utils.dialog.HelpDialogUtils;
 import com.easymanager.utils.easyManagerUtils;
 import com.easymanager.utils.permissionRequest;
 
@@ -41,7 +40,7 @@ public class AppManagerLayoutActivity extends Activity {
     private ArrayList<PKGINFO> pkginfos = new ArrayList<>();
     private ArrayList<Boolean> checkboxs = new ArrayList<>();
     private Button amlapplybt;
-    private Spinner amlsp1,amlsp2,amlsp3;
+    private Spinner amlsp1,amlsp2,amlsp3,amlsp4;
     private ListView apllv1;
 
     private int mode;
@@ -49,21 +48,21 @@ public class AppManagerLayoutActivity extends Activity {
     private Context context;
     private Activity activity;
     private Boolean isRoot , isADB;
-    private String uid;
+    private Integer uid;
     private String APP_PERMIS_OPT1_VALUES[] = {"default", "ignore","deny","allow","foreground"};
     private String APP_PERMIS_OPT2_VALUES[] = {"active", "working_set","frequent","rare","restricted"};
     private String APP_PERMIS_OPT3_VALUES[] = {"true","false"};
     private String APP_BACKUP_AND_RESTORY_OPT2[] = {"tar.xz","tar.gz","tar.bz"};
     private String APP_BACKUP_AND_RESTORY_OPT_VALUES[] = {"full","data","apk"};
     private String APP_BACKUP_AND_RESTORY_OPT2_VALUES[] = {"txz","tgz","tbz"};
-    private int APP_CHOICES_INDEX = 0, APP_PERMIS_INDEX = 0 , APP_PERMIS_OPT_INDEX = 0, APP_PERMIS_MODE= 0 ;
+    private String APP_ALL_UERS[] = null;
+    private int APP_UID_INDEX=0,APP_CHOICES_INDEX = 0, APP_PERMIS_INDEX = 0 , APP_PERMIS_OPT_INDEX = 0, APP_PERMIS_MODE= 0 ;
 
     private boolean install_mode = false;
-    private DialogUtils du = new DialogUtils();
     private FileTools ft = new FileTools();
 
+    private AppCloneUtils acu = new AppCloneUtils();
     private PackageUtils packageUtils = new PackageUtils();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,20 +74,33 @@ public class AppManagerLayoutActivity extends Activity {
     }
 
     private void initBt(){
+        easyManagerUtils ee = new easyManagerUtils();
         Intent intent = getIntent();
         mode = intent.getIntExtra("mode",-1);
         isRoot = intent.getBooleanExtra("isRoot",false);
         isADB = intent.getBooleanExtra("isADB",false);
-        uid = "0";
+        uid = intent.getIntExtra("uid",0);
         context = this;
         activity = this;
         amlapplybt = findViewById(R.id.amlapplybt);
         amlsp1 = findViewById(R.id.amlsp1);
         amlsp2 = findViewById(R.id.amlsp2);
         amlsp3 = findViewById(R.id.amlsp3);
+        amlsp4 = findViewById(R.id.amlsp4);
         apllv1 = findViewById(R.id.apllv1);
         amlsp1.setAdapter(getSpinnerAdapter(getAppPermis()));
         amlsp3.setAdapter(getSpinnerAdapter(getAppChoicesOPT()));
+        String[] appCloneUsers = ee.getAppCloneUsers();
+        APP_ALL_UERS = new String[appCloneUsers.length];
+        APP_ALL_UERS[0]=String.valueOf(uid);
+        int n = 1;
+        for (int i = 0; i < appCloneUsers.length; i++) {
+            if(!appCloneUsers[i].equals(String.valueOf(uid))){
+                APP_ALL_UERS[n]=appCloneUsers[i];
+                n++;
+            }
+        }
+        amlsp4.setAdapter(getSpinnerAdapter(APP_ALL_UERS));
         if(mode == AppManagerEnum.APP_PERMISSION){
             amlsp2.setAdapter(getSpinnerAdapter(getAppPermisOPT1()));
         }
@@ -147,6 +159,8 @@ public class AppManagerLayoutActivity extends Activity {
         spinnerChange(amlsp1,0);
         spinnerChange(amlsp2,1);
         spinnerChange(amlsp3,2);
+        spinnerChange(amlsp4,3);
+
         amlapplybt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -213,52 +227,52 @@ public class AppManagerLayoutActivity extends Activity {
                             opt_str = APP_PERMIS_OPT2_VALUES[APP_PERMIS_OPT_INDEX];
                         }
                         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
-                            du.showInfoMsg(context,getLanStr(R.string.tips),getLanStr(R.string.not_support_5));
+                            acu.getUd().showInfoMsg(context,getLanStr(R.string.tips),getLanStr(R.string.not_support_5));
                         }else{
-                            du.showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_PERMISSION,APP_PERMIS_INDEX,opt_str);
+                            acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_PERMISSION,APP_PERMIS_INDEX,opt_str,uid);
                         }
                     }
 
                     if(mode == AppManagerEnum.APP_DISABLE_COMPENT){
-                        du.showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_DISABLE_COMPENT,APP_PERMIS_OPT_INDEX,null);
+                        acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_DISABLE_COMPENT,APP_PERMIS_OPT_INDEX,null,uid);
                     }
 
                     if(mode == AppManagerEnum.APP_FIREWALL){
-                        du.showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_FIREWALL,APP_PERMIS_OPT_INDEX,null);
+                        acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_FIREWALL,APP_PERMIS_OPT_INDEX,null,uid);
                     }
 
                     if(mode == AppManagerEnum.APP_INSTALL_LOCAL_FILE){
-                        du.showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_INSTALL_LOCAL_FILE,APP_PERMIS_OPT_INDEX,null);
+                        acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_INSTALL_LOCAL_FILE,APP_PERMIS_OPT_INDEX,null,uid);
                     }
 
                     if(mode == AppManagerEnum.APP_DUMP){
-                        du.showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_DUMP,APP_PERMIS_OPT_INDEX,null);
+                        acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_DUMP,APP_PERMIS_OPT_INDEX,null,uid);
                     }
 
                     if(mode == AppManagerEnum.APP_UNINSTALL){
-                        du.showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_UNINSTALL,APP_PERMIS_OPT_INDEX,null);
+                        acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_UNINSTALL,APP_PERMIS_OPT_INDEX,null,uid);
                         if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.M){
                             easyManagerUtils ee = new easyManagerUtils();
                             if(ee.isROOT()){
                                 ee.activeRoot(context);
                             }else {
-                                du.showInfoMsg(context,getLanStr(R.string.error_tips),getLanStr(R.string.del_app_tips_6));
+                                acu.getPd().showInfoMsg(context,getLanStr(R.string.error_tips),getLanStr(R.string.del_app_tips_6));
                             }
                         }
                     }
 
                     if(mode == AppManagerEnum.APP_CLEAN_PROCESS){
-                        du.showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_CLEAN_PROCESS,APP_PERMIS_OPT_INDEX,null);
+                        acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_CLEAN_PROCESS,APP_PERMIS_OPT_INDEX,null,uid);
                     }
 
                     if(mode == AppManagerEnum.APP_BACKUP){
                         String opt_str = APP_BACKUP_AND_RESTORY_OPT_VALUES[APP_PERMIS_INDEX]+"---"+APP_BACKUP_AND_RESTORY_OPT2_VALUES[APP_PERMIS_OPT_INDEX];
-                        du.showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_BACKUP,(uid == null || uid.isEmpty() ? 0 : Integer.valueOf(uid.trim())),opt_str);
+                        acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_BACKUP,(uid == null  ? 0 : uid),opt_str,uid);
                     }
 
                     if(mode == AppManagerEnum.APP_RESTORY){
                         String opt_str = APP_BACKUP_AND_RESTORY_OPT_VALUES[APP_PERMIS_INDEX]+"---"+APP_BACKUP_AND_RESTORY_OPT2_VALUES[APP_PERMIS_OPT_INDEX];
-                        du.showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_RESTORY,(uid == null || uid.isEmpty() ? 0 : Integer.valueOf(uid.trim())),opt_str);
+                        acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_RESTORY,(uid == null ? 0 : uid),opt_str,uid);
                     }
 
                 }
@@ -274,7 +288,7 @@ public class AppManagerLayoutActivity extends Activity {
                     PackageInfo packageInfo = getPackageManager().getPackageInfo(pkginfo.getPkgname(), 0);
                     Intent intent = new Intent(AppManagerLayoutActivity.this,AppInfoLayoutActivity.class);
                     intent.putExtra("pkgname",packageInfo.packageName);
-                    intent.putExtra("uid",uid);
+                    intent.putExtra("uid",String.valueOf(uid));
                     intent.putExtra("isRoot",isRoot);
                     intent.putExtra("isADB",isADB);
                     startActivity(intent);
@@ -313,6 +327,10 @@ public class AppManagerLayoutActivity extends Activity {
                     case 2:
                         APP_CHOICES_INDEX = i;
                         break;
+                    case 3:
+                        APP_UID_INDEX = i;
+                        uid = Integer.valueOf(APP_ALL_UERS[APP_UID_INDEX]);
+                        break;
                 }
             }
 
@@ -337,11 +355,11 @@ public class AppManagerLayoutActivity extends Activity {
         int itemId = item.getItemId();
         if(itemId == R.id.actionbarsearch){
             if(mode == AppManagerEnum.APP_CLEAN_PROCESS){
-                du.showProcessSearchViewDialog(context,activity,apllv1,pkginfos,null,checkboxs);
+                acu.getSd().showProcessSearchViewDialog(context,activity,apllv1,pkginfos,null,checkboxs,uid);
             }else if(mode == AppManagerEnum.APP_RESTORY){
-                du.showRestorySearchViewDialog(context,activity,apllv1,pkginfos,checkboxs);
+                acu.getSd().showRestorySearchViewDialog(context,activity,apllv1,pkginfos,checkboxs,uid);
             }else {
-                du.showSearchViewDialog(context,activity,apllv1,pkginfos,null,checkboxs);
+                acu.getSd().showSearchViewDialog(context,activity,apllv1,pkginfos,null,checkboxs,uid);
             }
 
         }
@@ -349,35 +367,35 @@ public class AppManagerLayoutActivity extends Activity {
             activity.onBackPressed();
         }
         if(itemId == 0){
-            du.queryAllPKGSProcessDialog(context,activity,apllv1,pkginfos,checkboxs);
+            acu.getSd().queryAllPKGSProcessDialog(context,activity,apllv1,pkginfos,checkboxs,uid);
         }
 
         if(itemId == 1){
-            du.queryAllEnablePKGSProcessDialog(context,activity,apllv1,pkginfos,checkboxs);
+            acu.getSd().queryAllEnablePKGSProcessDialog(context,activity,apllv1,pkginfos,checkboxs,uid);
         }
 
         if(itemId == 2){
-            du.queryUserAllPKGSProcessDialog(context,activity,apllv1,pkginfos,checkboxs);
+            acu.getSd().queryUserAllPKGSProcessDialog(context,activity,apllv1,pkginfos,checkboxs,uid);
         }
 
         if(itemId == 3){
-            du.queryUserEnablePKGSProcessDialog(context,activity,apllv1,pkginfos,checkboxs);
+            acu.getSd().queryUserEnablePKGSProcessDialog(context,activity,apllv1,pkginfos,checkboxs,uid);
         }
 
         if(itemId == 4){
-            du.queryAllDisablePKGSProcessDialog(context,activity,apllv1,pkginfos,checkboxs);
+            acu.getSd().queryAllDisablePKGSProcessDialog(context,activity,apllv1,pkginfos,checkboxs,uid);
         }
 
         if(itemId == 7){
-            du.queryAllProcessDialog(context,activity,apllv1,pkginfos,checkboxs);
+            acu.getSd().queryAllProcessDialog(context,activity,apllv1,pkginfos,checkboxs,uid);
         }
 
         if(itemId == 8){
-            du.queryAllUserProcessDialog(context,activity,apllv1,pkginfos,checkboxs);
+            acu.getSd().queryAllUserProcessDialog(context,activity,apllv1,pkginfos,checkboxs,uid);
         }
 
         if(itemId == 9){
-            du.queryLocalBackupProcessDialog(context,activity,apllv1,pkginfos,checkboxs);
+            acu.getSd().queryLocalBackupProcessDialog(context,activity,apllv1,pkginfos,checkboxs,uid);
         }
 
         if(itemId == 5){
@@ -442,7 +460,7 @@ public class AppManagerLayoutActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         PackageUtils pkgutils = new PackageUtils();
-        String storage = ft.getSDPath();
+        String storage = ft.getSDPath(uid);
         PackageManager pm = getPackageManager();
         if(requestCode == 0){
             pkgutils.clearList(pkginfos,checkboxs);
@@ -456,7 +474,7 @@ public class AppManagerLayoutActivity extends Activity {
                 Uri uri = data.getData();
                 addPKGINFO(pm,uri,storage);
             }
-            du.showPKGS(context,apllv1,pkginfos,checkboxs);
+            acu.getSd().showPKGS(context,apllv1,pkginfos,checkboxs);
             if(pkginfos.size() > 0){
                 install_mode = false;
                 amlapplybt.setText(getLanStr(R.string.try_install_app));
@@ -485,14 +503,14 @@ public class AppManagerLayoutActivity extends Activity {
                         for (File listFile : files) {
                             addPKGINFO(pm,Uri.fromFile(listFile),storage);
                         }
-                        du.showPKGS(context,apllv1,pkginfos,checkboxs);
+                        acu.getSd().showPKGS(context,apllv1,pkginfos,checkboxs);
 //                        "正在安装 [ "+filePath+" ] 文件夹里面的内容...","当前正在安装: ";
 
                     }catch (Exception e){
                         e.printStackTrace();
                     }
                 }else{
-                    du.showInfoMsg(context,getLanStr(R.string.error_tips),getLanStr(R.string.need_root_or_adb_msg));
+                    acu.getSd().showInfoMsg(context,getLanStr(R.string.error_tips),getLanStr(R.string.need_root_or_adb_msg));
                 }
                 if(pkginfos.size() > 0){
                     install_mode = false;
@@ -503,30 +521,30 @@ public class AppManagerLayoutActivity extends Activity {
     }
 
     private String getLanStr(int id){
-        return du.tu.getLanguageString(context,id);
+        return acu.getTU().getLanguageString(context,id);
     }
 
     private String[] getAppPermis(){
         return new String[]{getLanStr(R.string.spin_item_phone_sms)
-        ,getLanStr(R.string.spin_item_storage),getLanStr(R.string.spin_item_clipboard)
-        ,getLanStr(R.string.spin_item_battery),getLanStr(R.string.spin_item_background)
-        ,getLanStr(R.string.spin_item_camera_microphone),getLanStr(R.string.spin_item_location)
-        ,getLanStr(R.string.spin_item_calendar),getLanStr(R.string.spin_item_sensor)
-        ,getLanStr(R.string.spin_item_notify),getLanStr(R.string.spin_item_biometrics)
-        ,getLanStr(R.string.spin_item_alert),getLanStr(R.string.spin_item_accessibility)
-        ,getLanStr(R.string.spin_item_account),getLanStr(R.string.spin_item_write_settings)
-        ,getLanStr(R.string.spin_item_read_device_id),getLanStr(R.string.spin_item_app_standby)
-        ,getLanStr(R.string.spin_item_app_standby_activity)};
+                ,getLanStr(R.string.spin_item_storage),getLanStr(R.string.spin_item_clipboard)
+                ,getLanStr(R.string.spin_item_battery),getLanStr(R.string.spin_item_background)
+                ,getLanStr(R.string.spin_item_camera_microphone),getLanStr(R.string.spin_item_location)
+                ,getLanStr(R.string.spin_item_calendar),getLanStr(R.string.spin_item_sensor)
+                ,getLanStr(R.string.spin_item_notify),getLanStr(R.string.spin_item_biometrics)
+                ,getLanStr(R.string.spin_item_alert),getLanStr(R.string.spin_item_accessibility)
+                ,getLanStr(R.string.spin_item_account),getLanStr(R.string.spin_item_write_settings)
+                ,getLanStr(R.string.spin_item_read_device_id),getLanStr(R.string.spin_item_app_standby)
+                ,getLanStr(R.string.spin_item_app_standby_activity)};
     }
 
     private String[] getAppPermisOPT1(){
         return new String[]{getLanStr(R.string.spin_item_opt1_default),getLanStr(R.string.spin_item_opt1_ignore)
-        ,getLanStr(R.string.spin_item_opt1_deny),getLanStr(R.string.spin_item_opt1_allow),getLanStr(R.string.spin_item_opt1_foreground)};
+                ,getLanStr(R.string.spin_item_opt1_deny),getLanStr(R.string.spin_item_opt1_allow),getLanStr(R.string.spin_item_opt1_foreground)};
     }
 
     private String[] getAppPermisOPT2(){
         return new String[]{getLanStr(R.string.spin_item_opt2_active),getLanStr(R.string.spin_item_opt2_work)
-        ,getLanStr(R.string.spin_item_opt2_frequent),getLanStr(R.string.spin_item_opt2_rare),getLanStr(R.string.spin_item_opt2_restricted)};
+                ,getLanStr(R.string.spin_item_opt2_frequent),getLanStr(R.string.spin_item_opt2_rare),getLanStr(R.string.spin_item_opt2_restricted)};
     }
 
     private String[] getAppPermisOPT3(){

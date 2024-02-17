@@ -1,7 +1,6 @@
 package com.easymanager.enums;
 
 public class AppManagerEnum {
-
     public final static int APP_PERMISSION=1;
     public final static int APP_DISABLE_COMPENT=2;
     public final static int APP_FIREWALL=3;
@@ -20,9 +19,6 @@ public class AppManagerEnum {
     public final static int SET_RATE=16;
     public final static int DEL_X=17;
     public final static int FILE_SHARED=18;
-
-
-
     public final static int APP_INFO_LAYOUT=200;
 
 

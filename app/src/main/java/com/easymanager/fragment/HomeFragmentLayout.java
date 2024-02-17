@@ -1,8 +1,6 @@
 package com.easymanager.fragment;
 
-import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,13 +10,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.easymanager.R;
+import com.easymanager.activitys.AppCloneLayoutActivity;
 import com.easymanager.activitys.AppManagerLayoutActivity;
 import com.easymanager.activitys.CreateImgLayoutActivity;
 import com.easymanager.activitys.FileSharedLayoutActivity;
 import com.easymanager.activitys.UsbModeLayoutActivity;
 import com.easymanager.enums.AppManagerEnum;
-import com.easymanager.utils.DialogUtils;
-import com.easymanager.utils.OtherTools;
 
 public class HomeFragmentLayout extends Fragment {
 
@@ -30,11 +27,14 @@ public class HomeFragmentLayout extends Fragment {
 
     private Button hflsetrate,hfldelx,hflsetntp,hflfileshared;
 
+    private int uid;
+
     public HomeFragmentLayout(){}
 
-    public HomeFragmentLayout(Boolean isRoot, Boolean isADB) {
+    public HomeFragmentLayout(Boolean isRoot, Boolean isADB, int uid) {
         this.isRoot = isRoot;
         this.isADB = isADB;
+        this.uid = uid;
     }
 
     private Boolean isRoot,isADB;
@@ -63,7 +63,9 @@ public class HomeFragmentLayout extends Fragment {
         hfldelx = view.findViewById(R.id.hfldelx);
         hflsetntp = view.findViewById(R.id.hflsetntp);
         hflfileshared = view.findViewById(R.id.hflfileshared);
-
+        hflappclone = view.findViewById(R.id.hflappclone);
+        hflappclonemanage = view.findViewById(R.id.hflappclonemanage);
+        hflappcloneremove = view.findViewById(R.id.hflappcloneremove);
         btClick();
     }
 
@@ -84,6 +86,10 @@ public class HomeFragmentLayout extends Fragment {
         hfldelx.setOnClickListener(clickListener);
         hflsetntp.setOnClickListener(clickListener);
         hflfileshared.setOnClickListener(clickListener);
+        hflappclone.setOnClickListener(clickListener);
+        hflappclonemanage.setOnClickListener(clickListener);
+        hflappcloneremove.setOnClickListener(clickListener);
+
         initBtColor();
     }
 
@@ -103,6 +109,10 @@ public class HomeFragmentLayout extends Fragment {
         setBtColor(hfldelx,true,true);
         setBtColor(hflsetntp,true,true);
         setBtColor(hflfileshared,false,false);
+        setBtColor(hflappclone,true,true);
+        setBtColor(hflappclonemanage,true,true);
+        setBtColor(hflappcloneremove,true,true);
+
     }
 
     private void jump(int mode){
@@ -117,10 +127,14 @@ public class HomeFragmentLayout extends Fragment {
         if(mode == AppManagerEnum.MOUNT_LOCAL_IMG){
             clazz = UsbModeLayoutActivity.class;
         }
+        if(mode == AppManagerEnum.APP_CLONE || mode == AppManagerEnum.APP_CLONE_REMOVE || mode == AppManagerEnum.APP_CLONE_MANAGE){
+            clazz = AppCloneLayoutActivity.class;
+        }
         Intent intent = new Intent(getActivity(), clazz);
         intent.putExtra("mode",mode);
         intent.putExtra("isRoot",isRoot);
         intent.putExtra("isADB",isADB);
+        intent.putExtra("uid",uid);
         startActivity(intent);
 
     }
@@ -181,6 +195,17 @@ public class HomeFragmentLayout extends Fragment {
                 jump(AppManagerEnum.FILE_SHARED);
             }
 
+            if(id == R.id.hflappclone){
+                jump(AppManagerEnum.APP_CLONE);
+            }
+
+            if(id == R.id.hflappclonemanage){
+                jump(AppManagerEnum.APP_CLONE_MANAGE);
+            }
+
+            if(id == R.id.hflappcloneremove){
+                jump(AppManagerEnum.APP_CLONE_REMOVE);
+            }
 
         }
     };

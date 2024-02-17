@@ -15,6 +15,15 @@ Moreover, the interface open to the public by EasyManager has been tested and su
 
 [easyMangerSDK Development Kit](https://github.com/MrsEWE44/easyManagerSDK)
 
+- V1.2.3
+
+1.Added application clone function.
+
+2.Add multi-user management and operation functions.
+
+3.Modify the version number to 1.2.3
+
+
 - V1.2.2a
 
 1.Fix the install local apk file not show apk icon.

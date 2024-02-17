@@ -52,6 +52,22 @@ public class OtherTools {
             menu.add(Menu.NONE,3,0,tv.getLanguageString(context,R.string.menu_get_app_recvi));
             menu.add(Menu.NONE,4,0,help);
             menu.add(Menu.NONE,5,0,exit);
+        }else if(menumode == AppManagerEnum.APP_CLONE_MANAGE){
+            menu.add(Menu.NONE,0,0,tv.getLanguageString(context,R.string.menu_get_all_app));
+            menu.add(Menu.NONE,1,0,tv.getLanguageString(context,R.string.menu_get_all_app2));
+            menu.add(Menu.NONE,2,0,tv.getLanguageString(context,R.string.menu_get_user_all_app));
+            menu.add(Menu.NONE,3,0,tv.getLanguageString(context,R.string.menu_get_user_all_app2));
+            menu.add(Menu.NONE,4,0,tv.getLanguageString(context,R.string.menu_get_user_all_disable_app));
+            menu.add(Menu.NONE,10,0,tv.getLanguageString(context,R.string.show_clone_user_installed_app));
+            menu.add(Menu.NONE,11,0,tv.getLanguageString(context,R.string.show_clone_user_all_installed_app));
+            menu.add(Menu.NONE,12,0,tv.getLanguageString(context,R.string.show_clone_user_uid));
+            menu.add(Menu.NONE,13,0,tv.getLanguageString(context,R.string.show_start_app_clone_user));
+            menu.add(Menu.NONE,5,0,help);
+            menu.add(Menu.NONE,6,0,exit);
+        }else if(menumode == AppManagerEnum.APP_CLONE_REMOVE){
+            menu.add(Menu.NONE,12,0,tv.getLanguageString(context,R.string.show_clone_user_uid));
+            menu.add(Menu.NONE,5,0,help);
+            menu.add(Menu.NONE,6,0,exit);
         }else{
             menu.add(Menu.NONE,0,0,tv.getLanguageString(context,R.string.menu_get_all_app));
             menu.add(Menu.NONE,1,0,tv.getLanguageString(context,R.string.menu_get_all_app2));

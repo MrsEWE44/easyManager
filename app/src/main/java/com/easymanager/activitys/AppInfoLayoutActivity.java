@@ -19,12 +19,11 @@ import com.easymanager.R;
 import com.easymanager.entitys.PKGINFO;
 import com.easymanager.enums.AppInfoEnums;
 import com.easymanager.enums.AppManagerEnum;
-import com.easymanager.utils.DialogUtils;
-import com.easymanager.utils.HelpDialogUtils;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
 import com.easymanager.utils.PackageUtils;
-import com.easymanager.utils.TextUtils;
+import com.easymanager.utils.base.AppCloneUtils;
+import com.easymanager.utils.dialog.HelpDialogUtils;
 
 import java.util.ArrayList;
 
@@ -50,15 +49,14 @@ public class AppInfoLayoutActivity extends Activity {
 
     private Boolean isRoot , isADB;
 
-    private String uid,pkgname;
-
-
+    private String pkgname;
+    private int uid;
     private int menus_index = 0;
     private int mode =-1;
     private int app_info_mode=-1;
     private int app_info_mode2=-1;
 
-    private DialogUtils du = new DialogUtils();
+    private AppCloneUtils acu = new AppCloneUtils();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,11 +74,8 @@ public class AppInfoLayoutActivity extends Activity {
         pkgname = (String) intent.getSerializableExtra("pkgname");
         isADB = intent.getBooleanExtra("isADB",false);
         isRoot = intent.getBooleanExtra("isRoot",false);
-        uid = (String) intent.getSerializableExtra("uid");
+        uid = intent.getIntExtra("uid",0);
         mode = intent.getIntExtra("mode",-1);
-        if(uid == null){
-            uid="0";
-        }
         ailappicon = findViewById(R.id.ailappicon);
         ailappname = findViewById(R.id.ailappname);
         ailapppkgname = findViewById(R.id.ailapppkgname);
@@ -97,7 +92,7 @@ public class AppInfoLayoutActivity extends Activity {
         ailappversion.setText(pkginfo.getAppversionname());
         ailappsize.setText(getSize(pkginfo.getFilesize(),0));
         if(!isRoot){
-            du.showInfoMsg(context,getLanStr(R.string.warning_tips),getLanStr(R.string.need_root_msg));
+            acu.getUd().showInfoMsg(context,getLanStr(R.string.warning_tips),getLanStr(R.string.need_root_msg));
         }else{
             btClicked();
             new HelpDialogUtils().showHelp(context,HelpDialogUtils.APP_INFO_HELP,mode);
@@ -142,7 +137,7 @@ public class AppInfoLayoutActivity extends Activity {
                         pkginfos.add(pkginfo);
                     }
                 }
-                du.showProcessBarDialogByCMD(context,pkginfos, AppManagerEnum.APP_INFO_LAYOUT,app_info_mode,null);
+                acu.getPd().showProcessBarDialogByCMD(context,pkginfos, AppManagerEnum.APP_INFO_LAYOUT,app_info_mode,null,Integer.valueOf(uid));
             }
         });
 
@@ -175,7 +170,7 @@ public class AppInfoLayoutActivity extends Activity {
         int itemId = item.getItemId();
 
         if(itemId == R.id.actionbarsearch){
-            du.showAppInfoSearchViewDialog(context,activity,app_info_mode,app_info_mode2,pkgname,uid,aillv1,list,checkboxs,switbs);
+            acu.getPd().showAppInfoSearchViewDialog(context,activity,app_info_mode,app_info_mode2,pkgname,uid,aillv1,list,checkboxs,switbs);
         }
 
         if(itemId == android.R.id.home){
@@ -185,25 +180,25 @@ public class AppInfoLayoutActivity extends Activity {
         if(itemId == 0){
             app_info_mode=AppInfoEnums.IS_PERMISSION;
             app_info_mode2=AppInfoEnums.GET_PERMISSIOSN;
-            du.showAppInfoPermissionProcessDialog(context,activity,aillv1,list,checkboxs,switbs,pkgname,uid);
+            acu.getPd().showAppInfoPermissionProcessDialog(context,activity,aillv1,list,checkboxs,switbs,pkgname,uid);
         }
 
         if(itemId == 1){
             app_info_mode=AppInfoEnums.IS_COMPENT_OR_PACKAGE;
             app_info_mode2=AppInfoEnums.GET_SERVICES;
-            du.showAppInfoServiceProcessDialog(context,activity,aillv1,list,checkboxs,switbs,pkgname,uid);
+            acu.getPd().showAppInfoServiceProcessDialog(context,activity,aillv1,list,checkboxs,switbs,pkgname,uid);
         }
 
         if(itemId == 2){
             app_info_mode=AppInfoEnums.IS_COMPENT_OR_PACKAGE;
             app_info_mode2=AppInfoEnums.GET_ACTIVITYS;
-            du.showAppInfoActivityProcessDialog(context,activity,aillv1,list,checkboxs,switbs,pkgname,uid);
+            acu.getPd().showAppInfoActivityProcessDialog(context,activity,aillv1,list,checkboxs,switbs,pkgname,uid);
         }
 
         if(itemId == 3){
             app_info_mode=AppInfoEnums.IS_COMPENT_OR_PACKAGE;
             app_info_mode2=AppInfoEnums.GET_RECEIVERS;
-            du.showAppInfoReceiverProcessDialog(context,activity,aillv1,list,checkboxs,switbs,pkgname,uid);
+            acu.getPd().showAppInfoReceiverProcessDialog(context,activity,aillv1,list,checkboxs,switbs,pkgname,uid);
         }
 
         if(itemId == 4){
@@ -217,7 +212,7 @@ public class AppInfoLayoutActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
     private String getLanStr(int id){
-        return du.tu.getLanguageString(context,id);
+        return acu.getTU().getLanguageString(context,id);
     }
     private String[] getAppChoicesOPT(){
         return new String[]{getLanStr(R.string.spin_item_selected),getLanStr(R.string.spin_item_no_selected),getLanStr(R.string.spin_item_all_selected)};

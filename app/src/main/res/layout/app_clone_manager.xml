@@ -5,27 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
-
-        <Spinner
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/amlsp1"
-            android:layout_weight="1"
-            />
-
-        <Spinner
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/amlsp2"
-            android:layout_weight="1"
-            />
-
-    </LinearLayout>
+        android:id="@+id/acmet1"
+        android:inputType="number"
+        android:hint="@string/app_clone_input_size_hint_str"></EditText>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -36,26 +21,42 @@
         <Spinner
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/amlsp3"
             android:layout_weight="1"
-            />
+            android:id="@+id/acmsp1"/>
 
         <Spinner
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/amlsp4"
             android:layout_weight="1"
-            />
+            android:id="@+id/acmsp2"/>
 
     </LinearLayout>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/button_apply"
-        android:id="@+id/amlapplybt"/>
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/apllv1"/>
+        android:text="@string/app_clone_button_default_str"
+        android:id="@+id/clmbt1"></Button>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:id="@+id/acmlv1"
+            ></ListView>
+
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:id="@+id/acmlv2"
+            ></ListView>
+
+    </LinearLayout>
 
 </LinearLayout>

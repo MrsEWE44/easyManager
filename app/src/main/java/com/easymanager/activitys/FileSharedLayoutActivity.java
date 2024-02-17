@@ -22,13 +22,12 @@ import android.widget.TextView;
 
 import com.easymanager.R;
 import com.easymanager.entitys.PKGINFO;
-import com.easymanager.utils.DialogUtils;
+import com.easymanager.utils.base.DialogUtils;
 import com.easymanager.utils.FileTools;
-import com.easymanager.utils.HelpDialogUtils;
+import com.easymanager.utils.dialog.HelpDialogUtils;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
 import com.easymanager.utils.PackageUtils;
-import com.easymanager.utils.TextUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,11 +40,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class FileSharedLayoutActivity extends Activity {
 

@@ -32,17 +32,28 @@ public class AppopsAPI extends baseAPI{
     public final static int WriteSettings = 14;
     public final static int DeviceIdentifiers = 15;
 
-    public final static int MODE_ALLOW = 0;
-    public final static int MODE_DEFAULT = 1;
-    public final static int MODE_IGNORE = 2;
-    public final static int MODE_FOREGROUND = 3;
-
     private static final Map<String, IAppOpsService> I_APP_OPS_SERVICE_CACHE = new HashMap<>();
     private PackageAPI packageAPI = new PackageAPI();
 
-    public void setModeCore(String pkgname,String modestr,int mode2){
+    public IAppOpsService getIAppOpsService(){
+        IAppOpsService iAppOpsService = I_APP_OPS_SERVICE_CACHE.get("iappservice");
+        if(iAppOpsService == null){
+            Singleton<IAppOpsService> iAppOpsServiceSingleton = new Singleton<IAppOpsService>() {
+                @Override
+                protected IAppOpsService create() {
+                    return IAppOpsService.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService(Context.APP_OPS_SERVICE)));
+                }
+            };
+            iAppOpsService = iAppOpsServiceSingleton.get();
+            I_APP_OPS_SERVICE_CACHE.put("iappservice",iAppOpsService);
+        }
+        return iAppOpsService;
+    }
+
+
+    public void setModeCore(String pkgname,String modestr,int mode2,int uid){
         for (String op : getOPS(getAppopsMode(mode2))) {
-            SetMode(pkgname,op,modestr);
+            SetMode(pkgname,op,modestr,uid);
         }
     }
 
@@ -114,38 +125,21 @@ public class AppopsAPI extends baseAPI{
         return -1;
     }
 
-
-    public String getSetModeStr(int mode){
-        switch (mode){
-            case MODE_ALLOW:
-                return "allow";
-            case MODE_DEFAULT:
-                return "default";
-            case MODE_IGNORE:
-                return "ignore";
-            case MODE_FOREGROUND:
-                return "foreground";
+    public int checkOp(String opstr, String packageName, int uid){
+        try {
+            return getIAppOpsService().checkOperation(AppOpsManager.strOpToOp(opstr),uid,packageName);
+        }catch (Exception e){
+            return AppOpsManager.MODE_DEFAULT;
         }
-        return null;
     }
 
     //通过调用appops系统api来修改应用权限
-    public void SetMode(String pkgname , String opstr , String opmode){
+    public void SetMode(String pkgname , String opstr , String opmode,int userid){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            IAppOpsService iAppOpsService = I_APP_OPS_SERVICE_CACHE.get("iappservice");
-            if(iAppOpsService == null){
-                Singleton<IAppOpsService> iAppOpsServiceSingleton = new Singleton<IAppOpsService>() {
-                    @Override
-                    protected IAppOpsService create() {
-                        return IAppOpsService.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService(Context.APP_OPS_SERVICE)));
-                    }
-                };
-                iAppOpsService = iAppOpsServiceSingleton.get();
-                I_APP_OPS_SERVICE_CACHE.put("iappservice",iAppOpsService);
-            }
+            IAppOpsService iAppOpsService = getIAppOpsService();
             try {
                 int opcode = AppOpsManager.strOpToOp(opstr);
-                int uid = packageAPI.getPKGUID(pkgname);
+                int uid = packageAPI.getPKGUID(pkgname,userid);
                 iAppOpsService.setMode(opcode, uid,pkgname,getModeInt(opmode));
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                     iAppOpsService.setUidMode(opcode,uid,getModeInt(opmode));
@@ -246,11 +240,11 @@ public class AppopsAPI extends baseAPI{
     }
 
 
-    public void setPermissionStr(String pkgname, String permission_str, boolean b) {
+    public void setPermissionStr(String pkgname, String permission_str, boolean b,int userid) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             int opCode = AppOpsManager.permissionToOpCode(permission_str);
             if(opCode > -1){
-                SetMode(pkgname,AppOpsManager.opToPermission(opCode), b? "allow":"ignore");
+                SetMode(pkgname,AppOpsManager.opToPermission(opCode), b? "allow":"ignore",userid);
             }
 
         }

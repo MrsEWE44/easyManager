@@ -28,6 +28,7 @@
         <activity android:name=".activitys.UsbModeLayoutActivity"/>
         <activity android:name=".activitys.CreateImgLayoutActivity"/>
         <activity android:name=".activitys.FileSharedLayoutActivity"/>
+        <activity android:name=".activitys.AppCloneLayoutActivity"/>
 
 
 

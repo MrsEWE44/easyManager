@@ -1,5 +1,6 @@
 package com.easymanager.core.server;
 
+import android.content.ComponentName;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Xml;
@@ -8,6 +9,7 @@ import com.easymanager.core.api.AppopsAPI;
 import com.easymanager.core.api.FileCompressApi;
 import com.easymanager.core.api.PackageAPI;
 import com.easymanager.core.api.baseAPI;
+import com.easymanager.entitys.MyPackageInfo;
 import com.easymanager.core.entity.TransmissionEntity;
 import com.easymanager.core.utils.CMD;
 import com.easymanager.utils.FileTools;
@@ -22,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class easyManagerAPI extends baseAPI {
@@ -41,81 +44,52 @@ public class easyManagerAPI extends baseAPI {
         return new PackageAPI();
     }
 
-    public File[] readPathFile(String path){
-        File file = new File(path);
-        if(file.isDirectory()){
-            return file.listFiles();
-        }
-        return null;
+
+    public void killpkg(String pkgname,int uid){
+        packageAPI.killApp(pkgname,uid);
     }
 
-    public void killpkg(String pkgname){
-        packageAPI.killApp(pkgname);
-    }
-
-    public void setAppopsModeCore(String pkgname , String opstr , String opmode){
-        appopsAPI.SetMode(pkgname, opstr, opmode);
-    }
+    public void setAppopsModeCore(String pkgname , String opstr , String opmode,int uid){appopsAPI.SetMode(pkgname, opstr, opmode,uid);}
 
     public void setAppopsMode(TransmissionEntity te){
         int opsmode = te.getOpsmode();
         String pkgname = te.getPkgname();
         String opmodestr = te.getOpmodestr();
-        killpkg(pkgname);
+        int uid = te.getUid();
+        killpkg(pkgname,uid);
         switch (opsmode){
             case 16:
-                packageAPI.SetInactive(pkgname,opmodestr.equals("true")?true:false);
+                packageAPI.SetInactive(pkgname,opmodestr.equals("true")?true:false,uid);
                 break;
             case 17:
-                packageAPI.SetStandbyBucket(pkgname, opmodestr);
+                packageAPI.SetStandbyBucket(pkgname, opmodestr,uid);
                 break;
             default:
-                appopsAPI.setModeCore(pkgname,opmodestr,opsmode);
+                appopsAPI.setModeCore(pkgname,opmodestr,opsmode,uid);
                 break;
         }
     }
+    public int getPKGUID(String pkgname , int uid){return packageAPI.getPKGUID(pkgname, uid);}
+    public void installAPK(String apkpath){packageAPI.InstallAPK(apkpath);}
+    public void installAPK(String apkpath,int uid){packageAPI.InstallAPK(apkpath,uid);}
+    public void uninstallApp(String pkgname,int uid){packageAPI.UninstallPKG(pkgname,uid);}
+    public void setComponentOrPackageEnabledState(String pkgname_or_compname,int state,int uid){packageAPI.setComponentOrPackageEnabledState(pkgname_or_compname, state,uid);}
+    public void setPackageHideState(String pkgname,boolean hide,int uid){packageAPI.setPackageHideState(pkgname, hide , uid);}
 
-    public void installAPK(String apkpath){
-        packageAPI.InstallAPK(apkpath);
-    }
-
-    public void uninstallApp(String pkgname){
-        packageAPI.UninstallPKG(pkgname);
-    }
-
-    public void setComponentOrPackageEnabledState(String pkgname_or_compname,int state){
-        packageAPI.setComponentOrPackageEnabledState(pkgname_or_compname, state);
-    }
-
-    public void setPackageHideState(String pkgname,boolean hide){
-        packageAPI.setPackageHideState(pkgname, hide);
-    }
-
-    public void revokeRuntimePermission(String pkgname , String permission_str){
+    public void revokeRuntimePermission(String pkgname , String permission_str, int uid){
         try {
-            packageAPI.revokeRuntimePermission(pkgname,permission_str);
+            packageAPI.revokeRuntimePermission(pkgname,permission_str,uid);
         }catch (Exception e){
-            appopsAPI.setPermissionStr(pkgname,permission_str,false);
+            appopsAPI.setPermissionStr(pkgname,permission_str,false,uid);
         }
-
-//        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.N){
-//            packageAPI.revokeRuntimePermission(pkgname,permission_str);
-//        }else{
-//            appopsAPI.setPermissionStr(pkgname,permission_str,false);
-//        }
     }
-    public void grantRuntimePermission(String pkgname , String permission_str){
-        try {
-            packageAPI.grantRuntimePermission(pkgname,permission_str);
-        }catch (Exception e){
-            appopsAPI.setPermissionStr(pkgname,permission_str,true);
-        }
 
-//        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.N){
-//            packageAPI.grantRuntimePermission(pkgname,permission_str);
-//        }else{
-//            appopsAPI.setPermissionStr(pkgname,permission_str,true);
-//        }
+    public void grantRuntimePermission(String pkgname , String permission_str , int uid){
+        try {
+            packageAPI.grantRuntimePermission(pkgname,permission_str,uid);
+        }catch (Exception e){
+            appopsAPI.setPermissionStr(pkgname,permission_str,true,uid);
+        }
     }
 
     public void CompressOrDecompressFile(String dirPath , String outPath , int mode){
@@ -166,7 +140,11 @@ public class easyManagerAPI extends baseAPI {
                 decompressFileOnBackup(fileEnd,pkg_out_dir_path,pkg_out_dir_path,"file");
                 String baseAPk = getBaseAPk(pkg_out_dir_path);
                 if(baseAPk != null){
-                    installAPK(baseAPk);
+                    if(uid > 0){
+                        installAPK(baseAPk,uid);
+                    }else{
+                        installAPK(baseAPk);
+                    }
                     restoryData(uid,pkgname,fileEnd,sdpath,pkg_out_dir_path);
                 }else{
                     System.out.println("baseAPK is null!!!");
@@ -177,7 +155,11 @@ public class easyManagerAPI extends baseAPI {
                 decompressFileOnBackup(fileEnd,pkg_out_dir_path,pkg_out_dir_path,"file");
                 String baseAPk =getBaseAPk(pkg_out_dir_path);
                 if(baseAPk != null){
-                    installAPK(baseAPk);
+                    if(uid > 0){
+                        installAPK(baseAPk,uid);
+                    }else{
+                        installAPK(baseAPk);
+                    }
                 }else{
                     System.out.println("baseAPK is null!!!");
                 }
@@ -202,7 +184,7 @@ public class easyManagerAPI extends baseAPI {
         String pkg_data_path1 = data_path1+"/"+pkgname;
         String pkg_data_path2 = data_path2+"/"+pkgname;
         String pkg_data_user_path = data_user_path+"/"+pkgname;
-        int pkguid = packageAPI.getPKGUID(pkgname);
+        int pkguid = packageAPI.getPKGUID(pkgname,uid);
         if(uid > 0){
             decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_user_path,"data");
             setMode(data_user_path+"/"+pkgname,pkguid);
@@ -461,4 +443,32 @@ public class easyManagerAPI extends baseAPI {
         }
         return getConfig(requestpkg,getCachePathOnXML(),getGrantUserConfigName()) != null ? 1:-1;
     }
+
+    public void createAppClone(){
+        packageAPI.createUser();
+    }
+
+    public void startUser(int uid){
+        packageAPI.startUser(uid);
+    }
+
+    public int getCurrentUserID(){return packageAPI.getCurrentUser();}
+
+    public void removeAppClone(int userid){
+        packageAPI.removeUser(userid);
+    }
+
+    public String[] getUsers(){
+        return packageAPI.getUsers();
+    }
+
+    public List<MyPackageInfo> getInstalledPackages(int uid){return packageAPI.getInstalledPackages(uid);}
+
+    public MyPackageInfo getMyPackageInfo(String pkgname , int uid){return packageAPI.getMyPackageInfo(pkgname, uid);}
+
+    public int getComponentEnabledSetting(ComponentName componentName, int userId){return packageAPI.getComponentEnabledSetting(componentName,userId);}
+
+    public int checkOp(String opstr, String packageName, int uid){return appopsAPI.checkOp(opstr, packageName, uid);}
+
+
 }

@@ -14,6 +14,11 @@ public interface IPackageManager extends IInterface {
     IPackageInstaller getPackageInstaller()
             throws RemoteException;
 
+
+    ParceledListSlice getInstalledPackages(int flags, int userId);
+    ParceledListSlice getInstalledPackages(long flags, int userId);
+    PackageInfo getPackageInfo(String packageName, int flags, int userId);
+    PackageInfo getPackageInfo(String packageName, long flags, int userId);
     //android4-5
     void grantPermission(String packageName, String permissionName);
     void revokePermission(String packageName, String permissionName);

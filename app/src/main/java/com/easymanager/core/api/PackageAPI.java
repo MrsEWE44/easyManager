@@ -10,21 +10,31 @@ import android.content.IIntentReceiver;
 import android.content.IIntentSender;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.IPackageDeleteObserver;
 import android.content.pm.IPackageInstallObserver;
 import android.content.pm.IPackageInstaller;
 import android.content.pm.IPackageManager;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
+import android.content.pm.ParceledListSlice;
+import android.content.pm.ServiceInfo;
+import android.content.pm.UserInfo;
 import android.content.pm.VerificationParams;
 import android.content.pm.VersionedPackage;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.IUserManager;
 import android.os.RemoteException;
 import android.permission.IPermissionManager;
 
+import com.easymanager.entitys.MyActivityInfo;
+import com.easymanager.entitys.MyApplicationInfo;
+import com.easymanager.entitys.MyPackageInfo;
 import com.easymanager.core.server.Singleton;
 import com.easymanager.core.server.easyManagerBinderWrapper;
 import com.easymanager.core.server.easyManagerPortService;
@@ -36,9 +46,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
@@ -73,12 +83,17 @@ public class PackageAPI extends  baseAPI implements Serializable {
             = "android.content.pm.extra.FAILURE_EXISTING_PACKAGE";
 
     public static final int INSTALL_ALL_WHITELIST_RESTRICTED_PERMISSIONS = 0x00400000;
+    public static final String USER_TYPE_PROFILE_MANAGED = "android.os.usertype.profile.MANAGED";
+    public static final String USER_TYPE_PROFILE_CLONE = "android.os.usertype.profile.CLONE";
+    public static final int FLAG_MANAGED_PROFILE = 0x00000020;
 
     private static final Map<String, IUsageStatsManager> I_USAGE_STATS_MANAGER_CACHE = new HashMap<>();
     private static final Map<String, IActivityManager> I_ACTIVITY_MANAGER_CACHE = new HashMap<>();
     private static final Map<String, IPackageManager> I_PACKAGE_MANAGER_CACHE = new HashMap<>();
     private static final Map<String, IPermissionManager> I_PERMISSION_MANAGER_CACHE = new HashMap<>();
+    private static final Map<String, IUserManager> I_USER_MANAGER_CACHE = new HashMap<>();
 
+    private String[] disallowedPackages = null;
 
     public IActivityManager getIActivityManager(){
         IActivityManager iActivityManager = I_ACTIVITY_MANAGER_CACHE.get("iaservice");
@@ -100,12 +115,10 @@ public class PackageAPI extends  baseAPI implements Serializable {
     }
 
     //通过调用activitymanager系统api实现进程清理
-    public void killApp(String pkgname){
+    public void killApp(String pkgname,int uid){
         IActivityManager iActivityManager = getIActivityManager();
-        iActivityManager.forceStopPackage(pkgname,getTranslatedUserId());
+        iActivityManager.forceStopPackage(pkgname,uid);
     }
-
-
 
     public IPackageManager getIPackageManager(){
         IPackageManager iPackageManager = I_PACKAGE_MANAGER_CACHE.get("ipkgservice");
@@ -120,6 +133,21 @@ public class PackageAPI extends  baseAPI implements Serializable {
             I_PACKAGE_MANAGER_CACHE.put("ipkgservice",iPackageManager);
         }
         return iPackageManager;
+    }
+
+    public IUserManager getIUserManager(){
+        IUserManager iUserManager = I_USER_MANAGER_CACHE.get("iuserservice");
+        if(iUserManager == null){
+            Singleton<IUserManager> iUserManagerSingleton = new Singleton<IUserManager>() {
+                @Override
+                protected IUserManager create() {
+                    return IUserManager.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService("user")));
+                }
+            };
+            iUserManager = iUserManagerSingleton.get();
+            I_USER_MANAGER_CACHE.put("iuserservice",iUserManager);
+        }
+        return iUserManager;
     }
 
     public IPermissionManager getIPermissionManager(){
@@ -137,16 +165,15 @@ public class PackageAPI extends  baseAPI implements Serializable {
         return iPermissionManager;
     }
 
-    public int getPKGUID(String pkgname){
+    public int getPKGUID(String pkgname , int uid){
         IPackageManager iPackageManager = getIPackageManager();
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-            return iPackageManager.getPackageUid(pkgname,0L,getTranslatedUserId());
+            return iPackageManager.getPackageUid(pkgname,0L,uid);
         }else if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.N){
-            return iPackageManager.getPackageUid(pkgname,0,getTranslatedUserId());
+            return iPackageManager.getPackageUid(pkgname,0,uid);
         }else{
-            return iPackageManager.getPackageUid(pkgname,getTranslatedUserId());
+            return iPackageManager.getPackageUid(pkgname,uid);
         }
-
     }
 
     public IPackageInstaller getIPackageInstaller() throws RemoteException {
@@ -296,6 +323,10 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
     }
 
+    public int getComponentEnabledSetting(ComponentName componentName, int userId){
+        return getIPackageManager().getComponentEnabledSetting(componentName,userId);
+    }
+
     private void closeIO(Closeable out) throws IOException {
         if(out != null){
             out.close();
@@ -349,8 +380,8 @@ public class PackageAPI extends  baseAPI implements Serializable {
         }
     }
 
-    public void UninstallPKG(String pkgname ){
-        UninstallPKG(pkgname,getTranslatedUserId(),-1);
+    public void UninstallPKG(String pkgname ,int uid){
+        UninstallPKG(pkgname,uid,-1);
     }
 
     /**
@@ -371,7 +402,8 @@ public class PackageAPI extends  baseAPI implements Serializable {
         try {
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
                 int flags = 0;
-                flags |= DELETE_ALL_USERS;
+                //加上这个flag,会删除所有用户下的应用,非必要不需要加
+//                flags |= DELETE_ALL_USERS;
                 IPackageInstaller iPackageInstaller = getIPackageInstaller();
                 LocalIntentReceiver r = new LocalIntentReceiver();
                 int sdkInt = Build.VERSION.SDK_INT;
@@ -420,33 +452,29 @@ public class PackageAPI extends  baseAPI implements Serializable {
         return null;
     }
 
-    public void setComponentOrPackageEnabledState(String pkgname_or_compname,int state){
-//        System.out.println(pkgname_or_compname + " --- " + enabledSettingToString(state));
+    public void setComponentOrPackageEnabledState(String pkgname_or_compname , int state,int uid){
         IPackageManager iPackageManager = getIPackageManager();
         ComponentName componentName = ComponentName.unflattenFromString(pkgname_or_compname);
-        int translatedUserId = getTranslatedUserId();
         if(componentName == null){
-            iPackageManager.setApplicationEnabledSetting(pkgname_or_compname,state,0,translatedUserId,"shell:" + getMyuid());
-//            System.out.println("Package "+pkgname_or_compname + " new state : " +enabledSettingToString(iPackageManager.getApplicationEnabledSetting(pkgname_or_compname,translatedUserId)));
+            iPackageManager.setApplicationEnabledSetting(pkgname_or_compname,state,0,uid,"shell:" + getMyuid());
         }else{
             if(Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU){
-                iPackageManager.setComponentEnabledSetting(componentName,state,0,translatedUserId,"shell:" + getMyuid());
+                iPackageManager.setComponentEnabledSetting(componentName,state,0,uid,"shell");
             }else{
-                iPackageManager.setComponentEnabledSetting(componentName, state, 0, translatedUserId);
+                iPackageManager.setComponentEnabledSetting(componentName, state, 0, uid);
             }
         }
 
     }
 
-    public void revokeRuntimePermission(String pkgname , String permission_str){
-        int translatedUserId = getTranslatedUserId();
+    public void revokeRuntimePermission(String pkgname , String permission_str, int uid){
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.Q){
             IPermissionManager iPermissionManager = getIPermissionManager();
-            iPermissionManager.revokeRuntimePermission(pkgname,permission_str,translatedUserId,null);
+            iPermissionManager.revokeRuntimePermission(pkgname,permission_str,uid,null);
         }else{
             IPackageManager iPackageManager = getIPackageManager();
             if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
-                iPackageManager.revokeRuntimePermission(pkgname,permission_str,translatedUserId);
+                iPackageManager.revokeRuntimePermission(pkgname,permission_str,uid);
             }else{
                 iPackageManager.revokePermission(pkgname,permission_str);
             }
@@ -454,42 +482,170 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
     }
 
-    public void grantRuntimePermission(String pkgname , String permission_str){
-        int translatedUserId = getTranslatedUserId();
+    public void grantRuntimePermission(String pkgname , String permission_str,int uid){
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.Q){
             IPermissionManager iPermissionManager = getIPermissionManager();
-            iPermissionManager.grantRuntimePermission(pkgname,permission_str,translatedUserId);
+            iPermissionManager.grantRuntimePermission(pkgname,permission_str,uid);
         }else{
             IPackageManager iPackageManager = getIPackageManager();
             if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
-                iPackageManager.grantRuntimePermission(pkgname,permission_str,translatedUserId);
+                iPackageManager.grantRuntimePermission(pkgname,permission_str,uid);
             }else{
                 iPackageManager.grantPermission(pkgname,permission_str);
             }
         }
     }
 
-    public void setPackageHideState(String pkgname,boolean hide){
+    public void setPackageHideState(String pkgname,boolean hide , int uid){
         IPackageManager iPackageManager = getIPackageManager();
-        iPackageManager.setApplicationHiddenSettingAsUser(pkgname, hide, getTranslatedUserId());
+        iPackageManager.setApplicationHiddenSettingAsUser(pkgname, hide, uid);
     }
 
 
-    public void SetInactive(String pkgname,boolean b){
+    public void SetInactive(String pkgname,boolean b,int uid){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
             IUsageStatsManager manager = getIUsageStatsManager();
-            manager.setAppInactive(pkgname,b,getMyuidHascode());
+            manager.setAppInactive(pkgname,b,uid);
         }
     }
 
-    public void SetStandbyBucket(String pkgname,String op){
+    public void SetStandbyBucket(String pkgname,String op,int uid){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
             IUsageStatsManager manager = getIUsageStatsManager();
-            manager.setAppStandbyBucket(pkgname,bucketNameToBucketValue(op),getMyuidHascode());
+            manager.setAppStandbyBucket(pkgname,bucketNameToBucketValue(op),uid);
         }
-
     }
 
+    public void createUser() {
+        IUserManager iUserManager = getIUserManager();
+        String name = "EAMA";
+        int translatedUserId = getTranslatedUserId();
+        String userType = USER_TYPE_PROFILE_MANAGED;
+        int flags = 0;
+        int sdk_int = Build.VERSION.SDK_INT;
+        if(disallowedPackages == null){
+            List<MyPackageInfo> installedPackages = getInstalledPackages(getCurrentUser());
+            ArrayList<String> strings = new ArrayList<>();
+            for (MyPackageInfo myPackageInfo : installedPackages) {
+                if(!isAllowPKG(myPackageInfo.packageName)){
+                    strings.add(myPackageInfo.packageName);
+                }
+            }
+            disallowedPackages = new String[strings.size()];
+            for (int i = 0; i < strings.size(); i++) {
+                disallowedPackages[i] = strings.get(i);
+            }
+        }
+        if(sdk_int >= Build.VERSION_CODES.R){
+            iUserManager.createProfileForUserWithThrow(name,userType,flags,translatedUserId,disallowedPackages);
+        }else if(sdk_int >= Build.VERSION_CODES.O){
+            flags |= FLAG_MANAGED_PROFILE;
+            iUserManager.createProfileForUser(name,flags,translatedUserId,disallowedPackages);
+        }else{
+            flags |= FLAG_MANAGED_PROFILE;
+            iUserManager.createProfileForUser(name,flags,translatedUserId);
+        }
+    }
+
+    public void removeUser(int userid){
+        if(userid != getCurrentUser()){
+            stopUser(userid);
+            IUserManager iUserManager = getIUserManager();
+            iUserManager.removeUser(userid);
+        }
+    }
+
+    public void stopUser(int userid){
+        IActivityManager iActivityManager = getIActivityManager();
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            iActivityManager.stopUser(userid,true,null);
+        }else{
+            iActivityManager.stopUser(userid,null);
+        }
+    }
+
+    public String[] getUsers(){
+        IUserManager iUserManager = getIUserManager();
+        List<UserInfo> ll = null;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+            ll = iUserManager.getUsers(false, false, false);
+        }else{
+            ll = iUserManager.getUsers(false);
+        }
+        int size = ll.size();
+        String a[] = new String[size];
+        for (int i = 0; i < size; i++) {
+            a[i]=String.valueOf(ll.get(i).id);
+        }
+        return a;
+    }
+
+    public void startUser(int userid){
+        getIActivityManager().startUserInBackground(userid);
+    }
+
+    public int getCurrentUser(){
+        return getIActivityManager().getCurrentUser().id;
+    }
+
+    public List<MyPackageInfo> getInstalledPackages(int userid){
+        int flags = 0;
+        long flags2 = 0;
+        //PackageManager.MATCH_UNINSTALLED_PACKAGES;加上这个flags会同步主用户的应用,建议不要添加,除非你需要排查所有应用
+//        flags |= PackageManager.MATCH_UNINSTALLED_PACKAGES;
+//        flags2 |= PackageManager.MATCH_UNINSTALLED_PACKAGES;
+        IPackageManager iPackageManager = getIPackageManager();
+        ParceledListSlice<PackageInfo> slice = Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU?iPackageManager.getInstalledPackages(flags2,userid):iPackageManager.getInstalledPackages(flags,userid);
+        List<PackageInfo> list = slice.getList();
+        ArrayList<MyPackageInfo> myPackageInfos = new ArrayList<>();
+        for (PackageInfo packageInfo : list) {
+            myPackageInfos.add(getMyPackageInfo(packageInfo.packageName,userid));
+        }
+        return myPackageInfos;
+    }
+
+    public MyPackageInfo getMyPackageInfo(String pkgname , int uid){
+        IPackageManager iPackageManager = getIPackageManager();
+        int flags = PackageManager.GET_PERMISSIONS|PackageManager.GET_ACTIVITIES|PackageManager.GET_DISABLED_COMPONENTS|PackageManager.GET_SERVICES|PackageManager.GET_RECEIVERS;
+        long flags2 = flags;
+        PackageInfo packageInfo = Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU ? iPackageManager.getPackageInfo(pkgname, flags2, uid) : iPackageManager.getPackageInfo(pkgname, flags, uid);
+        return copyPkgInfoToMyPkginfo(packageInfo);
+    }
+
+    public MyPackageInfo copyPkgInfoToMyPkginfo(PackageInfo packageInfo){
+        ApplicationInfo applicationInfo = packageInfo.applicationInfo;
+        MyApplicationInfo myApplicationInfo = new MyApplicationInfo(applicationInfo.flags, applicationInfo.enabled,applicationInfo.sourceDir);
+        ActivityInfo activities[] = packageInfo.activities;
+        ServiceInfo[] services = packageInfo.services;
+        ActivityInfo[] receivers = packageInfo.receivers;
+        MyActivityInfo myActivityInfo[]=new MyActivityInfo[0];
+        MyActivityInfo myServices[]=new MyActivityInfo[0];
+        MyActivityInfo myReceivers[]=new MyActivityInfo[0];
+        if(activities != null && activities.length > 0){
+            myActivityInfo = new MyActivityInfo[activities.length];
+            for (int i = 0; i < activities.length; i++) {
+                ActivityInfo a = activities[i];
+                myActivityInfo[i]=new MyActivityInfo(a.name,a.enabled,a.exported);
+            }
+        }
+        if(services != null && services.length > 0){
+            myServices = new MyActivityInfo[services.length];
+            for (int i = 0; i < services.length; i++) {
+                ServiceInfo service = services[i];
+                myServices[i] = new MyActivityInfo(service.name,service.enabled,service.exported);
+            }
+        }
+        if(receivers != null && receivers.length > 0){
+            myReceivers = new MyActivityInfo[receivers.length];
+            for (int i = 0; i < receivers.length; i++) {
+                ActivityInfo receiver = receivers[i];
+                myReceivers[i] = new MyActivityInfo(receiver.name,receiver.enabled,receiver.exported);
+            }
+        }
+
+        return new MyPackageInfo(packageInfo.packageName,packageInfo.versionCode,packageInfo.versionName,
+                myApplicationInfo,myActivityInfo,myServices,myReceivers,packageInfo.requestedPermissions);
+    }
 
     class LocalPackageInstallObserver extends android.app.PackageInstallObserver {
         boolean finished;
@@ -545,51 +701,6 @@ public class PackageAPI extends  baseAPI implements Serializable {
         public IBinder asBinder() {
             return this;
         }
-    }
-
-    private String installFailureToString(int result) {
-        Field[] fields = PackageManager.class.getFields();
-        for (Field f: fields) {
-            if (f.getType() == int.class) {
-                int modifiers = f.getModifiers();
-                // only look at public final static fields.
-                if (((modifiers & Modifier.FINAL) != 0) &&
-                        ((modifiers & Modifier.PUBLIC) != 0) &&
-                        ((modifiers & Modifier.STATIC) != 0)) {
-                    String fieldName = f.getName();
-                    if (fieldName.startsWith("INSTALL_FAILED_") ||
-                            fieldName.startsWith("INSTALL_PARSE_FAILED_")) {
-                        // get the int value and compare it to result.
-                        try {
-                            if (result == f.getInt(null)) {
-                                return fieldName;
-                            }
-                        } catch (IllegalAccessException e) {
-                            // this shouldn't happen since we only look for public static fields.
-                        }
-                    }
-                }
-            }
-        }
-
-        // couldn't find a matching constant? return the value
-        return Integer.toString(result);
-    }
-
-    private String enabledSettingToString(int state) {
-        switch (state) {
-            case COMPONENT_ENABLED_STATE_DEFAULT:
-                return "default";
-            case COMPONENT_ENABLED_STATE_ENABLED:
-                return "enabled";
-            case COMPONENT_ENABLED_STATE_DISABLED:
-                return "disabled";
-            case COMPONENT_ENABLED_STATE_DISABLED_USER:
-                return "disabled-user";
-            case COMPONENT_ENABLED_STATE_DISABLED_UNTIL_USED:
-                return "disabled-until-used";
-        }
-        return "unknown";
     }
 
     private int bucketNameToBucketValue(String name) {
@@ -664,5 +775,50 @@ public class PackageAPI extends  baseAPI implements Serializable {
         }
     }
 
+    private boolean isAllowPKG(String pkgname){
+        for (String s : allowPkgs()) {
+            if(pkgname.equals(s)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String[] allowPkgs() {
+        return new String[]{
+                "android",
+                "android.ext.services",
+                "android.ext.shared",
+                "com.android.bluetooth",
+                "com.android.htmlviewer",
+                "com.android.inputdevices",
+                "com.android.shell",
+                "com.android.certinstaller",
+                "com.android.externalstorage",
+                "com.android.providers.contacts",
+                "com.android.providers.downloads",
+                "com.android.providers.media",
+                "com.android.providers.settings",
+                "com.android.providers.userdictionary",
+                "com.android.server.telecom",
+                "com.android.packageinstaller",
+                "com.android.settings",
+                "com.android.providers.telephony",
+                "com.android.mms.service",
+                "com.android.webview",
+                "com.android.location.fused",
+                "com.android.cts.priv.ctsshim",
+                "com.android.statementservice",
+                "com.android.defcontainer",
+                "com.android.keychain",
+                "com.android.proxyhandler",
+                "com.android.dreams.basic",
+                "com.android.printspooler",
+                "com.android.pacprocessor",
+                "com.android.providers.downloads.ui",
+                "com.google.android.webview",
+                "com.lenovo.lsf"
+        };
+    }
 
 }
