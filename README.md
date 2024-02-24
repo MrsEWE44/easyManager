@@ -15,6 +15,15 @@ easyManager的工作原理借鉴了Shizuku、AppOps,与它们两个类似,easyMa
 
 [easyMangerSDK开发工具包](https://github.com/MrsEWE44/easyManagerSDK)
 
+- V1.2.3a
+
+1.完善分身应用备份与恢复功能。
+
+2.更新easyManagerSDK开发工具包,同步easyManager接口。
+
+3.修改版本号为1.2.3a
+
+
 - V1.2.3
 
 1.新增应用分身功能。

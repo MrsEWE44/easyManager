@@ -179,37 +179,18 @@ public class AppManagerLayoutActivity extends Activity {
                         PKGINFO pkginfo = pkginfos.get(i);
                         if(APP_CHOICES_INDEX == 0){
                             if(checkboxs.get(i)){
-                                if(mode == AppManagerEnum.APP_RESTORY){
-                                    if(pkginfo.getAppname().equals(pkginfo.getPkgname().trim()+"."+APP_BACKUP_AND_RESTORY_OPT2[APP_PERMIS_OPT_INDEX])){
-                                        list.add(pkginfo);
-                                    }
-                                }else {
-                                    list.add(pkginfo);
-                                }
-
+                                addPKGS(pkginfo,list);
                             }
                         }
 
                         if(APP_CHOICES_INDEX == 1){
                             if(!checkboxs.get(i)){
-                                if(mode == AppManagerEnum.APP_RESTORY){
-                                    if(pkginfo.getAppname().equals(pkginfo.getPkgname().trim()+"."+APP_BACKUP_AND_RESTORY_OPT2[APP_PERMIS_OPT_INDEX])){
-                                        list.add(pkginfo);
-                                    }
-                                }else {
-                                    list.add(pkginfo);
-                                }
+                                addPKGS(pkginfo,list);
                             }
                         }
 
                         if(APP_CHOICES_INDEX == 2){
-                            if(mode == AppManagerEnum.APP_RESTORY){
-                                if(pkginfo.getAppname().equals(pkginfo.getPkgname().trim()+"."+APP_BACKUP_AND_RESTORY_OPT2[APP_PERMIS_OPT_INDEX])){
-                                    list.add(pkginfo);
-                                }
-                            }else {
-                                list.add(pkginfo);
-                            }
+                            addPKGS(pkginfo,list);
                         }
 
                     }
@@ -568,6 +549,21 @@ public class AppManagerLayoutActivity extends Activity {
     }
     private String[] getAppChoicesOPT(){
         return new String[]{getLanStr(R.string.spin_item_selected),getLanStr(R.string.spin_item_no_selected),getLanStr(R.string.spin_item_all_selected)};
+    }
+
+    private void addPKGS(PKGINFO pkginfo,ArrayList<PKGINFO> list){
+        if(mode == AppManagerEnum.APP_RESTORY){
+            String appname = pkginfo.getAppname();
+            String trim = pkginfo.getPkgname().trim();
+            String end = APP_BACKUP_AND_RESTORY_OPT2[APP_PERMIS_OPT_INDEX];
+            String old_backup_file = trim+"."+end;
+            String user_backup_file = trim+"-"+uid+"."+end;
+            if(appname.equals(old_backup_file) || appname.equals(user_backup_file)){
+                list.add(pkginfo);
+            }
+        }else {
+            list.add(pkginfo);
+        }
     }
 
 }

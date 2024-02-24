@@ -110,14 +110,24 @@ public class startAdbService {
                                             break;
                                         case easyManagerEnums.BACKUP_APK:
                                             if(managerAPI.isRoot()){
-                                                managerAPI.backupApk(entity.getPkgname(), entity.getUid(), entity.getOpmodestr());
+                                                int uid = entity.getUid();
+                                                String[] users = managerAPI.getUsers();
+                                                if(users == null || users.length <= 1){
+                                                    uid=0;
+                                                }
+                                                managerAPI.backupApk(entity.getPkgname(), uid, entity.getOpmodestr());
                                             }else {
                                                 return getActiveROOT();
                                             }
                                             break;
                                         case easyManagerEnums.RESTORY_APK:
                                             if(managerAPI.isRoot()){
-                                                managerAPI.restoryApp(entity.getPkgname(), entity.getUid(), entity.getOpmodestr());
+                                                int uid = entity.getUid();
+                                                String[] users = managerAPI.getUsers();
+                                                if(users == null || users.length <= 1){
+                                                    uid=0;
+                                                }
+                                                managerAPI.restoryApp(entity.getPkgname(), uid, entity.getOpmodestr());
                                             }else {
                                                 return getActiveROOT();
                                             }

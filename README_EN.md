@@ -15,6 +15,15 @@ Moreover, the interface open to the public by EasyManager has been tested and su
 
 [easyMangerSDK Development Kit](https://github.com/MrsEWE44/easyManagerSDK)
 
+- V1.2.3a
+
+1.Improve the backup and restore function of the doppelganger application.
+
+2.Update the easyManager SDK and synchronize the easyManager API.
+
+3.The modified version number is 1.2.3a
+
+
 - V1.2.3
 
 1.Added application clone function.

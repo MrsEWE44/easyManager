@@ -114,14 +114,14 @@ public class easyManagerAPI extends baseAPI {
                 apkPath = new File(apkPath).getParent();
             }
             if(mode.equals("full")){
-                compressFileByBackup(fileEnd,apkPath,outbackuppkgdir,"file");
+                compressFileByBackup(fileEnd,apkPath,outbackuppkgdir,"file",uid);
                 backupData(uid,pkgname,fileEnd,outbackuppkgdir,sdpath);
             }else if(mode.equals("data")){
                 backupData(uid,pkgname,fileEnd,outbackuppkgdir,sdpath);
             }else if(mode.equals("apk")){
-                compressFileByBackup(fileEnd,apkPath,outbackuppkgdir,"file");
+                compressFileByBackup(fileEnd,apkPath,outbackuppkgdir,"file",uid);
             }
-            compressFileByBackup(fileEnd,outbackuppkgdir,outdir,pkgname);
+            compressFileByBackup(fileEnd,outbackuppkgdir,outdir,pkgname,uid);
             ft.deleteFile(outbackuppkgdir);
         }
     }
@@ -129,18 +129,19 @@ public class easyManagerAPI extends baseAPI {
     //恢复已经备份的应用
     public void restoryApp(String pkgname , int uid, String parm) {
         String[] s = parm.split("---");
+        pkgname=pkgname.replaceAll("-"+uid,"");
         if(s != null){
             String mode = s[0].trim();
             String fileEnd = s[1].trim();
             String sdpath = s[2].trim();
             String backup_dir_path = sdpath+"/easyManager/backup";
             String pkg_out_dir_path = backup_dir_path+"/"+pkgname;
-            decompressFileOnBackup(fileEnd,backup_dir_path,backup_dir_path,pkgname);
+            decompressFileOnBackup(fileEnd,backup_dir_path,backup_dir_path,pkgname,uid);
             if(mode.equals("full")){
-                decompressFileOnBackup(fileEnd,pkg_out_dir_path,pkg_out_dir_path,"file");
+                decompressFileOnBackup(fileEnd,pkg_out_dir_path,pkg_out_dir_path,"file",uid);
                 String baseAPk = getBaseAPk(pkg_out_dir_path);
                 if(baseAPk != null){
-                    if(uid > 0){
+                    if(uid > 1){
                         installAPK(baseAPk,uid);
                     }else{
                         installAPK(baseAPk);
@@ -152,7 +153,7 @@ public class easyManagerAPI extends baseAPI {
             }else if(mode.equals("data")){
                 restoryData(uid,pkgname,fileEnd,sdpath,pkg_out_dir_path);
             }else if(mode.equals("apk")){
-                decompressFileOnBackup(fileEnd,pkg_out_dir_path,pkg_out_dir_path,"file");
+                decompressFileOnBackup(fileEnd,pkg_out_dir_path,pkg_out_dir_path,"file",uid);
                 String baseAPk =getBaseAPk(pkg_out_dir_path);
                 if(baseAPk != null){
                     if(uid > 0){
@@ -186,31 +187,34 @@ public class easyManagerAPI extends baseAPI {
         String pkg_data_user_path = data_user_path+"/"+pkgname;
         int pkguid = packageAPI.getPKGUID(pkgname,uid);
         if(uid > 0){
-            decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_user_path,"data");
+            decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_user_path,"data",uid);
             setMode(data_user_path+"/"+pkgname,pkguid);
         }else {
             File file = new File(pkg_data_path1);
             File file2 = new File(pkg_data_path2);
             File file3 = new File(pkg_data_user_path);
             if(file.exists()){
-                decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_path1,"data");
+                decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_path1,"data",uid);
                 setMode(pkg_data_path1,pkguid);
             }
             else if(file2.exists()){
-                decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_path2,"data");
+                decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_path2,"data",uid);
                 setMode(pkg_data_path2,pkguid);
             }
             else if(file3.exists()){
-                decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_user_path,"data");
+                decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_user_path,"data",uid);
                 setMode(pkg_data_user_path,pkguid);
             }else{
                 System.err.println("restoryData : " + uid + " -- " + pkguid + " -- " + pkgname + " -- " + fileEnd + " -- " + new File(data_path1).exists());
             }
         }
-        decompressFileOnBackup(fileEnd,pkg_out_dir_path,sddatapath,"sddata");
-        setMode(sddatapath+"/"+pkgname,pkguid);
-        decompressFileOnBackup(fileEnd,pkg_out_dir_path,sdobbpath,"sdobb");
-        setMode(sdobbpath+"/"+pkgname,pkguid);
+        File file = new File(sdandroidpath);
+        if(file.exists()){
+            decompressFileOnBackup(fileEnd,pkg_out_dir_path,sddatapath,"sddata",uid);
+            setMode(sddatapath+"/"+pkgname,pkguid);
+            decompressFileOnBackup(fileEnd,pkg_out_dir_path,sdobbpath,"sdobb",uid);
+            setMode(sdobbpath+"/"+pkgname,pkguid);
+        }
     }
 
     public void backupData(int uid ,String pkgname , String fileEnd, String outbackuppkgdir  , String sdpath){
@@ -220,23 +224,26 @@ public class easyManagerAPI extends baseAPI {
         String sdandroidpath=sdpath+"/Android";
         String sddatapath = sdandroidpath+"/data/"+pkgname;
         String sdobbpath = sdandroidpath+"/obb/"+pkgname;
-        if(uid > 0){
-            compressFileByBackup(fileEnd,data_user_path,outbackuppkgdir,"data");
+        if(uid > 1){
+            compressFileByBackup(fileEnd,data_user_path,outbackuppkgdir,"data",uid);
         }else{
             File file = new File(data_path1);
             if(file.exists()){
-                compressFileByBackup(fileEnd,data_path1,outbackuppkgdir,"data");
+                compressFileByBackup(fileEnd,data_path1,outbackuppkgdir,"data",uid);
             }else{
-                compressFileByBackup(fileEnd,data_path2,outbackuppkgdir,"data");
+                compressFileByBackup(fileEnd,data_path2,outbackuppkgdir,"data",uid);
             }
         }
-        File sddatapathFile = new File(sddatapath);
-        if(sddatapathFile.exists()){
-            compressFileByBackup(fileEnd,sddatapath,outbackuppkgdir,"sddata");
-        }
-        File sdobbpathFile = new File(sdobbpath);
-        if(sdobbpathFile.exists()){
-            compressFileByBackup(fileEnd,sdobbpath,outbackuppkgdir,"sdobb");
+        File file = new File(sdandroidpath);
+        if(file.exists()){
+            File sddatapathFile = new File(sddatapath);
+            if(sddatapathFile.exists()){
+                compressFileByBackup(fileEnd,sddatapath,outbackuppkgdir,"sddata",uid);
+            }
+            File sdobbpathFile = new File(sdobbpath);
+            if(sdobbpathFile.exists()){
+                compressFileByBackup(fileEnd,sdobbpath,outbackuppkgdir,"sdobb",uid);
+            }
         }
     }
 
@@ -244,23 +251,40 @@ public class easyManagerAPI extends baseAPI {
         CMD cmd = new CMD("chown -R " + pkguid + ":" + pkguid + " " + dirPath, false);
     }
 
-    public void compressFileByBackup(String fileEnd,String dirPath , String outPath ,String name ){
+    public void compressFileByBackup(String fileEnd,String dirPath , String outPath ,String name ,Integer uid){
+        String head_path = outPath+"/"+name+"-"+uid;
         if(fileEnd.equals("txz")){
-            CompressOrDecompressFile(dirPath,outPath+"/"+name+".tar.xz",fileCompressApi.TAR_XZ_COMPRESS_TYPE);
+            CompressOrDecompressFile(dirPath,head_path+".tar.xz",fileCompressApi.TAR_XZ_COMPRESS_TYPE);
         }else if(fileEnd.equals("tbz")){
-            CompressOrDecompressFile(dirPath,outPath+"/"+name+".tar.bz",fileCompressApi.TAR_BZIP_COMPRESS_TYPE);
+            CompressOrDecompressFile(dirPath,head_path+".tar.bz",fileCompressApi.TAR_BZIP_COMPRESS_TYPE);
         }else if(fileEnd.equals("tgz")){
-            CompressOrDecompressFile(dirPath,outPath+"/"+name+".tar.gz",fileCompressApi.TAR_GZIP_COMPRESS_TYPE);
+            CompressOrDecompressFile(dirPath,head_path+".tar.gz",fileCompressApi.TAR_GZIP_COMPRESS_TYPE);
         }
     }
 
-    public void decompressFileOnBackup(String fileEnd,String dirPath , String outPath ,String name ){
+    public void decompressFileOnBackup(String fileEnd,String dirPath , String outPath ,String name , Integer uid){
+        String head_path = dirPath+"/"+name;
         if(fileEnd.equals("txz")){
-            CompressOrDecompressFile(dirPath+"/"+name+".tar.xz",outPath,fileCompressApi.TAR_XZ_DECOMPRESS_TYPE);
+            String path = head_path+"-"+uid + ".tar.xz";
+            File file = new File(path);
+            if(!file.exists()){
+                path = head_path+".tar.xz";
+            }
+            CompressOrDecompressFile(path,outPath,fileCompressApi.TAR_XZ_DECOMPRESS_TYPE);
         }else if(fileEnd.equals("tbz")){
-            CompressOrDecompressFile(dirPath+"/"+name+".tar.bz",outPath,fileCompressApi.TAR_BZIP_DECOMPRESS_TYPE);
+            String path = head_path+"-"+uid + ".tar.bz";
+            File file = new File(path);
+            if(!file.exists()){
+                path = head_path+".tar.bz";
+            }
+            CompressOrDecompressFile(path,outPath,fileCompressApi.TAR_BZIP_DECOMPRESS_TYPE);
         }else if(fileEnd.equals("tgz")){
-            CompressOrDecompressFile(dirPath+"/"+name+".tar.gz",outPath,fileCompressApi.TAR_GZIP_DECOMPRESS_TYPE);
+            String path = head_path+"-"+uid + ".tar.gz";
+            File file = new File(path);
+            if(!file.exists()){
+                path = head_path+".tar.gz";
+            }
+            CompressOrDecompressFile(path,outPath,fileCompressApi.TAR_GZIP_DECOMPRESS_TYPE);
         }
     }
 
