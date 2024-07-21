@@ -33,7 +33,6 @@ public class DialogUtils extends DialogBaseUtils {
 
     public easyManagerUtils easyMUtils = new easyManagerUtils();
 
-
     public DialogUtils(){}
 
     public void findLocalImgDialog(Context context, Activity activity, ListView lv1 , ArrayList<String> strings, ArrayList<Boolean> checkboxs){
@@ -71,7 +70,7 @@ public class DialogUtils extends DialogBaseUtils {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                CMD cmd = new easyManagerUtils().runCMD(cmdstr);
+                CMD cmd = easyMUtils.getServerStatus() ? easyMUtils.runCMD(cmdstr) : new CMD(cmdstr,false);
                 sendHandlerMSG(handler,0);
             }
         }).start();

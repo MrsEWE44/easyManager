@@ -24,7 +24,7 @@ public class startAdbService {
                     @Override
                     public CMD sendCMD(String cmdstr) {
                         if(cmdstr != null){
-                            return new CMD(cmdstr,managerAPI.isRoot());
+                            return new CMD(cmdstr,false);
                         }
                         return null;
                     }
@@ -233,7 +233,7 @@ public class startAdbService {
                             }
                         }
 
-                        return new String(Process.myUid()+" --- " + Process.myUserHandle().hashCode());
+                        return new String(Process.myUid()+" has not permission...");
                     }
                 });
 

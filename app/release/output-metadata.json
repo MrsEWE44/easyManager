@@ -11,10 +11,11 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 8,
-      "versionName": "1.2.3a",
+      "versionCode": 9,
+      "versionName": "1.2.3b",
       "outputFile": "easyManager_release.apk"
     }
   ],
-  "elementType": "File"
+  "elementType": "File",
+  "minSdkVersionForDexing": 14
 }

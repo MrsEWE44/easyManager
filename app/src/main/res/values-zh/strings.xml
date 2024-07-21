@@ -428,10 +428,10 @@
     <string name="help_question_2">它的优势是什么?</string>
     <string name="help_question_3">工作原理是什么?</string>
     <string name="help_question_4">它与shizuku的区别是什么?</string>
-    <string name="help_question_1_reply">easyManager是一个轻量化、核心化、简单易用的安卓系统管理工具,它非常适合在原生系统上使用,它还支持安卓4.4这种老设备上使用,同时也支持安卓14的新设备.正如你所看到的,它不会放弃任何还在使用的旧设备,它会一直支持下去,也许现在刚开始,并不完善,但它拥有无限的未来.</string>
+    <string name="help_question_1_reply">easyManager是一个轻量化、核心化、简单易用的安卓系统管理工具,它非常适合在原生系统上使用,它还支持安卓4.0这种老设备上使用,同时也支持安卓14的新设备.正如你所看到的,它不会放弃任何还在使用的旧设备,它会一直支持下去,也许现在刚开始,并不完善,但它拥有无限的未来.</string>
     <string name="help_question_2_reply">easyManager支持adb与root两种模式运行,正如你所见到,它也支持将自己私有API公开给任何一个通过授权的应用访问.\n它现在提供应用的批量权限管理、后台进程清理、软件静默安装/卸载、单个应用服务/活动/广播/权限管理、应用网络管控、备份与恢复、文件共享等功能.\n它提供大量一键功能,你只需要看完帮助文档,然后选择对应的规则,最后点击那个大大的按钮,它就可以完成你的预期.\n</string>
     <string name="help_question_3_reply">easyManager的工作原理借鉴了Shizuku、AppOps,与它们两个类似,easyManager也需要开启一个单独的后台进程到shell或者root shell里面,才能正常工作.\n通过Socket进行TCP通信,执行对应的操作.\n</string>
-    <string name="help_question_4_reply">跟Shizuku不同的是,easyManager向下拓展了安卓4.4低版本的支持,同时对外也提供对应的SDK开发包工具,任何接入SDK的第三方程序,都可以通过SDK来使用easyManager完整的、私有的功能函数接口,大部分常用的功能都不需要开发者再次实现,easyManager已经全部封装好了,开发者只需要关注界面交互部分.\n并且,easyManager对外开放的接口是经过测试的,支持安卓4.4-安卓14,它们工作稳定而且正常.</string>
+    <string name="help_question_4_reply">跟Shizuku不同的是,easyManager向下拓展了安卓4.0低版本的支持,同时对外也提供对应的SDK开发包工具,任何接入SDK的第三方程序,都可以通过SDK来使用easyManager完整的、私有的功能函数接口,大部分常用的功能都不需要开发者再次实现,easyManager已经全部封装好了,开发者只需要关注界面交互部分.\n并且,easyManager对外开放的接口是经过测试的,支持安卓4.0-安卓14,它们工作稳定而且正常.</string>
     <string name="app_clone_menu">应用分身</string>
     <string name="app_clone_button">应用分身</string>
     <string name="app_clone_manager_button">分身管理</string>
@@ -459,8 +459,11 @@
     <string name="show_clone_user_all_installed_app">显示分身用户所有应用</string>
     <string name="show_clone_user_uid">显示分身用户UID</string>
     <string name="show_start_app_clone_user">启动分身用户</string>
-
-
+    <string name="show_app_clone_low_version_msg">安卓5.0以下不支持分身功能.</string>
+    <string name="button_home_run_cmd">运行命令</string>
+    <string name="run_cmd_run_bt">运行</string>
+    <string name="run_cmd_input_cmd_str_hint">请输入想要执行的命令</string>
+    <string name="show_help_getRunCmdHELP">该界面主要是用来执行设备自带命令的,这里做的一切操作,都是在ProcessBuilder服务实现.\n\n        在编辑框内输入你想执行的命令，再点击旁边的按钮，即可执行该命令，并在下面空白界面返回执行结果.\n</string>
 
 
 </resources>

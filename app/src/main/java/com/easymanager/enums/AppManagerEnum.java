@@ -19,6 +19,8 @@ public class AppManagerEnum {
     public final static int SET_RATE=16;
     public final static int DEL_X=17;
     public final static int FILE_SHARED=18;
+    public final static int APP_MANAGER=19;
+    public final static int RUN_CMD=20;
     public final static int APP_INFO_LAYOUT=200;
 
 

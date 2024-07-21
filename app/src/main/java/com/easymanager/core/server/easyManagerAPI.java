@@ -196,16 +196,14 @@ public class easyManagerAPI extends baseAPI {
             if(file.exists()){
                 decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_path1,"data",uid);
                 setMode(pkg_data_path1,pkguid);
-            }
-            else if(file2.exists()){
+            } else if(file2.exists()){
                 decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_path2,"data",uid);
                 setMode(pkg_data_path2,pkguid);
-            }
-            else if(file3.exists()){
+            } else if(file3.exists()){
                 decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_user_path,"data",uid);
                 setMode(pkg_data_user_path,pkguid);
             }else{
-                System.err.println("restoryData : " + uid + " -- " + pkguid + " -- " + pkgname + " -- " + fileEnd + " -- " + new File(data_path1).exists());
+                System.err.println("restoryData Error : " + uid + " -- " + pkguid + " -- " + pkgname + " -- " + fileEnd + " -- " + new File(data_path1).exists());
             }
         }
         File file = new File(sdandroidpath);
@@ -456,14 +454,8 @@ public class easyManagerAPI extends baseAPI {
     }
 
     public int requestGrantUserState(String requestpkg){
-        if(requestpkg.equals("com.easymanager")){
-            if(getConfig(requestpkg,getCachePathOnXML(),getGrantUserConfigName()) == null){
-                writeConfig(requestpkg,0,getCachePathOnXML(),getGrantUserConfigName());
-            }
-        }else {
-            if(getConfig(requestpkg,getCachePathOnXML(),getGrantUserConfigName()) == null){
-                writeConfig(requestpkg,1,getCachePathOnXML(),getGrantUserConfigName());
-            }
+        if(getConfig(requestpkg,getCachePathOnXML(),getGrantUserConfigName()) == null){
+            writeConfig(requestpkg,requestpkg.equals("com.easymanager")?0:1,getCachePathOnXML(),getGrantUserConfigName());
         }
         return getConfig(requestpkg,getCachePathOnXML(),getGrantUserConfigName()) != null ? 1:-1;
     }

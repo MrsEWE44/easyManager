@@ -29,6 +29,8 @@ import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
 import com.easymanager.utils.PackageUtils;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -351,6 +353,7 @@ public class FileSharedLayoutActivity extends Activity {
         private Context context;
 
         private ServerSocket serverSocket = null;
+        private Socket socket = null;
 
         public void start(Context context2) {
             context = context2;
@@ -362,16 +365,13 @@ public class FileSharedLayoutActivity extends Activity {
                     try {
                         serverSocket = new ServerSocket(s.isEmpty() ? default_port : Integer.valueOf(s));
                         Log.d(FileSharedLayoutActivity.class.getName(), "listen port : " + serverSocket.getLocalPort());
-//                System.out.println("服务器端正在监听端口："+serverSocket.getLocalPort());
-
 
                         while (true) {//死循环时刻监听客户端链接
                             //开始服务
                             try {
-                                Socket socket = serverSocket.accept();
+                                socket = serverSocket.accept();
                                 Log.d(FileSharedLayoutActivity.class.getName(), "new con : " + socket.getInetAddress() + ":" + socket.getPort());
-//                    System.out.println("建立了与客户端一个新的tcp连接，客户端地址为："+socket.getInetAddress()
-//                            +":"+socket.getPort());
+
                                 //读取HTTP请求信息
                                 InputStream socketIn = socket.getInputStream();
                                 int size = socketIn.available();
@@ -379,7 +379,7 @@ public class FileSharedLayoutActivity extends Activity {
                                 socketIn.read(b);
                                 String request = new String(b);
                                 String[] split = request.split("\r\n");
-
+//                                Log.d("request",request);
                                 //创建HTTP响应结果
                                 //创建响应协议、状态
                                 String httpStatus = "HTTP/1.1 200 OK\r\n";
@@ -406,8 +406,7 @@ public class FileSharedLayoutActivity extends Activity {
                                                     }
                                                     data = data.replaceAll("//", "/");
                                                     File file = new File(data);
-
-//                            Log.d("data",data + " -- " + parenPath + " -- " + file.getAbsolutePath());
+//                                                    Log.d("data",data + " -- " + parenPath + " -- " + file.getAbsolutePath());
                                                     if (file.isDirectory()) {
                                                         tempList.clear();
                                                         File[] files = file.listFiles();
@@ -429,25 +428,28 @@ public class FileSharedLayoutActivity extends Activity {
                                                     } else {
                                                         String contentType = "attachment;filename=" + URLEncoder.encode(file.getName(), "utf-8");
                                                         //创建响应头
-                                                        String responseHeader = "Content-disposition:" + contentType + "\r\nContent-Length: " + file.length() + "\r\n\r\n";
+                                                        String responseHeader = "Content-Description:File Transfer\r\nContent-disposition:" + contentType + "\r\nContent-Length: " + file.length() + "\r\nContent-Transfer-Encoding:binary\r\n\r\n";
                                                         OutputStream socketOut = socket.getOutputStream();
                                                         //发送响应协议、状态码及响应头、正文
                                                         socketOut.write(httpStatus.getBytes());
                                                         socketOut.write(responseHeader.getBytes());
                                                         InputStream in = new FileInputStream(file);
-                                                        int len = 0;
-                                                        b = new byte[1024];
+                                                        byte[] b2 = new byte[1024];
+                                                        int len = in.read(b2);
                                                         try {
-                                                            while ((len = in.read(b)) != -1) {
+                                                            while (len != -1) {
                                                                 //在这里会出现下载出错的问题，需要改善一下。
                                                                 //2023年1月30日18点32分
-                                                                socketOut.write(b, 0, len);
+                                                                //2024年3月3日15点27分，修复失败，暂时不清楚什么原因导致，安卓4.4无法正常使用
+                                                                socketOut.write(b2, 0, len);
+                                                                len = in.read(b2);
                                                             }
                                                         } catch (Exception e) {
-                                                            Log.d(FileSharedLayoutActivity.class.getName(), e.getMessage());
                                                             e.printStackTrace();
                                                         } finally {
+                                                            in.close();
                                                             socketOut.close();
+                                                            socket.close();
                                                         }
 
                                                     }
@@ -462,14 +464,15 @@ public class FileSharedLayoutActivity extends Activity {
 
                                     }
                                 }
-                                socket.shutdownInput();
-                                socket.shutdownOutput();
-                                socket.close();
+                                if(!socket.isClosed()){
+                                    socket.close();
+                                }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                             isFirst=false;
                         }
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

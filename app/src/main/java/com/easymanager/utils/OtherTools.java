@@ -31,9 +31,10 @@ public class OtherTools {
     }
 
     public void addMenuBase(Context context , Menu menu,int menumode){
+        menu.clear();
         String help = tv.getLanguageString(context, R.string.menu_help);
         String exit = tv.getLanguageString(context, R.string.menu_exit);
-        if(menumode == AppManagerEnum.APP_INSTALL_LOCAL_FILE || menumode == AppManagerEnum.MOUNT_LOCAL_IMG || menumode == AppManagerEnum.CREATE_IMG || menumode == AppManagerEnum.SET_NTP || menumode == AppManagerEnum.SET_RATE || menumode == AppManagerEnum.DEL_X || menumode == AppManagerEnum.FILE_SHARED){
+        if(menumode == AppManagerEnum.RUN_CMD ||menumode == AppManagerEnum.APP_INSTALL_LOCAL_FILE || menumode == AppManagerEnum.MOUNT_LOCAL_IMG || menumode == AppManagerEnum.CREATE_IMG || menumode == AppManagerEnum.SET_NTP || menumode == AppManagerEnum.SET_RATE || menumode == AppManagerEnum.DEL_X || menumode == AppManagerEnum.FILE_SHARED){
             menu.add(Menu.NONE,5,0,help);
             menu.add(Menu.NONE,6,0,exit);
         }else if(menumode == AppManagerEnum.APP_RESTORY){

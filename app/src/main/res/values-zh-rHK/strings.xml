@@ -199,10 +199,10 @@
     <string name="help_question_2">它的優勢是什麽?</string>
     <string name="help_question_3">工作原理是什麽?</string>
     <string name="help_question_4">它與shizuku的區別是什麽?</string>
-    <string name="help_question_1_reply">easyManager是一個慶亮化、核心化、簡單易用的安卓系統管理工具,它非常適合在AOSP這種原生系統上使用,它還支持安卓4.4這種老設備,同時也支持安卓14的新設備,這個項目不會放棄任何還在服役或者日用的設備,它的未來充滿無限可能.</string>
+    <string name="help_question_1_reply">easyManager是一個慶亮化、核心化、簡單易用的安卓系統管理工具,它非常適合在AOSP這種原生系統上使用,它還支持安卓4.0這種老設備,同時也支持安卓14的新設備,這個項目不會放棄任何還在服役或者日用的設備,它的未來充滿無限可能.</string>
     <string name="help_question_2_reply">easyManager支持adb與root兩種模式運行，正如你所見到，它也支持將自己私有API公開給任何一個通過授權的應用訪問.\n它現在提供應用的批量許可權管理、後臺進程清理、軟件靜默安裝/卸載、單個應用服務/活動/廣播/許可權管理、應用網絡管控、備份與恢復、文件共亯等功能.\n它提供大量一鍵功能，你只需要看完幫助文檔，然後選擇對應的規則，最後點擊那個大大的按鈕，它就可以完成你的預期.</string>
     <string name="help_question_3_reply">easyManager的工作原理借鑒了Shizuku、AppOps，與它們兩個類似，easyManager也需要開啟一個單獨的後臺進程到shell或者root shell裡面，才能正常工作.\n通過Socket進行TCP通信，執行對應的操作.</string>
-    <string name="help_question_4_reply">跟Shizuku不同的是，easyManager向下拓展了安卓4.4低版本的支持，同時對外也提供對應的SDK開發包工具，任何接入SDK的協力廠商程式，都可以通過SDK來使用easyManager完整的、私有的功能函數介面，大部分常用的功能都不需要開發者再次實現，easyManager已經全部封裝好了，開發者只需要關注介面互動部分.\n並且，easyManager對外開放的介面是經過測試的，支持安卓4.4-安卓14，它們工作穩定而且正常.</string>
+    <string name="help_question_4_reply">跟Shizuku不同的是，easyManager向下拓展了安卓4.0低版本的支持，同時對外也提供對應的SDK開發包工具，任何接入SDK的協力廠商程式，都可以通過SDK來使用easyManager完整的、私有的功能函數介面，大部分常用的功能都不需要開發者再次實現，easyManager已經全部封裝好了，開發者只需要關注介面互動部分.\n並且，easyManager對外開放的介面是經過測試的，支持安卓4.0-安卓14，它們工作穩定而且正常.</string>
     <string name="app_clone_menu">軟件克隆</string>
     <string name="app_clone_button">軟件克隆</string>
     <string name="app_clone_manager_button">克隆管理</string>
@@ -233,4 +233,9 @@
     <string name="show_help_getAppCloneHELP">"\n        這個界面主要是用來實現克隆應用的,因爲從Android5.0開始,Google對Android的多用戶機制進行了重大改革,允許在主用戶下使用其它克隆用戶的程序.\n\n\n\n        1.右上角的菜單欄,可以獲取當前用戶對應狀態的程序.\n\n        2.上面的編輯框,可以填入一個整數,用於產生對應數量的克隆分身程序.\n\n        3.右下角有個選項,允許批量或者單個選擇程序來進行克隆操作.\n\n        4.下面是開始進行克隆程序分身的按鈕,你單擊它,就可以讓選中或者未選中的程序執行克隆操作.\n\n        5.上面菜單旁邊是一個搜索按鈕,可以搜索當前程序列表的内容,按下回車就可以把搜索結果同步到當前程序列表.\n\n        6.單擊左上角的圖案,會回退到上一級菜單.\n\n\n\n    "</string>
     <string name="show_help_getAppCloneManagerHELP">"\n        這個界面主要是用來管理克隆應用的,因爲從Android5.0開始,Google對Android的多用戶機制進行了重大改革,允許在主用戶下使用其它克隆用戶的程序.\n\n\n\n        1.右上角的菜單欄,可以獲取當前用戶對應狀態的程序.\n\n        2.左下角有個選項,用於選擇對克隆程序的新增或者刪除操作.\n\n        3.右下角有個選項,允許批量或者單個選擇程序來進行新增或者刪除操作.\n\n        4.下面是應用更改的按鈕,你單擊它,就可以讓選中或者未選中的程序和克隆程序用戶執行新增或者刪除操作.\n\n        5.上面菜單旁邊是一個搜索按鈕,可以搜索當前程序列表的内容,按下回車就可以把搜索結果同步到當前程序列表.\n\n        6.單擊左上角的圖案,會回退到上一級菜單.\n\n\n\n    "</string>
     <string name="show_help_getAppCloneRemoveHELP">"\n        這個界面主要是用來刪除克隆應用的,因爲從Android5.0開始,Google對Android的多用戶機制進行了重大改革,允許在主用戶下使用其它克隆用戶的程序.\n\n\n\n        1.右上角的菜單欄,可以獲取本地的克隆程序用戶UID.\n\n        2.右下角有個選項,允許批量或者單個選擇克隆程序用戶UID來進行刪除操作.\n\n        3.下面是應用更改的按鈕,你單擊它,就可以讓選中或者未選中的克隆程序用戶執行刪除操作.\n\n        4.上面菜單旁邊是一個搜索按鈕,不要單擊它.\n\n        5.單擊左上角的圖案,會回退到上一級菜單.\n\n\n\n    "</string>
+    <string name="show_app_clone_low_version_msg">Android 5.0 及以下版本不支援克隆功能。</string>
+    <string name="button_home_run_cmd">運行命令</string>
+    <string name="run_cmd_run_bt">運行</string>
+    <string name="run_cmd_input_cmd_str_hint">請輸入您要執行的命令</string>
+    <string name="show_help_getRunCmdHELP">此介面主要用於執行設備附帶的命令，此處完成的所有操作都在 ProcessBuilder 服務中實現。\n\n在編輯框中輸入要執行的命令，然後按下該命令旁邊的按鈕執行該命令，並在下面的空白介面中返回執行結果。\n</string>
 </resources>

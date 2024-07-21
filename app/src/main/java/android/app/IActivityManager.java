@@ -8,6 +8,7 @@ import android.os.RemoteException;
 
 public interface IActivityManager extends IInterface {
 
+    void forceStopPackage(String packageName);
     void forceStopPackage(String packageName, int userId);
     boolean killPids( int[] pids,  String reason, boolean secure);
     boolean startUserInBackground(int userid);

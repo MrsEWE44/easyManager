@@ -3,6 +3,7 @@ package com.easymanager.fragment;
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,18 +15,17 @@ import com.easymanager.activitys.AppCloneLayoutActivity;
 import com.easymanager.activitys.AppManagerLayoutActivity;
 import com.easymanager.activitys.CreateImgLayoutActivity;
 import com.easymanager.activitys.FileSharedLayoutActivity;
+import com.easymanager.activitys.RunCommandLayoutActivity;
 import com.easymanager.activitys.UsbModeLayoutActivity;
 import com.easymanager.enums.AppManagerEnum;
 
 public class HomeFragmentLayout extends Fragment {
 
-    private Button hflappopsbt,hflappdisable,hflfirewall,hflinlocalapk,hfldumpapp,hfldelapp;
-    private Button hflcleanprocess;
+    private Button hflinlocalapk,hflappmanagerbt;
     private Button hflbackupapp,hflrestoryapp;
     private Button hflappclone,hflappclonemanage,hflappcloneremove;
     private Button hflmountlocalimg,hflcreateimg;
-
-    private Button hflsetrate,hfldelx,hflsetntp,hflfileshared;
+    private Button hflsetrate,hfldelx,hflsetntp,hflfileshared,hflruncmd;
 
     private int uid;
 
@@ -48,13 +48,7 @@ public class HomeFragmentLayout extends Fragment {
     }
 
     private void initBt(View view){
-        hflappopsbt = view.findViewById(R.id.hflappopsbt);
-        hflappdisable = view.findViewById(R.id.hflappdisable);
-        hflfirewall = view.findViewById(R.id.hflfirewall);
         hflinlocalapk = view.findViewById(R.id.hflinlocalapk);
-        hfldumpapp = view.findViewById(R.id.hfldumpapp);
-        hfldelapp = view.findViewById(R.id.hfldelapp);
-        hflcleanprocess = view.findViewById(R.id.hflcleanprocess);
         hflbackupapp = view.findViewById(R.id.hflbackupapp);
         hflrestoryapp = view.findViewById(R.id.hflrestoryapp);
         hflmountlocalimg = view.findViewById(R.id.hflmountlocalimg);
@@ -66,18 +60,14 @@ public class HomeFragmentLayout extends Fragment {
         hflappclone = view.findViewById(R.id.hflappclone);
         hflappclonemanage = view.findViewById(R.id.hflappclonemanage);
         hflappcloneremove = view.findViewById(R.id.hflappcloneremove);
+        hflappmanagerbt = view.findViewById(R.id.hflappmanagerbt);
+        hflruncmd = view.findViewById(R.id.hflruncmd);
         btClick();
     }
 
     private void btClick(){
 
-        hflappopsbt.setOnClickListener(clickListener);
-        hflappdisable.setOnClickListener(clickListener);
-        hflfirewall.setOnClickListener(clickListener);
         hflinlocalapk.setOnClickListener(clickListener);
-        hfldumpapp.setOnClickListener(clickListener);
-        hfldelapp.setOnClickListener(clickListener);
-        hflcleanprocess.setOnClickListener(clickListener);
         hflbackupapp.setOnClickListener(clickListener);
         hflrestoryapp.setOnClickListener(clickListener);
         hflmountlocalimg.setOnClickListener(clickListener);
@@ -89,18 +79,19 @@ public class HomeFragmentLayout extends Fragment {
         hflappclone.setOnClickListener(clickListener);
         hflappclonemanage.setOnClickListener(clickListener);
         hflappcloneremove.setOnClickListener(clickListener);
-
+        hflappmanagerbt.setOnClickListener(clickListener);
+        hflruncmd.setOnClickListener(clickListener);
         initBtColor();
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
+            hflappclonemanage.setEnabled(false);
+            hflappcloneremove.setEnabled(false);
+            hflappclone.setEnabled(false);
+        }
     }
 
     private void initBtColor(){
-        setBtColor(hflappopsbt,true,true);
-        setBtColor(hflappdisable,true,false);
-        setBtColor(hflfirewall,true,false);
+
         setBtColor(hflinlocalapk,true,true);
-        setBtColor(hfldumpapp,false,false);
-        setBtColor(hfldelapp,true,true);
-        setBtColor(hflcleanprocess,true,true);
         setBtColor(hflbackupapp,true,false);
         setBtColor(hflrestoryapp,true,false);
         setBtColor(hflmountlocalimg,true,false);
@@ -112,11 +103,18 @@ public class HomeFragmentLayout extends Fragment {
         setBtColor(hflappclone,true,true);
         setBtColor(hflappclonemanage,true,true);
         setBtColor(hflappcloneremove,true,true);
+        setBtColor(hflappmanagerbt,true,true);
+        setBtColor(hflruncmd,false,false);
 
     }
 
     private void jump(int mode){
         Class clazz = AppManagerLayoutActivity.class;
+
+        if(mode == AppManagerEnum.RUN_CMD){
+            clazz = RunCommandLayoutActivity.class;
+        }
+
         if(mode == AppManagerEnum.FILE_SHARED){
             clazz = FileSharedLayoutActivity.class;
         }
@@ -143,27 +141,10 @@ public class HomeFragmentLayout extends Fragment {
         @Override
         public void onClick(View view) {
             int id = view.getId();
-            if(id == R.id.hflappopsbt){
-                jump(AppManagerEnum.APP_PERMISSION);
-            }
-            if(id == R.id.hflappdisable){
-                jump(AppManagerEnum.APP_DISABLE_COMPENT);
-            }
-            if(id == R.id.hflfirewall){
-                jump(AppManagerEnum.APP_FIREWALL);
-            }
             if(id == R.id.hflinlocalapk){
                 jump(AppManagerEnum.APP_INSTALL_LOCAL_FILE);
             }
-            if(id == R.id.hfldumpapp){
-                jump(AppManagerEnum.APP_DUMP);
-            }
-            if(id == R.id.hfldelapp){
-                jump(AppManagerEnum.APP_UNINSTALL);
-            }
-            if(id == R.id.hflcleanprocess){
-                jump(AppManagerEnum.APP_CLEAN_PROCESS);
-            }
+
             if(id == R.id.hflbackupapp){
                 jump(AppManagerEnum.APP_BACKUP);
             }
@@ -207,6 +188,15 @@ public class HomeFragmentLayout extends Fragment {
                 jump(AppManagerEnum.APP_CLONE_REMOVE);
             }
 
+            if(id == R.id.hflappmanagerbt){
+                jump(AppManagerEnum.APP_MANAGER);
+            }
+
+            if(id == R.id.hflruncmd){
+                jump(AppManagerEnum.RUN_CMD);
+            }
+
+
         }
     };
 
@@ -218,6 +208,7 @@ public class HomeFragmentLayout extends Fragment {
 
             if(needRoot && !needADB){
                 b.setBackgroundColor(Color.RED);
+                b.setEnabled(false);
             }
 
         }
@@ -225,6 +216,7 @@ public class HomeFragmentLayout extends Fragment {
         if(isRoot != null && !isRoot && isADB != null && !isADB){
             if(needADB || needRoot){
                b.setBackgroundColor(Color.RED);
+               b.setEnabled(false);
             }
         }
 

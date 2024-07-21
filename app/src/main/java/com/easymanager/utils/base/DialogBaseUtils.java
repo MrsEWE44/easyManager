@@ -59,17 +59,5 @@ public class DialogBaseUtils {
         ddd.dismiss();
     }
 
-    public void showLowMemDialog(Context context){
-        showLowMemDialog(context,tu.getLanguageString(context,R.string.warning_tips),tu.getLanguageString(context,R.string.low_mem_device));
-    }
-
-    public void showLowMemDialog(Context context,String title , String msg){
-        ActivityManager activityManager = (ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE);
-        ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
-        activityManager.getMemoryInfo(memoryInfo);
-        if(activityManager.isLowRamDevice() || (memoryInfo != null && (memoryInfo.totalMem*1.0/(1024*1024)) < 4096)){
-            showInfoMsg(context,title,msg);
-        }
-    }
 
 }

@@ -1,7 +1,7 @@
 
 easyManager是基于FQAOSP项目削减部分旧内容并耦合其新内容而诞生的,摈弃了众多设计缺陷,提升执行与开发效率,开放许多对外开发接口.
 
-easyManager是一个轻量化、核心化、简单易用的安卓系统管理工具,它非常适合在原生系统上使用,它还支持安卓4.4这种老设备上使用,同时也支持安卓14的新设备.正如你所看到的,它不会放弃任何还在使用的旧设备,它会一直支持下去,也许现在刚开始,并不完善,但它拥有无限的未来.
+easyManager是一个轻量化、核心化、简单易用的安卓系统管理工具,它非常适合在原生系统上使用,它还支持安卓4.0这种老设备上使用,同时也支持安卓14的新设备.正如你所看到的,它不会放弃任何还在使用的旧设备,它会一直支持下去,也许现在刚开始,并不完善,但它拥有无限的未来.
 
 easyManager支持adb与root两种模式运行,正如你所见到,它也支持将自己私有API公开给任何一个通过授权的应用访问.
 它现在提供应用的批量权限管理、后台进程清理、软件静默安装/卸载、单个应用服务/活动/广播/权限管理、应用网络管控、备份与恢复、文件共享等功能.
@@ -10,10 +10,29 @@ easyManager支持adb与root两种模式运行,正如你所见到,它也支持将
 easyManager的工作原理借鉴了Shizuku、AppOps,与它们两个类似,easyManager也需要开启一个单独的后台进程到shell或者root shell里面,才能正常工作.
 通过Socket进行TCP通信,执行对应的操作.
 
-跟Shizuku不同的是,easyManager向下拓展了安卓4.4低版本的支持,同时对外也提供对应的SDK开发包工具,任何接入SDK的第三方程序,都可以通过SDK来使用easyManager完整的、私有的功能函数接口,大部分常用的功能都不需要开发者再次实现,easyManager已经全部封装好了,开发者只需要关注界面交互部分.
-并且,easyManager对外开放的接口是经过测试的,支持安卓4.4-安卓14,它们工作稳定而且正常.
+跟Shizuku不同的是,easyManager向下拓展了安卓4.0低版本的支持,同时对外也提供对应的SDK开发包工具,任何接入SDK的第三方程序,都可以通过SDK来使用easyManager完整的、私有的功能函数接口,大部分常用的功能都不需要开发者再次实现,easyManager已经全部封装好了,开发者只需要关注界面交互部分.
+并且,easyManager对外开放的接口是经过测试的,支持安卓4.0-安卓14,它们工作稳定而且正常.
 
 [easyMangerSDK开发工具包](https://github.com/MrsEWE44/easyManagerSDK)
+
+![image](images/0.png) ![image](images/002.png) ![image](images/02.png) ![image](images/001.png)
+![image](images/1.png) ![image](images/2.png) ![image](images/4.png) ![image](images/5.png)
+![image](images/6.png) ![image](images/3.png) ![image](images/7.png)
+
+- V1.2.3b
+
+1.完善应用删除功能，使其可以正常删除系统内置应用。
+
+2.优化操作界面，删减多余按钮选项。
+
+3.添加安卓4.0.x最低支持。
+
+4.添加运行命令功能界面。
+
+5.更新easyManager工程的Gradle版本。
+
+6.修改版本号为1.2.3b
+
 
 - V1.2.3a
 

@@ -9,4 +9,8 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
         throw new UnsupportedOperationException();
     }
 
+    static public IActivityManager getDefault() {
+        throw new UnsupportedOperationException();
+    }
+
 }

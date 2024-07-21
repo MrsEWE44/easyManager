@@ -3,6 +3,7 @@ package com.easymanager.activitys;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +22,7 @@ import com.easymanager.enums.AppManagerEnum;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
 import com.easymanager.utils.base.AppCloneUtils;
+import com.easymanager.utils.base.DialogBaseUtils;
 import com.easymanager.utils.dialog.HelpDialogUtils;
 
 import java.util.ArrayList;
@@ -48,7 +50,13 @@ public class AppCloneLayoutActivity extends Activity {
         setContentView(R.layout.app_clone_manager);
         MyActivityManager.getIns().add(this);
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        initBt();
+        context = this;
+        activity = this;
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
+            new DialogBaseUtils().showInfoMsg(context,getLanStr(R.string.tips),getLanStr(R.string.show_app_clone_low_version_msg));
+        }else {
+            initBt();
+        }
     }
 
     private void initBt() {
@@ -56,8 +64,6 @@ public class AppCloneLayoutActivity extends Activity {
         mode = intent.getIntExtra("mode",-1);
         isRoot = intent.getBooleanExtra("isRoot",false);
         isADB = intent.getBooleanExtra("isADB",false);
-        context = this;
-        activity = this;
         acmet1 = findViewById(R.id.acmet1);
         acmsp1 = findViewById(R.id.acmsp1);
         acmsp2 = findViewById(R.id.acmsp2);
@@ -138,7 +144,7 @@ public class AppCloneLayoutActivity extends Activity {
                     }
                     if(mode == AppManagerEnum.APP_CLONE){
                         String s = acmet1.getText().toString();
-                        int count =s==null?1:Integer.valueOf(s);
+                        int count =(s==null || s.isEmpty())?1:Integer.valueOf(s);
                         acu.getUd().showAppClone(context,list,count,getLanStr(R.string.app_clone_create_clone_title),getLanStr(R.string.app_clone_create_clone_msg));
                     }
 

@@ -25,7 +25,7 @@ public class FileTools extends FileUtils {
     //调用系统文件选择器选择一个文件夹
     public void execDirSelect(Context context, Activity activity, String msg) {
         Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT){
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT){
             execFileSelect(context,activity,msg,43);
         }else{
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
@@ -84,6 +84,8 @@ public class FileTools extends FileUtils {
             File file = new File(path);
             if(file.exists()){
                 sdPath = "/storage/emulated/legacy";
+            }else{
+                sdPath = Environment.getExternalStorageDirectory().toString();
             }
         }
         return sdPath;

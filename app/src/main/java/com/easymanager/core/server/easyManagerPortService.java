@@ -19,12 +19,16 @@ public class easyManagerPortService implements Serializable {
     private static Method getService;
 
     static {
+        Class<?> sm = null;
         try {
-            Class<?> sm = Class.forName("android.os.ServiceManager");
+            sm = Class.forName("android.os.ServiceManager");
             getService = sm.getMethod("getService", String.class);
-        } catch (ClassNotFoundException | NoSuchMethodException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
         }
+
     }
 
     /**
@@ -38,8 +42,10 @@ public class easyManagerPortService implements Serializable {
         if (binder == null) {
             try {
                 binder = (IBinder) getService.invoke(null, name);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-               e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
             }
             SYSTEM_SERVICE_CACHE.put(name, binder);
         }
@@ -89,7 +95,7 @@ public class easyManagerPortService implements Serializable {
 
             TRANSACT_CODE_CACHE.put(key, value);
             return value;
-        } catch (ClassNotFoundException | IllegalAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.ContainerEncryptionParams;
 import android.content.pm.IPackageDeleteObserver;
 import android.content.pm.IPackageInstallObserver;
 import android.content.pm.IPackageInstaller;
@@ -29,6 +30,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.IUserManager;
+import android.os.Process;
 import android.os.RemoteException;
 import android.permission.IPermissionManager;
 
@@ -68,6 +70,8 @@ public class PackageAPI extends  baseAPI implements Serializable {
     public static final int DELETE_ALL_USERS = 0x00000002;
 
     public static final int DELETE_SUCCEEDED = 1;
+    public static final int DELETE_SYSTEM_APP = 0x00000004;
+    public static final int MATCH_STATIC_SHARED_AND_SDK_LIBRARIES = 0x04000000;
 
     public static final int INSTALL_ALL_USERS = 0x00000040;
     public static final int INSTALL_FROM_ADB = 0x00000020;
@@ -117,7 +121,11 @@ public class PackageAPI extends  baseAPI implements Serializable {
     //通过调用activitymanager系统api实现进程清理
     public void killApp(String pkgname,int uid){
         IActivityManager iActivityManager = getIActivityManager();
-        iActivityManager.forceStopPackage(pkgname,uid);
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN){
+            iActivityManager.forceStopPackage(pkgname,uid);
+        }else{
+            iActivityManager.forceStopPackage(pkgname);
+        }
     }
 
     public IPackageManager getIPackageManager(){
@@ -171,8 +179,10 @@ public class PackageAPI extends  baseAPI implements Serializable {
             return iPackageManager.getPackageUid(pkgname,0L,uid);
         }else if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.N){
             return iPackageManager.getPackageUid(pkgname,0,uid);
-        }else{
+        }else if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.JELLY_BEAN){
             return iPackageManager.getPackageUid(pkgname,uid);
+        }else {
+            return iPackageManager.getPackageUid(pkgname);
         }
     }
 
@@ -281,11 +291,9 @@ public class PackageAPI extends  baseAPI implements Serializable {
                     session = new PackageInstaller.Session(iPackageInstaller.openSession(sessionId));
                     in = new FileInputStream(apkPath);
                     out = session.openWrite("package", 0, params.sizeBytes);
-                    int total = 0;
                     byte[] buffer = new byte[65536];
                     int c;
                     while ((c = in.read(buffer)) != -1) {
-                        total += c;
                         out.write(buffer, 0, c);
                         if (sessionInfo.sizeBytes > 0) {
                             final float fraction = ((float) c / (float) sessionInfo.sizeBytes);
@@ -346,7 +354,13 @@ public class PackageAPI extends  baseAPI implements Serializable {
         Uri uri = Uri.fromFile(new File(apkPath));
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
             PackageInstallObserver obs = new PackageInstallObserver();
-            iPackageManager.installPackageWithVerificationAndEncryption(uri,obs,installFlags,null,verificationParams,null);
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+                iPackageManager.installPackage(uri,obs,installFlags,null);
+            } else if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1){
+                iPackageManager.installPackageWithVerification(uri,obs,installFlags,null,null,null,null);
+            } else {
+                iPackageManager.installPackageWithVerificationAndEncryption(uri,obs,installFlags,null,verificationParams,null);
+            }
             synchronized (obs) {
                 while (!obs.finished) {
                     try {
@@ -385,13 +399,18 @@ public class PackageAPI extends  baseAPI implements Serializable {
     }
 
     /**
-     * uninstall pkg on android 4.4
+     * uninstall pkg on android 4.x
      *
      * */
     public void UninstallPKGK(String pkgname,int userId){
         IPackageManager iPackageManager = getIPackageManager();
         PackageDeleteObserver obs = new PackageDeleteObserver();
-        iPackageManager.deletePackageAsUser(pkgname,obs,userId,DELETE_ALL_USERS);
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2){
+            iPackageManager.deletePackage(pkgname,obs,DELETE_ALL_USERS);
+        }else{
+            iPackageManager.deletePackageAsUser(pkgname,obs,userId,DELETE_ALL_USERS);
+        }
+
     }
 
     /**
@@ -400,18 +419,25 @@ public class PackageAPI extends  baseAPI implements Serializable {
      * */
     public void UninstallPKG(String pkgname , int userId , int versionCode) {
         try {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            int sdkInt = Build.VERSION.SDK_INT;
+            if(sdkInt >= Build.VERSION_CODES.LOLLIPOP){
                 int flags = 0;
-                //加上这个flag,会删除所有用户下的应用,非必要不需要加
+
+                //加上这个flag,会删除所有用户下的应用。,非必要不需要加
 //                flags |= DELETE_ALL_USERS;
                 IPackageInstaller iPackageInstaller = getIPackageInstaller();
                 LocalIntentReceiver r = new LocalIntentReceiver();
-                int sdkInt = Build.VERSION.SDK_INT;
+                int flags2 = Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1 ? 0 : MATCH_STATIC_SHARED_AND_SDK_LIBRARIES;
+                PackageInfo packageInfo = getPackageInfo(pkgname,getTranslatedUserId(),flags2);
+                if((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0){
+                    flags |= DELETE_SYSTEM_APP;
+                }
+
                 if (sdkInt >= Build.VERSION_CODES.O) {
                     iPackageInstaller.uninstall(new VersionedPackage(pkgname,
                                     versionCode), null /*callerPackageName*/, flags,
                             r.getIntentSender(), userId);
-                    resultLocalIntent(r);
+//                    resultLocalIntent(r);
                 }else if(sdkInt >= Build.VERSION_CODES.M){
                     /**
                      * 安卓6.0以下调用IIntentSender.send会出现找不到抽象接口得问题，但是，实际上
@@ -565,13 +591,27 @@ public class PackageAPI extends  baseAPI implements Serializable {
     }
 
     public String[] getUsers(){
-        IUserManager iUserManager = getIUserManager();
         List<UserInfo> ll = null;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-            ll = iUserManager.getUsers(false, false, false);
-        }else{
-            ll = iUserManager.getUsers(false);
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN){
+            IUserManager iUserManager = getIUserManager();
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                ll = iUserManager.getUsers(false, false, false);
+            }else{
+                ll = iUserManager.getUsers(false);
+            }
         }
+
+        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN){
+            ll = getIPackageManager().getUsers();
+        }
+
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+            String a[] = new String[1];
+            a[0]="0";
+            return a;
+        }
+
+
         int size = ll.size();
         String a[] = new String[size];
         for (int i = 0; i < size; i++) {
@@ -585,7 +625,13 @@ public class PackageAPI extends  baseAPI implements Serializable {
     }
 
     public int getCurrentUser(){
-        return getIActivityManager().getCurrentUser().id;
+        int current_id = -1;
+        try {
+            current_id = getIActivityManager().getCurrentUser().id;
+        }catch (Throwable e){
+            current_id = Process.myUid();
+        }
+        return current_id;
     }
 
     public List<MyPackageInfo> getInstalledPackages(int userid){
@@ -595,21 +641,26 @@ public class PackageAPI extends  baseAPI implements Serializable {
 //        flags |= PackageManager.MATCH_UNINSTALLED_PACKAGES;
 //        flags2 |= PackageManager.MATCH_UNINSTALLED_PACKAGES;
         IPackageManager iPackageManager = getIPackageManager();
+        ArrayList<MyPackageInfo> myPackageInfos = new ArrayList<>();
         ParceledListSlice<PackageInfo> slice = Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU?iPackageManager.getInstalledPackages(flags2,userid):iPackageManager.getInstalledPackages(flags,userid);
         List<PackageInfo> list = slice.getList();
-        ArrayList<MyPackageInfo> myPackageInfos = new ArrayList<>();
         for (PackageInfo packageInfo : list) {
             myPackageInfos.add(getMyPackageInfo(packageInfo.packageName,userid));
         }
         return myPackageInfos;
     }
 
-    public MyPackageInfo getMyPackageInfo(String pkgname , int uid){
+
+    public PackageInfo getPackageInfo(String pkgname,int uid,int flags){
         IPackageManager iPackageManager = getIPackageManager();
-        int flags = PackageManager.GET_PERMISSIONS|PackageManager.GET_ACTIVITIES|PackageManager.GET_DISABLED_COMPONENTS|PackageManager.GET_SERVICES|PackageManager.GET_RECEIVERS;
         long flags2 = flags;
-        PackageInfo packageInfo = Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU ? iPackageManager.getPackageInfo(pkgname, flags2, uid) : iPackageManager.getPackageInfo(pkgname, flags, uid);
-        return copyPkgInfoToMyPkginfo(packageInfo);
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ? iPackageManager.getPackageInfo(pkgname, flags2, uid) : iPackageManager.getPackageInfo(pkgname, flags, uid);
+    }
+
+    public MyPackageInfo getMyPackageInfo(String pkgname , int uid){
+        int flags = PackageManager.GET_PERMISSIONS|PackageManager.GET_ACTIVITIES|PackageManager.GET_DISABLED_COMPONENTS|PackageManager.GET_SERVICES|PackageManager.GET_RECEIVERS;
+        return copyPkgInfoToMyPkginfo(getPackageInfo(pkgname,uid,flags));
+
     }
 
     public MyPackageInfo copyPkgInfoToMyPkginfo(PackageInfo packageInfo){
@@ -737,7 +788,7 @@ public class PackageAPI extends  baseAPI implements Serializable {
         }
         int status = result.getIntExtra(PackageInstaller.EXTRA_STATUS, PackageInstaller.STATUS_FAILURE);
         String message = result.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE);
-//        System.out.println("status ::: " + status + " ---    " + message);
+        System.out.println("status ::: " + status + " ---    " + message);
     }
     private class LocalIntentReceiver {
         private final SynchronousQueue<Intent> mResult = new SynchronousQueue<>();

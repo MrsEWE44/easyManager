@@ -2,6 +2,7 @@ package com.easymanager.utils;
 
 import android.content.Context;
 import android.os.IBinder;
+import android.os.Process;
 
 import com.easymanager.entitys.MyPackageInfo;
 import com.easymanager.core.entity.TransmissionEntity;
@@ -203,9 +204,13 @@ public class easyManagerUtils {
     }
 
     public int getCurrentUserID(){
-        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,null,easyManagerEnums.GET_CURRENT_USER_ID);
-        easyManagerServiceEntity eee = putOptionOnServer(adben2);
-        return (Integer) eee.getObject();
+        try{
+            easyManagerClientEntity adben2 = new easyManagerClientEntity(null,null,easyManagerEnums.GET_CURRENT_USER_ID);
+            easyManagerServiceEntity eee = putOptionOnServer(adben2);
+            return (Integer) eee.getObject();
+        }catch (Throwable e){
+            return Process.myUid();
+        }
     }
 
     public int getComponentEnabledSetting(Context context , String pkgname,String componentName,int uid){

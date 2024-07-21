@@ -11,6 +11,7 @@ public class HelpDialogUtils extends DialogBaseUtils {
     public final static int MAIN_HELP=0;
     public final static int APP_MANAGE_HELP=1;
     public final static int APP_INFO_HELP=2;
+    public final static int RUN_COMMAND_HELP=3;
 
     public void showHelp(Context  context, int mode1 , int mode2){
         if(mode1 == MAIN_HELP){
@@ -80,6 +81,10 @@ public class HelpDialogUtils extends DialogBaseUtils {
 
         if(mode1 == APP_INFO_HELP){
             showInfoMsg(context,tu.getLanguageString(context, R.string.show_help_title),tu.getLanguageString(context,R.string.show_help_getAppInfoHELP));
+        }
+
+        if(mode1 == RUN_COMMAND_HELP){
+            showInfoMsg(context,tu.getLanguageString(context, R.string.show_help_title),context.getString(R.string.show_help_getRunCmdHELP));
         }
 
     }

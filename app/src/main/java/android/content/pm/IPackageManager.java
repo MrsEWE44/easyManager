@@ -14,7 +14,6 @@ public interface IPackageManager extends IInterface {
     IPackageInstaller getPackageInstaller()
             throws RemoteException;
 
-
     ParceledListSlice getInstalledPackages(int flags, int userId);
     ParceledListSlice getInstalledPackages(long flags, int userId);
     PackageInfo getPackageInfo(String packageName, int flags, int userId);
@@ -28,7 +27,8 @@ public interface IPackageManager extends IInterface {
     void revokeRuntimePermission(String packageName, String permissionName, int userId);
 
 
-
+    //android 4.0.x
+    void installPackage( Uri packageURI, IPackageInstallObserver observer, int flags, String installerPackageName);
     //android4.4
     void installPackageWithVerification(Uri packageURI, IPackageInstallObserver observer,
                                         int flags,  String installerPackageName,  Uri verificationURI,
@@ -41,12 +41,12 @@ public interface IPackageManager extends IInterface {
 
 
 
-    void deletePackageAsUser(String packageName, IPackageDeleteObserver observer,
-                             int userId, int flags);
-
+    void deletePackageAsUser(String packageName, IPackageDeleteObserver observer, int userId, int flags);
+    void deletePackage(String packageName, IPackageDeleteObserver observer, int flags);
     int getPackageUid(String packageName, long flags, int userId);
     int getPackageUid(String packageName, int userId);
     int getPackageUid(String packageName, int flags, int userId);
+    int getPackageUid(String packageName);
 
     void setComponentEnabledSetting( ComponentName componentName,int newState,  int flags, int userId);
 
@@ -75,6 +75,9 @@ public interface IPackageManager extends IInterface {
                                String packageAbiOverride,
                               int userId);
 
+    //android 4.1
+    List<UserInfo> getUsers();
+    UserInfo getUser(int userId);
 
     abstract class Stub extends Binder implements IPackageManager {
 
