@@ -238,4 +238,16 @@
     <string name="run_cmd_run_bt">Run</string>
     <string name="run_cmd_input_cmd_str_hint">Please enter the command you want to execute</string>
     <string name="show_help_getRunCmdHELP">This interface is mainly used to execute the commands that come with the device, and all the operations done here are implemented in the ProcessBuilder service.\n\nEnter the command you want to execute in the edit box, and then click the button next to it to execute the command, and return the execution result in the blank interface below.\n</string>
+    <string name="usb_button_select_local_img">Select Local Image File</string>
+    <string name="permission_storage_grand">Access to the file has been granted.</string>
+    <string name="general_loading">Loading...</string>
+    <string name="check_app_update">Checking for updates...</string>
+    <string name="check_app_update_title">Check APP Update</string>
+    <string name="check_app_update_is_no">No updates detected.</string>
+    <string name="check_app_update_is_ok">A new version has been detected, is it updated?</string>
+    <string name="app_clean_toast_msg">clean ok...</string>
+    <string name="help_check_update_button">Chcek APP Update</string>
+    <string name="help_clean_app_files_button">Clean APP Cache Files</string>
+    <string name="help_open_source_global_button">Github Project</string>
+    <string name="help_open_source_china_button">Gitee Project</string>
 </resources>

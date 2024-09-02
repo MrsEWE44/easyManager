@@ -1,8 +1,6 @@
 package com.easymanager.fragment;
 
 import android.app.Fragment;
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,6 +16,7 @@ import com.easymanager.activitys.FileSharedLayoutActivity;
 import com.easymanager.activitys.RunCommandLayoutActivity;
 import com.easymanager.activitys.UsbModeLayoutActivity;
 import com.easymanager.enums.AppManagerEnum;
+import com.easymanager.utils.OtherTools;
 
 public class HomeFragmentLayout extends Fragment {
 
@@ -28,6 +27,9 @@ public class HomeFragmentLayout extends Fragment {
     private Button hflsetrate,hfldelx,hflsetntp,hflfileshared,hflruncmd;
 
     private int uid;
+
+    private OtherTools ot = new OtherTools();
+
 
     public HomeFragmentLayout(){}
 
@@ -82,6 +84,11 @@ public class HomeFragmentLayout extends Fragment {
         hflappmanagerbt.setOnClickListener(clickListener);
         hflruncmd.setOnClickListener(clickListener);
         initBtColor();
+
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.P){
+            hflsetrate.setEnabled(false);
+        }
+
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
             hflappclonemanage.setEnabled(false);
             hflappcloneremove.setEnabled(false);
@@ -91,20 +98,20 @@ public class HomeFragmentLayout extends Fragment {
 
     private void initBtColor(){
 
-        setBtColor(hflinlocalapk,true,true);
-        setBtColor(hflbackupapp,true,false);
-        setBtColor(hflrestoryapp,true,false);
-        setBtColor(hflmountlocalimg,true,false);
-        setBtColor(hflcreateimg,true,false);
-        setBtColor(hflsetrate,true,true);
-        setBtColor(hfldelx,true,true);
-        setBtColor(hflsetntp,true,true);
-        setBtColor(hflfileshared,false,false);
-        setBtColor(hflappclone,true,true);
-        setBtColor(hflappclonemanage,true,true);
-        setBtColor(hflappcloneremove,true,true);
-        setBtColor(hflappmanagerbt,true,true);
-        setBtColor(hflruncmd,false,false);
+        ot.setBtColor(hflinlocalapk,true,true,isRoot,isADB);
+        ot.setBtColor(hflbackupapp,true,false,isRoot,isADB);
+        ot.setBtColor(hflrestoryapp,true,false,isRoot,isADB);
+        ot.setBtColor(hflmountlocalimg,true,false,isRoot,isADB);
+        ot.setBtColor(hflcreateimg,true,false,isRoot,isADB);
+        ot.setBtColor(hflsetrate,true,true,isRoot,isADB);
+        ot.setBtColor(hfldelx,true,true,isRoot,isADB);
+        ot.setBtColor(hflsetntp,true,true,isRoot,isADB);
+        ot.setBtColor(hflfileshared,false,false,isRoot,isADB);
+        ot.setBtColor(hflappclone,true,true,isRoot,isADB);
+        ot.setBtColor(hflappclonemanage,true,true,isRoot,isADB);
+        ot.setBtColor(hflappcloneremove,true,true,isRoot,isADB);
+        ot.setBtColor(hflappmanagerbt,true,true,isRoot,isADB);
+        ot.setBtColor(hflruncmd,true,true,isRoot,isADB);
 
     }
 
@@ -128,12 +135,8 @@ public class HomeFragmentLayout extends Fragment {
         if(mode == AppManagerEnum.APP_CLONE || mode == AppManagerEnum.APP_CLONE_REMOVE || mode == AppManagerEnum.APP_CLONE_MANAGE){
             clazz = AppCloneLayoutActivity.class;
         }
-        Intent intent = new Intent(getActivity(), clazz);
-        intent.putExtra("mode",mode);
-        intent.putExtra("isRoot",isRoot);
-        intent.putExtra("isADB",isADB);
-        intent.putExtra("uid",uid);
-        startActivity(intent);
+
+        ot.jump(getActivity(),clazz,mode,isRoot,isADB,uid);
 
     }
 
@@ -199,32 +202,6 @@ public class HomeFragmentLayout extends Fragment {
 
         }
     };
-
-    private void setBtColor(Button b , boolean needRoot , boolean needADB){
-        if(isADB != null && isADB){
-            if(needRoot && needADB){
-                b.setBackgroundColor(Color.YELLOW);
-            }
-
-            if(needRoot && !needADB){
-                b.setBackgroundColor(Color.RED);
-                b.setEnabled(false);
-            }
-
-        }
-
-        if(isRoot != null && !isRoot && isADB != null && !isADB){
-            if(needADB || needRoot){
-               b.setBackgroundColor(Color.RED);
-               b.setEnabled(false);
-            }
-        }
-
-
-
-
-    }
-
 
 }
 

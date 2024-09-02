@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.ContainerEncryptionParams;
 import android.content.pm.IPackageDeleteObserver;
 import android.content.pm.IPackageInstallObserver;
 import android.content.pm.IPackageInstaller;
@@ -332,7 +331,12 @@ public class PackageAPI extends  baseAPI implements Serializable {
     }
 
     public int getComponentEnabledSetting(ComponentName componentName, int userId){
-        return getIPackageManager().getComponentEnabledSetting(componentName,userId);
+        IPackageManager iPackageManager = getIPackageManager();
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+            return iPackageManager.getComponentEnabledSetting(componentName,userId);
+        }else {
+            return iPackageManager.getComponentEnabledSetting(componentName);
+        }
     }
 
     private void closeIO(Closeable out) throws IOException {
@@ -478,16 +482,38 @@ public class PackageAPI extends  baseAPI implements Serializable {
         return null;
     }
 
+    public int checkPermission(String pkgname , String permission_str, int uid){
+        IPackageManager manager = getIPackageManager();
+        try{
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                return manager.checkPermission(permission_str,pkgname,uid);
+            }else {
+                return manager.checkPermission(permission_str,pkgname);
+            }
+        }catch (Throwable t){
+            t.printStackTrace();
+        }
+        return -1;
+    }
+
     public void setComponentOrPackageEnabledState(String pkgname_or_compname , int state,int uid){
         IPackageManager iPackageManager = getIPackageManager();
         ComponentName componentName = ComponentName.unflattenFromString(pkgname_or_compname);
         if(componentName == null){
-            iPackageManager.setApplicationEnabledSetting(pkgname_or_compname,state,0,uid,"shell:" + getMyuid());
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+                iPackageManager.setApplicationEnabledSetting(pkgname_or_compname,state,0,uid,"shell:" + getMyuid());
+            }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                iPackageManager.setApplicationEnabledSetting(pkgname_or_compname,state,0,uid);
+            }else{
+                iPackageManager.setApplicationEnabledSetting(pkgname_or_compname,state,0);
+            }
         }else{
             if(Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU){
                 iPackageManager.setComponentEnabledSetting(componentName,state,0,uid,"shell");
-            }else{
+            }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
                 iPackageManager.setComponentEnabledSetting(componentName, state, 0, uid);
+            }else {
+                iPackageManager.setComponentEnabledSetting(componentName, state, 0);
             }
         }
 
@@ -501,7 +527,7 @@ public class PackageAPI extends  baseAPI implements Serializable {
             IPackageManager iPackageManager = getIPackageManager();
             if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
                 iPackageManager.revokeRuntimePermission(pkgname,permission_str,uid);
-            }else{
+            }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
                 iPackageManager.revokePermission(pkgname,permission_str);
             }
         }
@@ -516,15 +542,17 @@ public class PackageAPI extends  baseAPI implements Serializable {
             IPackageManager iPackageManager = getIPackageManager();
             if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
                 iPackageManager.grantRuntimePermission(pkgname,permission_str,uid);
-            }else{
+            }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
                 iPackageManager.grantPermission(pkgname,permission_str);
             }
         }
     }
 
     public void setPackageHideState(String pkgname,boolean hide , int uid){
-        IPackageManager iPackageManager = getIPackageManager();
-        iPackageManager.setApplicationHiddenSettingAsUser(pkgname, hide, uid);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            IPackageManager iPackageManager = getIPackageManager();
+            iPackageManager.setApplicationHiddenSettingAsUser(pkgname, hide, uid);
+        }
     }
 
 
@@ -654,7 +682,13 @@ public class PackageAPI extends  baseAPI implements Serializable {
     public PackageInfo getPackageInfo(String pkgname,int uid,int flags){
         IPackageManager iPackageManager = getIPackageManager();
         long flags2 = flags;
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ? iPackageManager.getPackageInfo(pkgname, flags2, uid) : iPackageManager.getPackageInfo(pkgname, flags, uid);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            return iPackageManager.getPackageInfo(pkgname, flags2, uid);
+        }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+            return iPackageManager.getPackageInfo(pkgname, flags, uid);
+        }else {
+            return iPackageManager.getPackageInfo(pkgname, flags);
+        }
     }
 
     public MyPackageInfo getMyPackageInfo(String pkgname , int uid){

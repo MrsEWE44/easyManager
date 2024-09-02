@@ -3,41 +3,103 @@ package com.easymanager.fragment;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.easymanager.R;
+import com.easymanager.utils.OtherTools;
 import com.easymanager.utils.TextUtils;
+import com.easymanager.utils.dialog.NetUtilsDialog;
 
 public class HelpFragmentLayout extends Fragment {
 
     private Boolean isRoot, isADB;
+    private int uid;
 
     private Context context;
     private ExpandableListView hflelv;
-    private TextUtils tvvv = new TextUtils();
+    private Button hflcheckupdate,hflcleanfile,hflopengithub,hflopengitee;
+    private NetUtilsDialog nu = new NetUtilsDialog();
+    private OtherTools ot = new OtherTools();
+    private TextUtils tvvv = nu.tu;
 
     public HelpFragmentLayout() {
     }
 
-    public HelpFragmentLayout(Boolean isRoot, Boolean isADB) {
+    public HelpFragmentLayout(Boolean isRoot, Boolean isADB , int uid) {
         this.isRoot = isRoot;
         this.isADB = isADB;
+        this.uid = uid;
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        context = getActivity().getApplicationContext();
+        context = getActivity();
         View inflate = inflater.inflate(R.layout.help_fragment_layout, container, false);
         hflelv = inflate.findViewById(R.id.hflelv);
-        ExpandableListAdapter adapter = new BaseExpandableListAdapter() {
+        hflcheckupdate = inflate.findViewById(R.id.hflcheckupdate);
+        hflcleanfile = inflate.findViewById(R.id.hflcleanfile);
+        hflopengithub = inflate.findViewById(R.id.hflopengithub);
+        hflopengitee = inflate.findViewById(R.id.hflopengitee);
+        hflelv.setAdapter(getadapter());
+        btClicked();
+        initBtColor();
+        return inflate;
+    }
+
+    private void btClicked() {
+        hflcheckupdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                nu.checkupdate(context);
+            }
+        });
+
+        hflcleanfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                nu.ft.clearAppFiles(context, uid);
+                Toast.makeText(context, R.string.app_clean_toast_msg,Toast.LENGTH_SHORT);
+            }
+        });
+
+        hflopengithub.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                nu.openUrlWithBrowser(context,"https://github.com/MrsEWE44/easyManager");
+            }
+        });
+
+        hflopengitee.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                nu.openUrlWithBrowser(context,"https://gitee.com/SorryMyLife/easyManager");
+            }
+        });
+
+
+    }
+
+    private void initBtColor(){
+
+        ot.setBtColor(hflcheckupdate,false,false,isRoot,isADB);
+        ot.setBtColor(hflcleanfile,true,true,isRoot,isADB);
+        ot.setBtColor(hflopengithub,false,false,isRoot,isADB);
+        ot.setBtColor(hflopengitee,false,false,isRoot,isADB);
+    }
+
+
+    private ExpandableListAdapter getadapter() {
+
+        return  new BaseExpandableListAdapter() {
             private String[] parn = new String[]{getLanStr(R.string.help_question_1), getLanStr(R.string.help_question_2), getLanStr(R.string.help_question_3), getLanStr(R.string.help_question_4)};
             // 每个列表下面的子列表字符数组
             private String[] child = new String[]{getLanStr(R.string.help_question_1_reply), getLanStr(R.string.help_question_2_reply), getLanStr(R.string.help_question_3_reply), getLanStr(R.string.help_question_4_reply)};
@@ -90,7 +152,6 @@ public class HelpFragmentLayout extends Fragment {
                 } else {
                     inflate = convertView;
                 }
-                Log.d("gccccc", groupPosition + " --- " + childPosition);
                 TextView exparent = inflate.findViewById(R.id.exchild);
                 exparent.setText(child[groupPosition]);
                 return inflate;
@@ -107,8 +168,8 @@ public class HelpFragmentLayout extends Fragment {
             }
         };
 
-        hflelv.setAdapter(adapter);
-        return inflate;
+
+
     }
 
     private String getLanStr(int id) {

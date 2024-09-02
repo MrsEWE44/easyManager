@@ -10,7 +10,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.provider.Settings;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,13 +59,13 @@ public class AppManagerLayoutActivity extends Activity {
     private String APP_BACKUP_AND_RESTORY_OPT_VALUES[] = {"full","data","apk"};
     private String APP_BACKUP_AND_RESTORY_OPT2_VALUES[] = {"txz","tgz","tbz"};
     private String APP_ALL_UERS[] = null;
+    private int nowItemIndex=-1;
     private int APP_UID_INDEX=0,APP_CHOICES_INDEX = 0, APP_PERMIS_INDEX = 0 , APP_PERMIS_OPT_INDEX = 0, APP_PERMIS_MODE= 0 ;
 
     private boolean install_mode = false;
-    private FileTools ft = new FileTools();
-
     private AppCloneUtils acu = new AppCloneUtils();
-    private PackageUtils packageUtils = new PackageUtils();
+    private PackageUtils packageUtils = acu.getPd().packageUtils;
+    private FileTools ft = acu.getPd().ft;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +77,7 @@ public class AppManagerLayoutActivity extends Activity {
     }
 
     private void initBt(){
-        easyManagerUtils ee = new easyManagerUtils();
+        easyManagerUtils ee = acu.getEasyManagerUtils();
         Intent intent = getIntent();
         mode = intent.getIntExtra("mode",-1);
         isRoot = intent.getBooleanExtra("isRoot",false);
@@ -259,10 +260,47 @@ public class AppManagerLayoutActivity extends Activity {
             }
         });
 
+        apllv1.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                nowItemIndex=i;
+                createLVMenu();
+                return false;
+            }
+        });
+
 
     }
 
-    private void spinnerChange(Spinner s,int app_opt_mode){
+
+    private void createLVMenu(){
+        apllv1.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+            @Override
+            public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+                contextMenu.add(0,0,0,"复制信息");
+                contextMenu.add(0,1,0,"跳转至应用详情");
+            }
+        });
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        switch (itemId){
+            case 0:
+                acu.getUd().tu.copyText(context,pkginfos.get(nowItemIndex).toString());
+                break;
+            case 1:
+                Intent intent2 = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                intent2.setData(Uri.parse("package:" + pkginfos.get(nowItemIndex).getPkgname()));
+                startActivity(intent2);
+                break;
+        }
+
+        return super.onContextItemSelected(item);
+    }
+
+    private void spinnerChange(Spinner s, int app_opt_mode){
         s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -333,6 +371,8 @@ public class AppManagerLayoutActivity extends Activity {
                                     amlapplybt.setText(getLanStr(R.string.button_clean));
                                     break;
                             }
+                            packageUtils.clearList(pkginfos,checkboxs);
+                            acu.getUd().showPKGS(context,apllv1,pkginfos,checkboxs);
                             new HelpDialogUtils().showHelp(context,HelpDialogUtils.APP_MANAGE_HELP,mode);
                         }
                         break;
@@ -418,12 +458,12 @@ public class AppManagerLayoutActivity extends Activity {
     }
 
     private void selectLocalFile(){
-        permissionRequest.getExternalStorageManager(context);
+        permissionRequest.getExternalStorageManager(context,activity);
         ft.execFileSelect(context,activity,getLanStr(R.string.choice_install_file));
     }
 
     private void selectLocalDir(){
-        permissionRequest.getExternalStorageManager(context);
+        permissionRequest.getExternalStorageManager(context,activity);
         ft.execDirSelect(context,activity,getLanStr(R.string.choice_install_file));
     }
 
@@ -491,16 +531,8 @@ public class AppManagerLayoutActivity extends Activity {
         if(requestCode == 43){
             if(data !=null && data.getData() != null) {//只有一个文件咯
                 Uri uri = data.getData();
-                String path = uri.getPath();
-                String filePath=null;
-                if(path.indexOf("tree/primary") != -1){
-                    filePath = storage + "/" +path.replaceAll("/tree/primary:","");
-                }else if(path.indexOf("document/primary") != -1){
-                    filePath = storage + "/" +path.replaceAll("/document/primary:","");
-                    filePath = new File(filePath).getParent();
-                }else{
-                    filePath = new File(path).getParent();
-                }
+                String filePath=ft.dirUriToRawFullPath(uri,storage);
+
                 if(isRoot || isADB){
                     pkgutils.clearList(pkginfos,checkboxs);
                     try {

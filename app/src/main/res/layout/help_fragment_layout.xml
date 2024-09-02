@@ -4,10 +4,65 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-   <ExpandableListView
+   <ScrollView
        android:layout_width="match_parent"
        android:layout_height="match_parent"
-       android:id="@+id/hflelv"/>
+       android:fillViewport="true"
+       >
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:orientation="vertical">
+
+         <ExpandableListView
+             android:id="@+id/hflelv"
+             android:layout_width="match_parent"
+             android:layout_weight="1"
+             android:layout_height="fill_parent"
+             />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+           <Button
+               android:id="@+id/hflcheckupdate"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:text="@string/help_check_update_button"></Button>
+
+           <Button
+               android:id="@+id/hflcleanfile"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:text="@string/help_clean_app_files_button"></Button>
+
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+              android:orientation="horizontal">
+              <Button
+                  android:id="@+id/hflopengithub"
+                  android:layout_weight="1"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:text="@string/help_open_source_global_button"></Button>
+
+              <Button
+                  android:id="@+id/hflopengitee"
+                  android:layout_weight="1"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:text="@string/help_open_source_china_button"></Button>
+
+           </LinearLayout>
+        </LinearLayout>
+
+      </LinearLayout>
+
+   </ScrollView>
 
 </FrameLayout>
 

@@ -1,6 +1,5 @@
 package com.easymanager.utils.base;
 
-import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;

@@ -1,7 +1,6 @@
 package com.easymanager.core.utils;
 
 import android.content.Context;
-import android.os.Environment;
 
 import com.easymanager.mylife.startAdbService;
 
@@ -100,7 +99,7 @@ public class FileUtils {
     }
 
     public String getActiveADBScript(Context context){
-                String str = "killall EAMADB\n" +
+        String str = "killall EAMADB\n" +
                 "exec app_process -Djava.class.path=\""+context.getApplicationInfo().sourceDir+"\" /system/bin --nice-name=EAMADB "+ startAdbService.class.getName()+" >>/dev/null 2>&1 &\n" +
                 "echo \"running ok [adb]\"";
 //        String str = "killall EAMADB\n" +
@@ -133,8 +132,7 @@ public class FileUtils {
                 for (File f1 : files) {
                     //如果path的值没有变化
                     if (path.equals("no")) {
-                        if (f1.isFile() && f1.getName().contains(fileName)) {
-//                            System.out.println(f1.getName());
+                        if (f1.isFile() && (fileName == null || fileName.isEmpty() || f1.getName().contains(fileName))) {
                             path = f1.getAbsolutePath();
                         } else {
                             path = findFiles(f1, fileName);

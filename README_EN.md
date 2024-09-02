@@ -15,9 +15,28 @@ Moreover, the interface open to the public by EasyManager has been tested and su
 
 [easyMangerSDK Development Kit](https://github.com/MrsEWE44/easyManagerSDK)
 
-![image](images/0.png) ![image](images/002.png) ![image](images/02.png) ![image](images/001.png)
-![image](images/1.png) ![image](images/2.png) ![image](images/4.png) ![image](images/5.png)
-![image](images/6.png) ![image](images/3.png) ![image](images/7.png)
+![image](images/1.png) ![image](images/01.png) ![image](images/02.png) ![image](images/001.png)
+![image](images/3.jpg) ![image](images/2.jpg) ![image](images/4.jpg) ![image](images/5.jpg)
+![image](images/6.png) ![image](images/8.png) ![image](images/7.png) ![image](images/9.png)
+![image](images/10.png) ![image](images/11.png)
+
+
+- V1.2.4
+
+1.Added a single file selection function in U disk mode.
+
+2.Fix the permission change function.
+
+3.Fix the problem that it is stuck when searching.
+
+4.After the optimizer crashes abnormally, there is a problem of page overlay.
+
+5.Added the functions of command prompt drop-down box, software update, and project address jump.
+
+6.Optimize more details.
+
+7.The modified version number is 1.2.4
+
 
 
 - V1.2.3b

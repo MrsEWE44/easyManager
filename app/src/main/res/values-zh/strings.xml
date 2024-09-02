@@ -464,6 +464,18 @@
     <string name="run_cmd_run_bt">运行</string>
     <string name="run_cmd_input_cmd_str_hint">请输入想要执行的命令</string>
     <string name="show_help_getRunCmdHELP">该界面主要是用来执行设备自带命令的,这里做的一切操作,都是在ProcessBuilder服务实现.\n\n        在编辑框内输入你想执行的命令，再点击旁边的按钮，即可执行该命令，并在下面空白界面返回执行结果.\n</string>
+    <string name="usb_button_select_local_img">选择本地镜像文件</string>
+    <string name="permission_storage_grand">已获取文件访问权限</string>
+    <string name="general_loading">加载中...</string>
+    <string name="check_app_update">正在检查更新...</string>
+    <string name="check_app_update_title">检测更新</string>
+    <string name="check_app_update_is_ok">检测到系统更新了,是否更新?</string>
+    <string name="check_app_update_is_no">未检测到更新.</string>
+    <string name="app_clean_toast_msg">清理结束...</string>
+    <string name="help_check_update_button">检查更新</string>
+    <string name="help_clean_app_files_button">清理残留</string>
+    <string name="help_open_source_global_button">Github开源地址</string>
+    <string name="help_open_source_china_button">Gitee开源地址</string>
 
 
 </resources>

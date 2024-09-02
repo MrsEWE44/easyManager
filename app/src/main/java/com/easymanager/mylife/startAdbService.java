@@ -198,6 +198,39 @@ public class startAdbService {
                                             }else {
                                                 return getActiveADB();
                                             }
+                                        case easyManagerEnums.GET_APPOPS_PERMISSIONS:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                return managerAPI.getAppopsPKGPermissions(entity.getPkgname(), entity.getUid());
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                            case easyManagerEnums.GET_APPOPS_PERMISSION_TO_OP:
+                                                if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                    return managerAPI.permissionToOp(entity.getOpmodestr());
+                                                }else {
+                                                    return getActiveADB();
+                                                }
+                                            case easyManagerEnums.GET_APPOPS_PERMISSION_TO_OP_CODE:
+                                                if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                    return managerAPI.strOpToOp(entity.getOpmodestr());
+                                                }else {
+                                                    return getActiveADB();
+                                                }
+                                            case easyManagerEnums.CHECK_PM_PERMISSION_CODE:
+                                                if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                    return managerAPI.checkPermission(entity.getPkgname(),entity.getOpmodestr(),entity.getUid());
+                                                }else {
+                                                    return getActiveADB();
+                                                }
+                                            case easyManagerEnums.GET_PATH_ALL_FILES:
+                                                if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                    return managerAPI.getPathALLFiles(entity.getOpmodestr());
+                                                }else {
+                                                    return getActiveADB();
+                                                }
+
+
+
 
                                     }
                                 }else {

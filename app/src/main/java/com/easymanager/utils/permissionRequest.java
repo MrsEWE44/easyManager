@@ -13,6 +13,7 @@ import android.os.Process;
 import android.provider.Settings;
 import android.widget.Toast;
 
+import com.easymanager.R;
 
 
 public class permissionRequest {
@@ -27,7 +28,7 @@ public class permissionRequest {
         context.startActivity(intent);
     }
 
-    public static void getExternalStorageManager(Context context){
+    public static void getExternalStorageManager(Context context,Activity activity){
         // 通过api判断手机当前版本号
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             // 安卓11，判断有没有“所有文件访问权限”权限
@@ -37,9 +38,13 @@ public class permissionRequest {
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // 安卓6 判断有没有读写权限权限
             if (checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(context, "已获取文件访问权限", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.permission_storage_grand, Toast.LENGTH_SHORT).show();
             }else{
-                intentExternal(context);
+                try {
+                    intentExternal(context);
+                }catch (Exception e){
+                    requestExternalStoragePermission(activity);
+                }
             }
         }
     }

@@ -10,8 +10,8 @@ android {
         applicationId "com.easymanager"
         minSdk 14
         targetSdk 34
-        versionCode 9
-        versionName "1.2.3b"
+        versionCode 10
+        versionName "1.2.4"
 
     }
 
@@ -41,6 +41,4 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.commons/commons-compress
     implementation 'org.apache.commons:commons-compress:1.14'
 
-
-//    implementation 'androidx.appcompat:appcompat:1.4.1'
 }

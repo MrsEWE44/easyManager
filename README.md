@@ -15,9 +15,29 @@ easyManager的工作原理借鉴了Shizuku、AppOps,与它们两个类似,easyMa
 
 [easyMangerSDK开发工具包](https://github.com/MrsEWE44/easyManagerSDK)
 
-![image](images/0.png) ![image](images/002.png) ![image](images/02.png) ![image](images/001.png)
-![image](images/1.png) ![image](images/2.png) ![image](images/4.png) ![image](images/5.png)
-![image](images/6.png) ![image](images/3.png) ![image](images/7.png)
+![image](images/1.png) ![image](images/01.png) ![image](images/02.png) ![image](images/001.png)
+![image](images/3.jpg) ![image](images/2.jpg) ![image](images/4.jpg) ![image](images/5.jpg)
+![image](images/6.png) ![image](images/8.png) ![image](images/7.png) ![image](images/9.png)
+![image](images/10.png) ![image](images/11.png)
+
+
+- V1.2.4
+  
+1.U盘模式新增单个文件选择功能。
+
+2.修复权限更改功能。
+
+3.修复搜索时卡死的问题。
+
+4.优化程序异常崩溃后，出现页面叠加的问题。
+
+5.新增命令符提示下拉框、软件更新、项目地址跳转功能。
+
+6.优化更多细节。
+
+7.修改版本号为1.2.4
+
+
 
 - V1.2.3b
 

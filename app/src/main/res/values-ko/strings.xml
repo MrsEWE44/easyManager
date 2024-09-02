@@ -238,4 +238,16 @@
     <string name="run_cmd_run_bt">실행명령</string>
     <string name="run_cmd_input_cmd_str_hint">실행하고 싶은 명령어를 입력해주세요.</string>
     <string name="show_help_getRunCmdHELP">이 인터페이스는 주로 장치와 함께 제공되는 명령을 실행하는 데 사용되며 여기에서 수행되는 모든 작업은 ProcessBuilder 서비스에서 구현됩니다.\n\n편집 상자에 실행할 명령을 입력한 다음 옆에 있는 버튼을 클릭하여 명령을 실행하고 실행 결과를 아래의 빈 인터페이스에 반환합니다.\n</string>
+    <string name="usb_button_select_local_img">로컬 이미지 파일을 선택합니다</string>
+    <string name="permission_storage_grand">파일에 대한 액세스 권한이 부여되었습니다.</string>
+    <string name="general_loading">로드...</string>
+    <string name="check_app_update">업데이트 확인 중...</string>
+    <string name="check_app_update_title">업데이트 감지</string>
+    <string name="check_app_update_is_ok">새 버전이 감지되었는데 업데이트되었습니까?</string>
+    <string name="check_app_update_is_no">업데이트가 감지되지 않았습니다.</string>
+    <string name="app_clean_toast_msg">청소가 끝났습니다...</string>
+    <string name="help_check_update_button">업데이트 감지</string>
+    <string name="help_clean_app_files_button">앱 잔여물 정리</string>
+    <string name="help_open_source_global_button">Github Project</string>
+    <string name="help_open_source_china_button">Gitee Project</string>
 </resources>

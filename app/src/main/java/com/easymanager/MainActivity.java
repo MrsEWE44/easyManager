@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
@@ -16,27 +17,43 @@ import com.easymanager.fragment.HelpFragmentLayout;
 import com.easymanager.fragment.HomeFragmentLayout;
 import com.easymanager.fragment.ManagerGrantUserFragmentLayout;
 import com.easymanager.utils.FileTools;
+import com.easymanager.utils.OtherTools;
 import com.easymanager.utils.dialog.HelpDialogUtils;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.ShellUtils;
 import com.easymanager.utils.TextUtils;
+import com.easymanager.utils.dialog.NetUtilsDialog;
 import com.easymanager.utils.easyManagerUtils;
 import com.easymanager.utils.permissionRequest;
 
 public class MainActivity extends Activity {
     private ImageView amiv1,amiv2,amiv3;
-
+    private FragmentManager fragmentManager;
+    private Fragment homeFragment , helpFragment , manageFragment , currentFragment;
     private Boolean isRoot,isADB;
-
+    private int stop_time = 5000;
     private int uid;
     private easyManagerUtils ee = new easyManagerUtils();
     private HelpDialogUtils dialogUtils = new HelpDialogUtils();
-
-    private TextUtils tu = new TextUtils();
+    private TextUtils tu = dialogUtils.tu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //修复软件崩溃后，出现页面重叠的问题
+        fragmentManager = getFragmentManager();
+        if(savedInstanceState != null){
+            helpFragment = fragmentManager.findFragmentByTag("help");
+            manageFragment = fragmentManager.findFragmentByTag("manager");
+            homeFragment = fragmentManager.findFragmentByTag("home");
+            showFragment(helpFragment);
+        }
+        initView();
+        dialogUtils.showHelp(this,HelpDialogUtils.MAIN_HELP,0);
+        new NetUtilsDialog().checkupdate(this);
+    }
+
+    public void initView(){
         setContentView(R.layout.activity_main);
         MyActivityManager.getIns().add(this);
         uid = getIntent().getIntExtra("uid",0);
@@ -50,19 +67,19 @@ public class MainActivity extends Activity {
             this.getExternalCacheDir().mkdirs();
             this.getCacheDir().mkdirs();
             this.getFilesDir().mkdirs();
-        }catch (Exception e){
-
-        }
+        }catch (Exception e){}
         ShellUtils shellUtils = new ShellUtils();
         FileTools fileUtils = new FileTools();
         permissionRequest.requestExternalStoragePermission(this);
-        permissionRequest.getExternalStorageManager(this);
+        permissionRequest.getExternalStorageManager(this,this);
         isRoot = shellUtils.testRoot();
         isADB = false;
         if(isRoot){
             isRoot = ee.isROOT();
             if(!isRoot){
                 ee.activeRoot(this);
+                // 开始时间
+                long stime = System.currentTimeMillis();
                 while(true){
                     if(ee.isROOT()){
                         isRoot = true;
@@ -73,6 +90,11 @@ public class MainActivity extends Activity {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
+                    }
+                    // 结束时间
+                    long etime = System.currentTimeMillis();
+                    if((etime - stime) > stop_time){
+                        break;
                     }
                 }
             }
@@ -111,40 +133,77 @@ public class MainActivity extends Activity {
         if(isRoot || isADB){
             ee.requestGrantUser(this);
         }
+        if (homeFragment == null) {
+            homeFragment = new HomeFragmentLayout(isRoot,isADB,uid);
+        }
+        if (helpFragment == null) {
+            helpFragment =  new HelpFragmentLayout(isRoot,isADB,uid);
+        }
 
-        FragmentManager fragmentManager = getFragmentManager();
+        if(manageFragment == null){
+            manageFragment = new ManagerGrantUserFragmentLayout(isRoot,isADB);
+        }
+
+        showFragment(helpFragment);
+    }
+
+    public void showFragment(Fragment fragment) {
+        String tag = null;
+        if (fragment instanceof HelpFragmentLayout) {
+            tag = "help";
+        }
+
+        if(fragment instanceof  HomeFragmentLayout){
+            tag = "home";
+        }
+
+        if(fragment instanceof  ManagerGrantUserFragmentLayout){
+            tag = "manager";
+        }
+
+        //开启事务 创建事务对象
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.amfl1,new HelpFragmentLayout(isRoot,isADB)).commit();
-
-        dialogUtils.showHelp(this,HelpDialogUtils.MAIN_HELP,0);
-
+        //如果之前没有添加过
+        if (!fragment.isAdded()) {
+            fragmentTransaction.add(R.id.amfl1,fragment,tag);
+            if (currentFragment != null) {
+                //隐藏fragment
+                fragmentTransaction.hide(currentFragment);
+            }
+        } else {
+            if (currentFragment != null) {
+                fragmentTransaction.hide(currentFragment);
+            }
+            fragmentTransaction.show(fragment);
+        }
+        //全局变量，记录当前显示的fragment
+        currentFragment = fragment;
+        fragmentTransaction.commit();
     }
 
     private void imclick(ImageView im){
         im.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentManager fm = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fm.beginTransaction();
-                Fragment fragment = null;
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 im.setSelected(true);
                 int id = view.getId();
                 if(id == R.id.amiv1){
-                    fragment = new ManagerGrantUserFragmentLayout(isRoot,isADB);
+                    currentFragment = new ManagerGrantUserFragmentLayout(isRoot,isADB);
                     amiv2.setSelected(false);
                     amiv3.setSelected(false);
                 }
                 if(id == R.id.amiv2){
-                    fragment = new HomeFragmentLayout(isRoot,isADB,uid);
+                    currentFragment = new HomeFragmentLayout(isRoot,isADB,uid);
                     amiv1.setSelected(false);
                     amiv3.setSelected(false);
                 }
                 if(id == R.id.amiv3){
-                    fragment = new HelpFragmentLayout(isRoot,isADB);
+                    currentFragment = new HelpFragmentLayout(isRoot,isADB,uid);
                     amiv1.setSelected(false);
                     amiv2.setSelected(false);
                 }
-                fragmentTransaction.replace(R.id.amfl1, fragment);
+                fragmentTransaction.replace(R.id.amfl1, currentFragment);
                 fragmentTransaction.commit();
             }
         });

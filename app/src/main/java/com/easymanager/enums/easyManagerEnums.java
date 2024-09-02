@@ -42,6 +42,11 @@ public class easyManagerEnums {
     public final static  int GET_COMPONENT_ENABLED_SETTING=33;
     public final static  int CHECK_OP=34;
     public final static  int APP_FIREWALL=35;
+    public final static  int GET_APPOPS_PERMISSIONS=36;
+    public final static  int GET_APPOPS_PERMISSION_TO_OP=37;
+    public final static  int GET_APPOPS_PERMISSION_TO_OP_CODE=38;
+    public final static  int CHECK_PM_PERMISSION_CODE=39;
+    public final static  int GET_PATH_ALL_FILES=40;
 
 
 

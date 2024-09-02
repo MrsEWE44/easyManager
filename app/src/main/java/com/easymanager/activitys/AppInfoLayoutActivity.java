@@ -21,7 +21,6 @@ import com.easymanager.enums.AppInfoEnums;
 import com.easymanager.enums.AppManagerEnum;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
-import com.easymanager.utils.PackageUtils;
 import com.easymanager.utils.base.AppCloneUtils;
 import com.easymanager.utils.dialog.HelpDialogUtils;
 
@@ -85,17 +84,17 @@ public class AppInfoLayoutActivity extends Activity {
         ailbt1 = findViewById(R.id.ailbt1);
         aillv1 = findViewById(R.id.aillv1);
         ailsp1.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, getAppChoicesOPT()));
-        PKGINFO pkginfo = new PackageUtils().getPKGINFO(context, pkgname);
+        PKGINFO pkginfo = acu.getUd().packageUtils.getPKGINFO(context, pkgname);
         ailappicon.setImageDrawable(pkginfo.getAppicon());
         ailappname.setText(pkginfo.getAppname());
         ailapppkgname.setText(pkginfo.getPkgname());
         ailappversion.setText(pkginfo.getAppversionname());
-        ailappsize.setText(getSize(pkginfo.getFilesize(),0));
-        if(!isRoot){
-            acu.getUd().showInfoMsg(context,getLanStr(R.string.warning_tips),getLanStr(R.string.need_root_msg));
-        }else{
+        ailappsize.setText(acu.getUd().ft.getSize(pkginfo.getFilesize(),0));
+        if(isRoot || isADB){
             btClicked();
             new HelpDialogUtils().showHelp(context,HelpDialogUtils.APP_INFO_HELP,mode);
+        }else{
+            acu.getUd().showInfoMsg(context,getLanStr(R.string.warning_tips),getLanStr(R.string.need_root_msg));
         }
     }
 
@@ -145,18 +144,6 @@ public class AppInfoLayoutActivity extends Activity {
 
     }
 
-
-
-    private String getSize(double size,int count){
-        String size_type[] = {"b","KB","MB","GB","TB","PB"};
-        if(size > 1024){
-            double d_size= size/1024;
-            count = count + 1;
-            return getSize(d_size,count);
-        }
-        String sizestr=String.format("%.2f",size)+size_type[count];
-        return sizestr;
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

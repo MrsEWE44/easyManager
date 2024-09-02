@@ -11,14 +11,15 @@ import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import com.easymanager.core.utils.FileUtils;
+import com.easymanager.core.utils.MyConfigUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class FileTools extends FileUtils {
 
@@ -92,7 +93,6 @@ public class FileTools extends FileUtils {
     }
 
     public void getAllFileByEndName(String filePath, String file_end_name, List<File> files){
-
         //获取指定目录下的所有文件或者目录的File数组
         File[] fileArray = new File(filePath).listFiles();
         //遍历该File数组，得到每一个File对象
@@ -105,7 +105,7 @@ public class FileTools extends FileUtils {
                 }else{
                     //否：获取绝对路径输出在控制台
                     String filepath = file.getAbsolutePath();
-                    if(filepath.indexOf(file_end_name) != -1){
+                    if(file_end_name == null || filepath.indexOf(file_end_name) != -1){
                         files.add(file);
                     }
                 }
@@ -155,6 +155,32 @@ public class FileTools extends FileUtils {
         return file.toString();
     }
 
+    public String dirUriToRawFullPath(Uri uri,String storage){
+        String path = uri.getPath();
+        String filePath=null;
+        if(path.indexOf("tree/primary") != -1){
+            filePath = storage + "/" +path.replaceAll("/tree/primary:","");
+        }else if(path.indexOf("document/primary") != -1){
+            filePath = storage + "/" +path.replaceAll("/document/primary:","");
+            filePath = new File(filePath).getParent();
+        }else{
+            filePath = new File(path).getParent();
+        }
+        return filePath;
+    }
+
+    public void clearAppFiles(Context context,int uid){
+        String local_adb_path = new MyConfigUtils().getCachePathOnXML();
+        String storage_path = getSDPath(uid)+"/easyManager";
+        for(String s : new String[]{local_adb_path,storage_path}){
+            File file = new File(s);
+            if(file.isDirectory()){
+                deleteFile(s);
+            }else{
+                file.delete();
+            }
+        }
+    }
 
 
 }

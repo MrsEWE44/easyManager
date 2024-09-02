@@ -2,6 +2,7 @@ package com.easymanager.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +12,15 @@ import com.easymanager.enums.AppManagerEnum;
 
 public class OtherTools {
     private TextUtils tv = new TextUtils();
+
+    public void jump(Context context , Class clazz,int mode , Boolean isRoot , Boolean isADB , int uid){
+        Intent intent = new Intent(context, clazz);
+        intent.putExtra("mode",mode);
+        intent.putExtra("isRoot",isRoot);
+        intent.putExtra("isADB",isADB);
+        intent.putExtra("uid",uid);
+        context.startActivity(intent);
+    }
 
     //页面布局跳转
     public void jump(Context srcA , Class<?> cls,Boolean isRoot,Boolean isADB){
@@ -28,6 +38,28 @@ public class OtherTools {
                 jump(srcA,cls,isRoot,isADB);
             }
         });
+    }
+
+    public void setBtColor(Button b , boolean needRoot , boolean needADB , Boolean isRoot , Boolean isADB){
+        if(isADB != null && isADB){
+            if(needRoot && needADB){
+                b.setBackgroundColor(Color.YELLOW);
+            }
+
+            if(needRoot && !needADB){
+                b.setBackgroundColor(Color.RED);
+                b.setEnabled(false);
+            }
+
+        }
+
+        if(isRoot != null && !isRoot && isADB != null && !isADB){
+            if(needADB || needRoot){
+                b.setBackgroundColor(Color.RED);
+                b.setEnabled(false);
+            }
+        }
+
     }
 
     public void addMenuBase(Context context , Menu menu,int menumode){

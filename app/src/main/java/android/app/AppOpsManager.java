@@ -1,5 +1,10 @@
 package android.app;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.List;
+
 public class AppOpsManager {
 
     public static final int MODE_ALLOWED = 0;
@@ -7,7 +12,11 @@ public class AppOpsManager {
     public static final int MODE_ERRORED = 2;
     public static final int MODE_DEFAULT = 3;
     public static final int MODE_FOREGROUND = 4;
+
     public static final int WATCH_FOREGROUND_CHANGES = 1 << 0;
+
+    public static final int CALL_BACK_ON_SWITCHED_OP = 1 << 1;
+
 
 
 
@@ -237,6 +246,11 @@ public class AppOpsManager {
 
     public static final String OPSTR_READ_DEVICE_IDENTIFIERS = "android:read_device_identifiers";
 
+    public static String modeToName(int mode) {
+        return null;
+    }
+
+    public static String opToName(int op) {return  null;}
     public static int strOpToOp(String op) {
         return -1;
     }
@@ -267,5 +281,79 @@ public class AppOpsManager {
     public int checkOp( String op, int uid,  String packageName){
         return -1;
     }
+
+    public static final class OpEntry implements Parcelable {
+
+        protected OpEntry(Parcel in) {
+        }
+
+        public static final Creator<OpEntry> CREATOR = new Creator<OpEntry>() {
+            @Override
+            public OpEntry createFromParcel(Parcel in) {
+                return new OpEntry(in);
+            }
+
+            @Override
+            public OpEntry[] newArray(int size) {
+                return new OpEntry[size];
+            }
+        };
+
+        public int getOp() {
+            return -1;
+        }
+        public int getMode() {
+            return -1;
+        }
+        public String getOpStr() {
+            return null;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int i) {
+        }
+    }
+
+    public static final class PackageOps implements  Parcelable{
+
+
+        PackageOps(Parcel in) {
+        }
+
+        public static final Creator<PackageOps> CREATOR = new Creator<PackageOps>() {
+            @Override
+            public PackageOps createFromParcel(Parcel in) {
+                return new PackageOps(in);
+            }
+
+            @Override
+            public PackageOps[] newArray(int size) {
+                return new PackageOps[size];
+            }
+        };
+
+        public  List<OpEntry> getOps() {
+            return null;
+        }
+
+        public String getPackageName() {
+            return null;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int i) {
+        }
+    }
+
 
 }

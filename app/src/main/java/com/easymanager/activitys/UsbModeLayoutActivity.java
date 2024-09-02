@@ -3,6 +3,7 @@ package com.easymanager.activitys;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,10 +16,12 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.easymanager.R;
+import com.easymanager.utils.FileTools;
 import com.easymanager.utils.base.AppCloneUtils;
 import com.easymanager.utils.dialog.HelpDialogUtils;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
+import com.easymanager.utils.permissionRequest;
 
 import java.util.ArrayList;
 
@@ -26,7 +29,7 @@ public class UsbModeLayoutActivity extends Activity {
 
     private ArrayList<String> list = new ArrayList<>();
     private ArrayList<Boolean> checkboxs = new ArrayList<>();
-    private Button umlscanbt,umlmountbt;
+    private Button umlscanbt,umlmountbt,umlscanbt2;
     private Spinner umlsp;
     private ListView umllv;
 
@@ -35,12 +38,14 @@ public class UsbModeLayoutActivity extends Activity {
     private Activity activity;
 
     private boolean isRoot,isADB;
+    private int uid;
 
     private int mode;
 
     private int MOUNT_MODE_INDEX=0;
 
     private AppCloneUtils acu = new AppCloneUtils();
+    private FileTools ft = acu.getUd().ft;
 
 
     private final static String config_path1 = "/config/usb_gadget/g1";
@@ -63,7 +68,9 @@ public class UsbModeLayoutActivity extends Activity {
         mode = intent.getIntExtra("mode",-1);
         isRoot = intent.getBooleanExtra("isRoot",false);
         isADB = intent.getBooleanExtra("isADB",false);
+        uid = intent.getIntExtra("uid",0);
         umlscanbt = findViewById(R.id.umlscanbt);
+        umlscanbt2 = findViewById(R.id.umlscanbt2);
         umlmountbt = findViewById(R.id.umlmountbt);
         umlsp = findViewById(R.id.umlsp);
         umllv = findViewById(R.id.umllv);
@@ -118,6 +125,13 @@ public class UsbModeLayoutActivity extends Activity {
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
+            }
+        });
+
+        umlscanbt2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectLocalFile();
             }
         });
 
@@ -187,4 +201,24 @@ public class UsbModeLayoutActivity extends Activity {
         return acu.getTU().getLanguageString(context,id);
     }
 
+    private void selectLocalFile(){
+        permissionRequest.getExternalStorageManager(context,activity);
+        ft.execFileSelect(context,activity,getLanStr(R.string.usb_button_select_local_img));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 0){
+            if(data != null && data.getData() != null) {
+                Uri uri = data.getData();
+                String fullPath = ft.uriToFilePath(uri, context);
+                list.clear();
+                checkboxs.clear();
+                list.add(fullPath);
+                checkboxs.add(false);
+                acu.getUd().showUsers(context,umllv,list,checkboxs);
+            }
+        }
+    }
 }

@@ -6,10 +6,10 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Build;
 
 import com.easymanager.entitys.MyActivityInfo;
 import com.easymanager.entitys.MyApplicationInfo;
+import com.easymanager.entitys.MyAppopsInfo;
 import com.easymanager.entitys.MyPackageInfo;
 import com.easymanager.core.entity.TransmissionEntity;
 import com.easymanager.entitys.PKGINFO;
@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PackageUtils {
 
@@ -168,7 +169,10 @@ public class PackageUtils {
             Collections.sort(pkginfos, new Comparator<PKGINFO>() {
                 @Override
                 public int compare(PKGINFO pkginfo, PKGINFO t1) {
-                    return pkginfo.getAppname().compareTo(t1.getAppname());
+                    if(pkginfo != null && t1 != null){
+                        return pkginfo.getAppname().compareTo(t1.getAppname());
+                    }
+                    return 0;
                 }
             });
         }
@@ -259,6 +263,8 @@ public class PackageUtils {
         if(myPackageInfo != null){
             ArrayList<String> mainActivityList = new ArrayList<>();
             ArrayList<String> otherActivityList = new ArrayList<>();
+            ArrayList<Boolean> mainBoolActivityList = new ArrayList<>();
+            ArrayList<Boolean> otherBoolActivityList = new ArrayList<>();
             if(mode == 0 || mode == 2 || mode == 3){
                 MyActivityInfo[] aa = myPackageInfo.getMyActivityInfos();
                 if(mode ==2){
@@ -284,20 +290,54 @@ public class PackageUtils {
             }
 
             if(mode == 1 && myPackageInfo.requestedPermissions != null){
+                List<MyAppopsInfo> myAppopsInfos = ee.getAppopsPKGPermissions(new TransmissionEntity(pkgname, null, context.getPackageName(), 0, uid));
+                ArrayList<String> st1 = new ArrayList<String>();
+                HashMap<String,Integer> map = new HashMap<>();
+
+
+                for (MyAppopsInfo info : myAppopsInfos) {
+                    if(info.getOPS_PER_STR() != null && info.getOPS_TO_PER_STR() == null){
+                        map.put(info.getOPS_PER_STR(),1);
+                    }
+
+                    if(info.getOPS_PER_STR() != null && info.getOPS_TO_PER_STR() != null){
+                        map.put(info.getOPS_TO_PER_STR(),1);
+                    }
+
+                }
+
                 for (String permission : myPackageInfo.requestedPermissions) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        String permissionToOp = AppOpsManager.permissionToOp(permission);
-                        checkboxs.add(false);
-                        if(permissionToOp != null){
-                            int checkop = ee.checkOp(context,pkgname,permissionToOp,uid);
-                            switbs.add(checkop == AppOpsManager.MODE_ALLOWED);
-                            otherActivityList.add(permission);
-                        }else{
-                            mainActivityList.add(permission);
-                            switbs.add(false);
-                        }
+                    map.put(permission,1);
+                }
+
+                for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                    if(entry.getValue() == 1){
+                        st1.add(entry.getKey());
                     }
                 }
+
+
+
+                for (String permission : st1) {
+                    String permissionToOp = ee.permissionToOp(context,permission,uid);
+                    if(permission.indexOf(".") == -1){
+                        permissionToOp = permission;
+                    }
+                    checkboxs.add(false);
+                    if(permissionToOp != null){
+                        int checkop = ee.checkOp(context,pkgname,permissionToOp,uid);
+                        boolean b = (checkop == AppOpsManager.MODE_ALLOWED || checkop == AppOpsManager.MODE_FOREGROUND);
+                        otherActivityList.add(permission);
+                        otherBoolActivityList.add(b);
+                    }else{
+                        int checkpermcode = ee.checkPermission(context,pkgname,permission,uid);
+                        mainActivityList.add(permission);
+                        mainBoolActivityList.add(checkpermcode == 0);
+                    }
+                }
+                switbs.addAll(mainBoolActivityList);
+                switbs.addAll(otherBoolActivityList);
+
             }
             list.addAll(mainActivityList);
             list.addAll(otherActivityList);
@@ -325,5 +365,7 @@ public class PackageUtils {
     public void getPKGReceivers(Context context , String pkgname, ArrayList<String> list , ArrayList<Boolean> checkboxs,ArrayList<Boolean> switbs,Integer uid){
         getPKGInfoCore(context,pkgname,list,checkboxs,switbs,3,uid);
     }
+
+
 
 }

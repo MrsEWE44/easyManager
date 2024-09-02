@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.easymanager.R;
+import com.easymanager.adapters.RunCMDFilterAdapter;
 import com.easymanager.core.utils.CMD;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
@@ -23,15 +24,18 @@ import com.easymanager.utils.base.DialogUtils;
 import com.easymanager.utils.dialog.HelpDialogUtils;
 import com.easymanager.utils.easyManagerUtils;
 
+import java.util.ArrayList;
+
 public class RunCommandLayoutActivity extends Activity {
 
     private Context context;
-
     private Activity activity;
+
+    private ArrayList<String> mycmd = new ArrayList<>();
 
     private String cmdresult;
     private boolean isRoot,isADB;
-    private int mode;
+    private int mode,uid;
     private AutoCompleteTextView rclactv1;
     private Button rclruncmdbt;
     private EditText rclet1;
@@ -55,13 +59,15 @@ public class RunCommandLayoutActivity extends Activity {
         mode = intent.getIntExtra("mode",-1);
         isRoot = intent.getBooleanExtra("isRoot",false);
         isADB = intent.getBooleanExtra("isADB",false);
+        uid = intent.getIntExtra("uid",0);
         rclactv1 = findViewById(R.id.rclactv1);
         rclruncmdbt = findViewById(R.id.rclruncmdbt);
         rclet1 = findViewById(R.id.rclet1);
         rcltv1 = findViewById(R.id.rcltv1);
-        rcltv1.setText(eu.getCurrentUserID()==0?"# ":"$ ");
+        rcltv1.setText(eu.isROOT()?"# ":"$ ");
         rclet1.setKeyListener(null);
         btClicked();
+        scanLocalCMDFile();
         new HelpDialogUtils().showHelp(context,HelpDialogUtils.RUN_COMMAND_HELP,mode);
     }
 
@@ -77,7 +83,7 @@ public class RunCommandLayoutActivity extends Activity {
                         public void handleMessage(Message msg) {
                             if(msg.what==0){
                                 show.dismiss();
-                                rclet1.setText(cmdresult);
+                                rclet1.append(cmdresult+"\n");
                             }
 
                         }
@@ -85,18 +91,55 @@ public class RunCommandLayoutActivity extends Activity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            CMD cmd = eu.getServerStatus() ? eu.runCMD(cmdstr) : new CMD(cmdstr,false);
-                            cmdresult = cmd.getResult();
-                            du.sendHandlerMSG(handler,0);
+                            if(cmdstr.equals("clear") || cmdstr.equals("cls")){
+                                cmdresult = "";
+                            }else{
+                                CMD cmd = eu.getServerStatus() ? eu.runCMD(cmdstr) : new CMD(cmdstr,false);
+                                cmdresult = cmd.getResult();
+                                du.sendHandlerMSG(handler,0);
+                            }
                         }
                     }).start();
                 }
-//                System.out.println("rclruncmdbt clicked !!!!! ----- " + rclactv1.getText().toString() + " --- " + System.getenv("PATH") );
             }
         });
 
+    }
 
-
+    private void scanLocalCMDFile(){
+        try {
+            //需要实现自定义规则匹配,匹配自动列出来的内容
+            ProgressDialog myDialog = du.showMyDialog(context, getString(R.string.general_loading));
+            Handler handler = new Handler(){
+                @Override
+                public void handleMessage(Message msg) {
+                    if(msg.what==0){
+                        RunCMDFilterAdapter adapter = new RunCMDFilterAdapter(mycmd,context);
+                        rclactv1.setAdapter(adapter);
+                        myDialog.dismiss();
+                    }
+                }
+            };
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String getenv = System.getenv("PATH");
+                    if(getenv != null){
+                        String[] split = getenv.split(":");
+                        if(split != null && split.length > 0){
+                            for (String s : split) {
+                                mycmd.addAll(eu.getPathALLFiles(context, s, uid));
+                            }
+                        }
+                    }
+                    du.sendHandlerMSG(handler,0);
+                }
+            });
+            t.start();
+            t.join();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 

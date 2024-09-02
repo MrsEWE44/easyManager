@@ -3,29 +3,22 @@ package com.easymanager.core.server;
 import android.content.ComponentName;
 import android.os.Build;
 import android.os.IBinder;
-import android.util.Xml;
 
 import com.easymanager.core.api.AppopsAPI;
 import com.easymanager.core.api.FileCompressApi;
 import com.easymanager.core.api.PackageAPI;
 import com.easymanager.core.api.baseAPI;
+import com.easymanager.core.utils.MyConfigUtils;
+import com.easymanager.entitys.MyAppopsInfo;
 import com.easymanager.entitys.MyPackageInfo;
 import com.easymanager.core.entity.TransmissionEntity;
 import com.easymanager.core.utils.CMD;
 import com.easymanager.utils.FileTools;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
-import org.xmlpull.v1.XmlSerializer;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class easyManagerAPI extends baseAPI {
 
@@ -33,15 +26,15 @@ public class easyManagerAPI extends baseAPI {
     private AppopsAPI appopsAPI = new AppopsAPI();
 
     private FileCompressApi fileCompressApi = new FileCompressApi();
-
-    private FileTools ft = new FileTools();
+    private MyConfigUtils myConfigUtils = new MyConfigUtils();
+    private FileTools ft = myConfigUtils.ft;
 
     public IBinder getSystemService( String name) {
         return easyManagerPortService.getSystemService(name);
     }
 
     public PackageAPI getPackageAPI(){
-        return new PackageAPI();
+        return packageAPI;
     }
 
 
@@ -59,7 +52,7 @@ public class easyManagerAPI extends baseAPI {
         killpkg(pkgname,uid);
         switch (opsmode){
             case 16:
-                packageAPI.SetInactive(pkgname,opmodestr.equals("true")?true:false,uid);
+                packageAPI.SetInactive(pkgname,opmodestr.equals("true"),uid);
                 break;
             case 17:
                 packageAPI.SetStandbyBucket(pkgname, opmodestr,uid);
@@ -76,18 +69,20 @@ public class easyManagerAPI extends baseAPI {
     public void setComponentOrPackageEnabledState(String pkgname_or_compname,int state,int uid){packageAPI.setComponentOrPackageEnabledState(pkgname_or_compname, state,uid);}
     public void setPackageHideState(String pkgname,boolean hide,int uid){packageAPI.setPackageHideState(pkgname, hide , uid);}
 
+    public int checkPermission(String pkgname , String permission_str, int uid){return packageAPI.checkPermission(pkgname, permission_str, uid);}
+
     public void revokeRuntimePermission(String pkgname , String permission_str, int uid){
         try {
-            packageAPI.revokeRuntimePermission(pkgname,permission_str,uid);
-        }catch (Exception e){
+            packageAPI.revokeRuntimePermission(pkgname,permission_str,packageAPI.getTranslatedUserId());
+        }catch (Throwable e){
             appopsAPI.setPermissionStr(pkgname,permission_str,false,uid);
         }
     }
 
     public void grantRuntimePermission(String pkgname , String permission_str , int uid){
         try {
-            packageAPI.grantRuntimePermission(pkgname,permission_str,uid);
-        }catch (Exception e){
+            packageAPI.grantRuntimePermission(pkgname,permission_str,packageAPI.getTranslatedUserId());
+        }catch (Throwable e){
             appopsAPI.setPermissionStr(pkgname,permission_str,true,uid);
         }
     }
@@ -169,6 +164,15 @@ public class easyManagerAPI extends baseAPI {
         }
     }
 
+    public ArrayList<String> getPathALLFiles(String path){
+        ArrayList<File> s = new ArrayList<>();
+        ArrayList<String> s2 = new ArrayList<>();
+        ft.getAllFileByEndName(path,null,s);
+        for (File file : s) {
+            s2.add(file.toString());
+        }
+        return s2;
+    }
 
     public String getBaseAPk(String dirPath){
         File file = new File(dirPath);
@@ -286,178 +290,35 @@ public class easyManagerAPI extends baseAPI {
         }
     }
 
-    public void deleteConfig(String requpkg,int state,String path,String filename){
-        try {
-            // 创建 XmlPullParser 对象
-            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-            XmlPullParser parser = factory.newPullParser();
-            File file1 = getConfigFile(path,filename);
-            FileInputStream fis = new FileInputStream(file1);
-            // 设置输入流
-            parser.setInput(fis,"UTF-8");
-            // 开始解析文档
-            int eventType = parser.getEventType();
-            while (eventType != XmlPullParser.END_DOCUMENT) {
-                if (eventType == XmlPullParser.START_TAG) {
-                    // 判断是否是要删除的元素
-                    if (parser.getName().equals("config") && parser.getAttributeValue(null, "pkg").equals(requpkg) && parser.getAttributeValue(null,"state").equals(state)) {
-                        // 删除该元素
-                        parser.next();
-                        continue;
-                    }
-                }
-                eventType = parser.next();
-            }
-            fis.close();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
-    public File getConfigFile(String path,String filename){
-        String config_path = path+"/"+filename;
-        File file1 = new File(path);
-        if(!file1.exists()){
-            file1.mkdirs();
-        }
-        return new File(config_path);
+
+    public void deleteConfig(String requpkg,int state,String path,String filename){
+        myConfigUtils.deleteConfig(requpkg, state, path, filename);
     }
 
     public void changeConfig(String requpkg,int newstate,String path,String filename){
-        try {
-            // 创建 XmlPullParser 和 XmlSerializer 对象，以及输入输出流
-            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-            XmlPullParser parser = factory.newPullParser();
-            File file1 = getConfigFile(path,filename);
-            FileInputStream fis = new FileInputStream(file1);
-            XmlSerializer serializer = Xml.newSerializer();
-            StringWriter writer = new StringWriter();
-            serializer.setOutput(writer);
-            parser.setInput(fis,"UTF-8");
-            // 开始解析文档
-            int eventType = parser.getEventType();
-            while (eventType != XmlPullParser.END_DOCUMENT) {
-                if (eventType == XmlPullParser.START_TAG) {
-                    // 判断是否是要修改的元素
-                    if (parser.getName().equals("config")) {
-                        serializer.startTag("", "config");
-                        if(parser.getAttributeValue(null, "pkg").equals(requpkg)){
-                            // 修改元素内容
-                            serializer.attribute("", "pkg", requpkg);
-                            serializer.attribute("", "state", newstate+"");
-                        }else{
-                            serializer.attribute("", "pkg", parser.getAttributeValue(null,"pkg"));
-                            serializer.attribute("", "state", parser.getAttributeValue(null, "state"));
-                        }
-                        serializer.endTag("", "config");
-                        // 跳过原始元素
-                        parser.next();
-                    }
-                }
-                eventType = parser.next();
-            }
-            fis.close();
-            serializer.endDocument();
-            ft.writeDataToPath(writer.toString(),getCachePathOnXML()+"/"+getGrantUserConfigName(),false);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        myConfigUtils.changeConfig(requpkg, newstate, path, filename);
     }
 
     public void writeConfig(String requpkg,int state,String path,String filename){
-        File file = getConfigFile(path,filename);
-        try {
-            XmlSerializer serializer = Xml.newSerializer();
-            FileOutputStream fos = new FileOutputStream(file,true);
-            serializer.setOutput(fos, "utf-8");
-            serializer.startTag(null, "config");
-            serializer.attribute("", "pkg", requpkg);
-            serializer.attribute("", "state", state+"");
-            serializer.endTag(null, "config");
-            serializer.endDocument();
-            fos.close();
-        }catch (IOException e){
-            System.out.println("write error  ::: " + e.toString());
-        }
+        myConfigUtils.writeConfig(requpkg, state, path, filename);
     }
 
-    public HashMap<String,Integer> getConfigs(String cachePath,String filename){
-        File file1 = getConfigFile(cachePath,filename);
-        HashMap<String,Integer> hashMap = new HashMap<String,Integer>();
-        if(file1.exists()){
-            try {
-                FileInputStream fis = new FileInputStream(file1);
-                // 创建 XmlPullParser 对象，并设置输入流
-                XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-                XmlPullParser parser = factory.newPullParser();
-                parser.setInput(fis, "UTF-8");
-                int eventType=parser.getEventType();
-                while (eventType != XmlPullParser.END_DOCUMENT) {
-                    if(eventType == XmlPullParser.START_TAG){
-                        if(parser.getName().equals("config")){
-                            String key = parser.getAttributeValue(null,"state");
-                            String value = parser.getAttributeValue(null,"pkg");
-                            hashMap.put(value,Integer.valueOf(key.trim()));
-                        }
-                    }
-                    eventType = parser.next();
-                }
-                fis.close();
-            } catch (Exception e) {
-                System.out.println("read error ::: " + e.toString());
-                e.printStackTrace();
-            }
-        }
-        return hashMap;
-    }
-
-    public String getConfig(String requestpkg,String cachePath,String filename){
-        HashMap<String, Integer> configs = getConfigs(cachePath, filename);
-        for (Map.Entry<String, Integer> entry : configs.entrySet()) {
-            if(entry.getKey().equals(requestpkg)){
-                return entry.getValue().toString();
-            }
-        }
-        return null;
-    }
-
-    public String getCachePathOnXML(){
-        return  "/data/local/tmp/easyManager";
-    }
-
-    public String getGrantUserConfigName(){
-        return "grantuser.xml";
-    }
 
     public HashMap<String,Integer> getGrantUsers(){
-        return getConfigs(getCachePathOnXML(),getGrantUserConfigName());
+        return myConfigUtils.getGrantUsers();
     }
 
     public Integer getGrantUserState(String requestpkg) {
-        String value = getConfig(requestpkg,getCachePathOnXML(),getGrantUserConfigName());
-        try {
-            Integer integer = Integer.valueOf(value.trim());
-            return integer;
-        }catch (Exception e){
-
-        }
-        return -1;
+        return myConfigUtils.getGrantUserState(requestpkg);
     }
 
     public int changeGrantUserState(String requestpkg){
-        String config = getConfig(requestpkg, getCachePathOnXML(), getGrantUserConfigName());
-        if(config != null){
-            changeConfig(requestpkg,config.equals("0")?1:0,getCachePathOnXML(),getGrantUserConfigName());
-            return 0;
-        }
-        return -1;
+        return myConfigUtils.changeGrantUserState(requestpkg);
     }
 
     public int requestGrantUserState(String requestpkg){
-        if(getConfig(requestpkg,getCachePathOnXML(),getGrantUserConfigName()) == null){
-            writeConfig(requestpkg,requestpkg.equals("com.easymanager")?0:1,getCachePathOnXML(),getGrantUserConfigName());
-        }
-        return getConfig(requestpkg,getCachePathOnXML(),getGrantUserConfigName()) != null ? 1:-1;
+        return myConfigUtils.requestGrantUserState(requestpkg);
     }
 
     public void createAppClone(){
@@ -485,6 +346,13 @@ public class easyManagerAPI extends baseAPI {
     public int getComponentEnabledSetting(ComponentName componentName, int userId){return packageAPI.getComponentEnabledSetting(componentName,userId);}
 
     public int checkOp(String opstr, String packageName, int uid){return appopsAPI.checkOp(opstr, packageName, uid);}
+
+    public List<MyAppopsInfo> getAppopsPKGPermissions(String pkgname, int userid){return appopsAPI.getAppopsPKGPermissions(pkgname,userid);}
+
+    public String permissionToOp(String permission_str){return appopsAPI.permissionToOp(permission_str);}
+
+    public int strOpToOp(String op){return appopsAPI.strOpToOp(op);}
+
 
 
 }

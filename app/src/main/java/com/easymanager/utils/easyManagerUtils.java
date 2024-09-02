@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.IBinder;
 import android.os.Process;
 
+import com.easymanager.entitys.MyAppopsInfo;
 import com.easymanager.entitys.MyPackageInfo;
 import com.easymanager.core.entity.TransmissionEntity;
 import com.easymanager.core.entity.easyManagerClientEntity;
@@ -225,6 +226,40 @@ public class easyManagerUtils {
         easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.CHECK_OP);
         easyManagerServiceEntity eee = putOptionOnServer(adben2);
         return (Integer) eee.getObject();
+    }
+
+    public int checkPermission(Context context , String pkgname,String opstr,int uid){
+        TransmissionEntity transmissionEntity = new TransmissionEntity(pkgname, opstr, context.getPackageName(), 0, uid);
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.CHECK_PM_PERMISSION_CODE);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+        return (Integer) eee.getObject();
+    }
+
+    public List<MyAppopsInfo> getAppopsPKGPermissions(TransmissionEntity entity){
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.GET_APPOPS_PERMISSIONS);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+        return (List<MyAppopsInfo>) eee.getObject();
+    }
+
+    public String permissionToOp(Context context, String permission, Integer uid) {
+        TransmissionEntity transmissionEntity = new TransmissionEntity(null, permission, context.getPackageName(), 0, uid);
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.GET_APPOPS_PERMISSION_TO_OP);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+        return (String) eee.getObject();
+    }
+
+    public int strOpToOp(Context context , String pkgname,String opstr,int uid){
+        TransmissionEntity transmissionEntity = new TransmissionEntity(pkgname, opstr, context.getPackageName(), 0, uid);
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.GET_APPOPS_PERMISSION_TO_OP_CODE);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+        return (Integer) eee.getObject();
+    }
+
+    public List<String> getPathALLFiles(Context context,String path,int uid){
+        TransmissionEntity transmissionEntity = new TransmissionEntity(null, path, context.getPackageName(), 0, uid);
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.GET_PATH_ALL_FILES);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+        return (List<String>) eee.getObject();
     }
 
 }
