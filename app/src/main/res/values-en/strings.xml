@@ -250,4 +250,14 @@
     <string name="help_clean_app_files_button">Clean APP Cache Files</string>
     <string name="help_open_source_global_button">Github Project</string>
     <string name="help_open_source_china_button">Gitee Project</string>
+    <string name="clean_input_hint_tips">Please enter an integer</string>
+    <string name="clean_input_time_second">second</string>
+    <string name="clean_input_time_minute">minute</string>
+    <string name="clean_input_time_hour">hour</string>
+    <string name="clean_input_time_day">day</string>
+    <string name="clean_input_value_tips">Pleas input value</string>
+    <string name="copy_app_detail">Copy APP Detail</string>
+    <string name="jump_app_detail">Jump APP Detail</string>
+    <string name="add_clean_list">Add scheduled cleaning list</string>
+    <string name="added_clean_list_msg">Is Added scheduled cleaning list!</string>
 </resources>

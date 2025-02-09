@@ -228,8 +228,36 @@ public class startAdbService {
                                                 }else {
                                                     return getActiveADB();
                                                 }
-
-
+                                            case easyManagerEnums.SET_PACKAGE_SUSPEND:
+                                                if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                    managerAPI.setPackagesSuspendedAsUser(entity.getPkgname(),entity.getOpsmode()==0,entity.getUid());
+                                                }else {
+                                                    return getActiveADB();
+                                                }
+                                            case easyManagerEnums.GET_PACKAGE_SUSPEND:
+                                                if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                    return managerAPI.isPackageSuspendedForUser(entity.getPkgname(),entity.getUid());
+                                                }else {
+                                                    return getActiveADB();
+                                                }
+                                            case easyManagerEnums.CLEAR_PACKAGE_DATA:
+                                                if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                    managerAPI.clearPackageData(entity.getPkgname(), entity.getUid());
+                                                }else {
+                                                    return getActiveADB();
+                                                }
+                                        case easyManagerEnums.ADD_RUNNING_PACKAGE:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                managerAPI.addRunningApps(entity.getPkgname(),entity.getOpmodestr(),entity.getUid());
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                        case easyManagerEnums.START_STOP_RUNNING_PACKAGE:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                managerAPI.startStopRunningAPP(entity.getUid());
+                                            }else {
+                                                return getActiveADB();
+                                            }
 
 
                                     }
@@ -258,6 +286,12 @@ public class startAdbService {
                             }else if(adbEntity2.getEasyManagerMode() == easyManagerEnums.APP_CLONE_GETUSERS){
                                     if(managerAPI.isRoot() || managerAPI.isADB()){
                                         return managerAPI.getUsers();
+                                    }else {
+                                        return getActiveADB();
+                                    }
+                            }else if(adbEntity2.getEasyManagerMode() == easyManagerEnums.DELETE_CLEAN_APP_CONFIG){
+                                    if(managerAPI.isRoot() || managerAPI.isADB()){
+                                        managerAPI.deleteCleanAPPConfig();
                                     }else {
                                         return getActiveADB();
                                     }

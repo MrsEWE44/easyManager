@@ -1,8 +1,10 @@
 package com.easymanager.activitys;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -11,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.InputType;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,13 +21,18 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.easymanager.R;
+import com.easymanager.core.entity.TransmissionEntity;
 import com.easymanager.entitys.PKGINFO;
 import com.easymanager.enums.AppManagerEnum;
+import com.easymanager.enums.easyManagerEnums;
 import com.easymanager.utils.FileTools;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
@@ -61,6 +69,7 @@ public class AppManagerLayoutActivity extends Activity {
     private String APP_ALL_UERS[] = null;
     private int nowItemIndex=-1;
     private int APP_UID_INDEX=0,APP_CHOICES_INDEX = 0, APP_PERMIS_INDEX = 0 , APP_PERMIS_OPT_INDEX = 0, APP_PERMIS_MODE= 0 ;
+    private int APP_CLEAN_TIME = 2,APP_CLEAN_TIME_TYPE = 0;
 
     private boolean install_mode = false;
     private AppCloneUtils acu = new AppCloneUtils();
@@ -155,26 +164,7 @@ public class AppManagerLayoutActivity extends Activity {
                     }
 
                 }else{
-                    ArrayList<PKGINFO> list = new ArrayList<>();
-                    for (int i = 0; i < checkboxs.size(); i++) {
-                        PKGINFO pkginfo = pkginfos.get(i);
-                        if(APP_CHOICES_INDEX == 0){
-                            if(checkboxs.get(i)){
-                                addPKGS(pkginfo,list);
-                            }
-                        }
-
-                        if(APP_CHOICES_INDEX == 1){
-                            if(!checkboxs.get(i)){
-                                addPKGS(pkginfo,list);
-                            }
-                        }
-
-                        if(APP_CHOICES_INDEX == 2){
-                            addPKGS(pkginfo,list);
-                        }
-
-                    }
+                    ArrayList<PKGINFO> list = getAddedPKGList();
                     if(mode == AppManagerEnum.APP_PERMISSION){
                         String opt_str = null;
                         if(APP_PERMIS_MODE == 0){
@@ -224,7 +214,8 @@ public class AppManagerLayoutActivity extends Activity {
                     }
 
                     if(mode == AppManagerEnum.APP_CLEAN_PROCESS){
-                        acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_CLEAN_PROCESS,APP_PERMIS_OPT_INDEX,null,uid);
+                        acu.getPd().easyMUtils.deleteCleanAPPConfig();
+                        acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_CLEAN_PROCESS,APP_PERMIS_OPT_INDEX,getADDCleanRunningAPPOPTSTR(),uid);
                     }
 
                     if(mode == AppManagerEnum.APP_BACKUP){
@@ -272,13 +263,13 @@ public class AppManagerLayoutActivity extends Activity {
 
     }
 
-
     private void createLVMenu(){
         apllv1.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
             @Override
             public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
-                contextMenu.add(0,0,0,"复制信息");
-                contextMenu.add(0,1,0,"跳转至应用详情");
+                contextMenu.add(0,0,0, R.string.copy_app_detail);
+                contextMenu.add(0,1,0, R.string.jump_app_detail);
+                contextMenu.add(0,2,0, R.string.add_clean_list);
             }
         });
     }
@@ -294,6 +285,17 @@ public class AppManagerLayoutActivity extends Activity {
                 Intent intent2 = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                 intent2.setData(Uri.parse("package:" + pkginfos.get(nowItemIndex).getPkgname()));
                 startActivity(intent2);
+                break;
+            case 2:
+                ArrayList<PKGINFO> pkgList = getAddedPKGList();
+                String opt_str =getADDCleanRunningAPPOPTSTR();
+                String reqpkg = context.getPackageName();
+                if(pkgList.size() > 0){
+                    acu.getPd().showProcessBarDialogByCMD(context,pkgList,AppManagerEnum.APP_CLEAN_PROCESS,1,getADDCleanRunningAPPOPTSTR(),uid);
+                }else{
+                    acu.getPd().easyMUtils.addRunningAPPS(new TransmissionEntity(pkginfos.get(nowItemIndex).getPkgname(),opt_str,reqpkg, easyManagerEnums.ADD_RUNNING_PACKAGE,uid));
+                    Toast.makeText(context,pkginfos.get(nowItemIndex).getAppname()+getLanStr(R.string.added_clean_list_msg),Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
 
@@ -322,6 +324,58 @@ public class AppManagerLayoutActivity extends Activity {
                         break;
                     case 1:
                         APP_PERMIS_OPT_INDEX = i;
+                        if(mode == AppManagerEnum.APP_CLEAN_PROCESS && APP_PERMIS_OPT_INDEX == 1){
+                            EditText input = new EditText(context);
+                            Spinner sp = new Spinner(context);
+                            input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                            input.setHint(R.string.clean_input_hint_tips);
+                            sp.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, new String[]{getLanStr(R.string.clean_input_time_second),getLanStr(R.string.clean_input_time_minute),getLanStr(R.string.clean_input_time_hour),getLanStr(R.string.clean_input_time_day)}));
+
+                            sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                                    APP_CLEAN_TIME_TYPE = i;
+                                }
+
+                                @Override
+                                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                                }
+                            });
+                            LinearLayout ll = new LinearLayout(context);
+                            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                            lp.weight = 1;
+                            input.setLayoutParams(lp);
+                            sp.setLayoutParams(lp);
+                            ll.addView(input);
+                            ll.addView(sp);
+                            ll.setOrientation(LinearLayout.HORIZONTAL);
+                            AlertDialog.Builder ab = new AlertDialog.Builder(context);
+                            ab.setTitle(getLanStr(R.string.tips));
+                            ab.setMessage(R.string.clean_input_value_tips);
+                            ab.setView(ll);
+                            ab.setNegativeButton(getLanStr( R.string.dialog_sure_text), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    String valueInput = input.getText().toString();
+                                    APP_CLEAN_TIME = Integer.parseInt(valueInput.trim());
+                                    dialogInterface.cancel();
+                                }
+                            });
+                            ab.setPositiveButton(getLanStr( R.string.dialog_cancel_text), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    input.getText().clear();
+                                    dialogInterface.cancel();
+                                }
+                            });
+
+                            AlertDialog alertDialog = ab.create();
+                            alertDialog.show();
+                            TextView tv = alertDialog.getWindow().getDecorView().findViewById(android.R.id.message);
+                            tv.setTextIsSelectable(true);
+
+                        }
                         break;
                     case 2:
                         APP_CHOICES_INDEX = i;
@@ -367,7 +421,8 @@ public class AppManagerLayoutActivity extends Activity {
                                 case 5:
                                     mode = AppManagerEnum.APP_CLEAN_PROCESS;
                                     amlsp1.setEnabled(false);
-                                    amlsp2.setEnabled(false);
+                                    amlsp2.setEnabled(true);
+                                    amlsp2.setAdapter(getSpinnerAdapter(getAppCleanOPT()));
                                     amlapplybt.setText(getLanStr(R.string.button_clean));
                                     break;
                             }
@@ -465,6 +520,30 @@ public class AppManagerLayoutActivity extends Activity {
     private void selectLocalDir(){
         permissionRequest.getExternalStorageManager(context,activity);
         ft.execDirSelect(context,activity,getLanStr(R.string.choice_install_file));
+    }
+
+    private ArrayList<PKGINFO> getAddedPKGList(){
+        ArrayList<PKGINFO> list = new ArrayList<>();
+        for (int i = 0; i < checkboxs.size(); i++) {
+            PKGINFO pkginfo = pkginfos.get(i);
+            if(APP_CHOICES_INDEX == 0){
+                if(checkboxs.get(i)){
+                    addPKGS(pkginfo,list);
+                }
+            }
+
+            if(APP_CHOICES_INDEX == 1){
+                if(!checkboxs.get(i)){
+                    addPKGS(pkginfo,list);
+                }
+            }
+
+            if(APP_CHOICES_INDEX == 2){
+                addPKGS(pkginfo,list);
+            }
+
+        }
+        return list;
     }
 
     private void addPKGINFO(PackageManager pm, Uri uri , String storage){
@@ -589,6 +668,10 @@ public class AppManagerLayoutActivity extends Activity {
         return new String[]{getLanStr(R.string.spin_item_opt3_allow),getLanStr(R.string.spin_item_opt3_denial)};
     }
 
+    private String[] getAppCleanOPT() {
+        return new String[]{"仅当前清理","后台定时清理"};
+    }
+
     private String[] getAppDisableOrEnableOPT(){
         return new String[]{getLanStr(R.string.spin_item_enable),getLanStr(R.string.spin_item_disable)};
     }
@@ -625,6 +708,10 @@ public class AppManagerLayoutActivity extends Activity {
         }else {
             list.add(pkginfo);
         }
+    }
+
+    private String getADDCleanRunningAPPOPTSTR(){
+        return APP_CLEAN_TIME + "-" + APP_CLEAN_TIME_TYPE;
     }
 
 }

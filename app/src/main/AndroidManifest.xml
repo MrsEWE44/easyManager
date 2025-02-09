@@ -9,9 +9,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/launcher_iconnn_round"
         android:theme="@android:style/Theme.Holo.Light"
-        android:enableOnBackInvokedCallback="true"
         android:requestLegacyExternalStorage="true"
-        android:supportsRtl="true"
         >
         <activity
             android:name=".MainActivity"

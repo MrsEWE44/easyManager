@@ -35,6 +35,8 @@ public class easyManagerEnums {
     public final static  int SET_PACKAGE_GRANT_RUNTIME_PERMISSION_UID=26;
     public final static  int BACKUP_APK_UID=27;
     public final static  int RESTORY_APK_UID=28;
+
+
     public final static  int QUERY_PACKAGES_UID=29;
     public final static  int GET_PACKAGEINFO_UID=30;
     public final static  int GET_CURRENT_USER_ID=31;
@@ -47,6 +49,14 @@ public class easyManagerEnums {
     public final static  int GET_APPOPS_PERMISSION_TO_OP_CODE=38;
     public final static  int CHECK_PM_PERMISSION_CODE=39;
     public final static  int GET_PATH_ALL_FILES=40;
+    public final static  int SET_PACKAGE_SUSPEND=41;
+    public final static  int GET_PACKAGE_SUSPEND=42;
+    public final static  int CLEAR_PACKAGE_DATA=43;
+    public final static  int ADD_RUNNING_PACKAGE=44;
+    public final static  int START_STOP_RUNNING_PACKAGE=45;
+    public final static  int DELETE_CLEAN_APP_CONFIG=46;
+
+
 
 
 

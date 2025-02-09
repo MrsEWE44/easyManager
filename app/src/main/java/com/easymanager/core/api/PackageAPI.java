@@ -1,5 +1,6 @@
 package com.easymanager.core.api;
 
+import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
 import android.app.IActivityManager;
 import android.app.usage.IUsageStatsManager;
@@ -12,6 +13,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.IPackageDataObserver;
 import android.content.pm.IPackageDeleteObserver;
 import android.content.pm.IPackageInstallObserver;
 import android.content.pm.IPackageInstaller;
@@ -21,6 +23,7 @@ import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
 import android.content.pm.ParceledListSlice;
 import android.content.pm.ServiceInfo;
+import android.content.pm.SuspendDialogInfo;
 import android.content.pm.UserInfo;
 import android.content.pm.VerificationParams;
 import android.content.pm.VersionedPackage;
@@ -29,6 +32,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.IUserManager;
+import android.os.PersistableBundle;
 import android.os.Process;
 import android.os.RemoteException;
 import android.permission.IPermissionManager;
@@ -89,6 +93,7 @@ public class PackageAPI extends  baseAPI implements Serializable {
     public static final String USER_TYPE_PROFILE_MANAGED = "android.os.usertype.profile.MANAGED";
     public static final String USER_TYPE_PROFILE_CLONE = "android.os.usertype.profile.CLONE";
     public static final int FLAG_MANAGED_PROFILE = 0x00000020;
+    public static final int FLAG_SUSPEND_QUARANTINED = 0x00000001;
 
     private static final Map<String, IUsageStatsManager> I_USAGE_STATS_MANAGER_CACHE = new HashMap<>();
     private static final Map<String, IActivityManager> I_ACTIVITY_MANAGER_CACHE = new HashMap<>();
@@ -203,6 +208,10 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
     public String getInstallerPackageName(){
         return (isRoot()?"com.easymanager":"com.android.shell");
+    }
+
+    public String getCallingPackage(){
+        return (isRoot()?"root":"com.android.shell");
     }
 
     public int getInstallFlags(){
@@ -519,6 +528,63 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
     }
 
+    public boolean isPackageSuspendedForUser(String packageName,int uid){
+        return getIPackageManager().isPackageSuspendedForUser(packageName,uid);
+    }
+
+    public void clearPackageData(String packageName,int uid){
+        try{
+            ClearDataObserver obs = new ClearDataObserver();
+            IActivityManager iActivityManager = getIActivityManager();
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
+                iActivityManager.clearApplicationUserData(packageName,false,obs,uid);
+            }else{
+                iActivityManager.clearApplicationUserData(packageName,obs,uid);
+            }
+            synchronized (obs) {
+                while (!obs.finished) {
+                    try {
+                        obs.wait();
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
+            if (obs.result) {
+
+            } else {
+
+            }
+        }catch (Throwable t){
+
+        }
+
+    }
+
+    public void setPackagesSuspendedAsUser(String packageName, boolean suspended,int uid) {
+        setPackagesSuspendedAsUser(new String[]{packageName},suspended,uid);
+    }
+
+    public void setPackagesSuspendedAsUser(String[] packageNames, boolean suspended,int uid){
+        IPackageManager iPackageManager = getIPackageManager();
+        int translatedUserId = uid;
+        String callingPackage = getCallingPackage();
+        PersistableBundle appExtras = null;
+        PersistableBundle launcherExtras = null;
+        SuspendDialogInfo dialogInfo = null;
+        String dialogMessage = null;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM){
+            iPackageManager.setPackagesSuspendedAsUser(packageNames,suspended,appExtras
+                    ,launcherExtras,dialogInfo,0,callingPackage,0,translatedUserId);
+        }else if(Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM && Build.VERSION.SDK_INT > Build.VERSION_CODES.P){
+            iPackageManager.setPackagesSuspendedAsUser(packageNames,suspended,appExtras,launcherExtras,dialogInfo,callingPackage,translatedUserId);
+        }else if(Build.VERSION.SDK_INT ==  Build.VERSION_CODES.P){
+            iPackageManager.setPackagesSuspendedAsUser(packageNames,suspended,appExtras,launcherExtras,dialogMessage,callingPackage,translatedUserId);
+        }else if(Build.VERSION.SDK_INT <  Build.VERSION_CODES.P && Build.VERSION.SDK_INT >  Build.VERSION_CODES.M){
+            iPackageManager.setPackagesSuspendedAsUser(packageNames,suspended,translatedUserId);
+        }
+
+    }
+
     public void revokeRuntimePermission(String pkgname , String permission_str, int uid){
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.Q){
             IPermissionManager iPermissionManager = getIPermissionManager();
@@ -553,6 +619,10 @@ public class PackageAPI extends  baseAPI implements Serializable {
             IPackageManager iPackageManager = getIPackageManager();
             iPackageManager.setApplicationHiddenSettingAsUser(pkgname, hide, uid);
         }
+    }
+
+    public List<ActivityManager.RunningAppProcessInfo> getRunningApps(int uid){
+        return getIActivityManager().getRunningAppProcesses();
     }
 
 
@@ -730,6 +800,25 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
         return new MyPackageInfo(packageInfo.packageName,packageInfo.versionCode,packageInfo.versionName,
                 myApplicationInfo,myActivityInfo,myServices,myReceivers,packageInfo.requestedPermissions);
+    }
+
+    class ClearDataObserver extends IPackageDataObserver.Stub {
+        boolean finished;
+        boolean result;
+
+        @Override
+        public void onRemoveCompleted(String packageName, boolean succeeded)  {
+            synchronized (this) {
+                finished = true;
+                result = succeeded;
+                notifyAll();
+            }
+        }
+
+        @Override
+        public IBinder asBinder() {
+            return this;
+        }
     }
 
     class LocalPackageInstallObserver extends android.app.PackageInstallObserver {

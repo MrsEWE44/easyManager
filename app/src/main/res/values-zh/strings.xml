@@ -476,6 +476,16 @@
     <string name="help_clean_app_files_button">清理残留</string>
     <string name="help_open_source_global_button">Github开源地址</string>
     <string name="help_open_source_china_button">Gitee开源地址</string>
+    <string name="clean_input_hint_tips">请输入整数</string>
+    <string name="clean_input_time_second">秒</string>
+    <string name="clean_input_time_minute">分钟</string>
+    <string name="clean_input_time_hour">小时</string>
+    <string name="clean_input_time_day">天</string>
+    <string name="clean_input_value_tips">请输入内容</string>
+    <string name="copy_app_detail">复制信息</string>
+    <string name="jump_app_detail">跳转至应用详情</string>
+    <string name="add_clean_list">添加到后台定时清理名单</string>
+    <string name="added_clean_list_msg">已添加到后台定时清理名单！</string>
 
 
 </resources>

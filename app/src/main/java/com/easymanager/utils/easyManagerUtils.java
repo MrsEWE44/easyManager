@@ -104,6 +104,26 @@ public class easyManagerUtils {
         easyManagerServiceEntity eee = putOptionOnServer(adben2);
     }
 
+    public void setPackagesSuspend(TransmissionEntity entity){
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.SET_PACKAGE_SUSPEND);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+    }
+
+    public void clearPackageData(TransmissionEntity entity){
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.CLEAR_PACKAGE_DATA);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+    }
+
+    public void addRunningAPPS(TransmissionEntity entity){
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.ADD_RUNNING_PACKAGE);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+    }
+
+    public void startStopRunningAPP(TransmissionEntity entity){
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.START_STOP_RUNNING_PACKAGE);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+    }
+
     public void setPackageHideState(TransmissionEntity entity){
         easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.SET_PACKAGE_HIDE_STATE);
         easyManagerServiceEntity eee = putOptionOnServer(adben2);
@@ -136,6 +156,11 @@ public class easyManagerUtils {
 
     public void restoryApp(TransmissionEntity entity){
         easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.RESTORY_APK);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+    }
+
+    public void deleteCleanAPPConfig(){
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,null,easyManagerEnums.DELETE_CLEAN_APP_CONFIG);
         easyManagerServiceEntity eee = putOptionOnServer(adben2);
     }
 
@@ -219,6 +244,13 @@ public class easyManagerUtils {
         easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.GET_COMPONENT_ENABLED_SETTING);
         easyManagerServiceEntity eee = putOptionOnServer(adben2);
         return (Integer) eee.getObject();
+    }
+
+    public boolean getPackageSuspend(Context context , String pkgname,int uid){
+        TransmissionEntity transmissionEntity = new TransmissionEntity(pkgname, null, context.getPackageName(), 0, uid);
+        easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.GET_PACKAGE_SUSPEND);
+        easyManagerServiceEntity eee = putOptionOnServer(adben2);
+        return (boolean) eee.getObject();
     }
 
     public int checkOp(Context context , String pkgname,String opstr,int uid){

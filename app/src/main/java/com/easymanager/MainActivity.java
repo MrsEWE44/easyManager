@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
@@ -13,11 +12,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
+import com.easymanager.core.entity.TransmissionEntity;
 import com.easymanager.fragment.HelpFragmentLayout;
 import com.easymanager.fragment.HomeFragmentLayout;
 import com.easymanager.fragment.ManagerGrantUserFragmentLayout;
 import com.easymanager.utils.FileTools;
-import com.easymanager.utils.OtherTools;
 import com.easymanager.utils.dialog.HelpDialogUtils;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.ShellUtils;
@@ -132,6 +131,7 @@ public class MainActivity extends Activity {
 
         if(isRoot || isADB){
             ee.requestGrantUser(this);
+            ee.startStopRunningAPP(new TransmissionEntity(null,null,this.getPackageName(),-1,uid));
         }
         if (homeFragment == null) {
             homeFragment = new HomeFragmentLayout(isRoot,isADB,uid);
@@ -145,6 +145,7 @@ public class MainActivity extends Activity {
         }
 
         showFragment(helpFragment);
+
     }
 
     public void showFragment(Fragment fragment) {

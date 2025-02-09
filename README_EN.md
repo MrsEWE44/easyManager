@@ -21,6 +21,19 @@ Moreover, the interface open to the public by EasyManager has been tested and su
 ![image](images/10.png) ![image](images/11.png)
 
 
+- V1.2.5
+
+1.Fixed the problem that the single ISO file selected in U disk mode is stuck.
+
+2.Added the functions of app freezing, data clearing, and scheduled termination of background apps.
+
+3.Boost the compileSdk to 35.
+
+4.Optimize the functional experience.
+
+5.The version number is 1.2.5
+
+
 - V1.2.4
 
 1.Added a single file selection function in U disk mode.

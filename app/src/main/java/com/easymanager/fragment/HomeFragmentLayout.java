@@ -45,7 +45,6 @@ public class HomeFragmentLayout extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View inflate = inflater.inflate(R.layout.home_fragment_layout, container, false);
         initBt(inflate);
-
         return inflate;
     }
 

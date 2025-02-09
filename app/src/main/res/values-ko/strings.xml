@@ -250,4 +250,14 @@
     <string name="help_clean_app_files_button">앱 잔여물 정리</string>
     <string name="help_open_source_global_button">Github Project</string>
     <string name="help_open_source_china_button">Gitee Project</string>
+    <string name="clean_input_hint_tips">정수를 입력하십시오.</string>
+    <string name="clean_input_time_second">둘째</string>
+    <string name="clean_input_time_minute">분</string>
+    <string name="clean_input_time_hour">시간</string>
+    <string name="clean_input_time_day">낮</string>
+    <string name="clean_input_value_tips">값을 입력하십시오.</string>
+    <string name="copy_app_detail">APP 세부 정보 복사</string>
+    <string name="jump_app_detail">점프 APP 상세 정보</string>
+    <string name="add_clean_list">예정된 청소 목록 추가</string>
+    <string name="added_clean_list_msg">예약된 청소 목록이 추가되었습니다!</string>
 </resources>

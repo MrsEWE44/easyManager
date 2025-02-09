@@ -18,7 +18,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class FileTools extends FileUtils {
@@ -153,6 +152,19 @@ public class FileTools extends FileUtils {
             }
         }
         return file.toString();
+    }
+
+    public String fileUriToRawFullPath(Uri uri,String storage){
+        String path = uri.getPath();
+        String filePath=null;
+        if(path.indexOf("tree/primary") != -1){
+            filePath = storage + "/" +path.replaceAll("/tree/primary:","");
+        }else if(path.indexOf("document/primary") != -1){
+            filePath = storage + "/" +path.replaceAll("/document/primary:","");
+        }else{
+            filePath = path;
+        }
+        return filePath;
     }
 
     public String dirUriToRawFullPath(Uri uri,String storage){

@@ -20,7 +20,6 @@ public class MyConfigUtils {
 
     public FileTools ft = new FileTools();
 
-
     public void deleteConfig(String requpkg,int state,String path,String filename){
         try {
             // 创建 XmlPullParser 对象
@@ -93,7 +92,7 @@ public class MyConfigUtils {
             }
             fis.close();
             serializer.endDocument();
-            ft.writeDataToPath(writer.toString(),getCachePathOnXML()+"/"+getGrantUserConfigName(),false);
+            ft.writeDataToPath(writer.toString(),path+"/"+filename,false);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -164,12 +163,32 @@ public class MyConfigUtils {
         return "grantuser.xml";
     }
 
+    public String getCleanAPPConfigName(){
+        return "cleanapp.xml";
+    }
+
+
     public HashMap<String,Integer> getGrantUsers(){
         return getConfigs(getCachePathOnXML(),getGrantUserConfigName());
     }
 
+    public HashMap<String,Integer> getCleanAPPs(){
+        return getConfigs(getCachePathOnXML(),getCleanAPPConfigName());
+    }
+
     public Integer getGrantUserState(String requestpkg) {
         String value = getConfig(requestpkg,getCachePathOnXML(),getGrantUserConfigName());
+        try {
+            Integer integer = Integer.valueOf(value.trim());
+            return integer;
+        }catch (Exception e){
+
+        }
+        return -1;
+    }
+
+    public Integer getCleanAPPConfigTime(String requestpkg) {
+        String value = getConfig(requestpkg,getCachePathOnXML(),getCleanAPPConfigName());
         try {
             Integer integer = Integer.valueOf(value.trim());
             return integer;
@@ -188,11 +207,31 @@ public class MyConfigUtils {
         return -1;
     }
 
+    public int changeCleanAPPConfigTime(String requestpkg,int time){
+        String config = getConfig(requestpkg, getCachePathOnXML(), getCleanAPPConfigName());
+        if(config != null){
+            changeConfig(requestpkg,time,getCachePathOnXML(),getCleanAPPConfigName());
+            return 0;
+        }
+        return -1;
+    }
+
     public int requestGrantUserState(String requestpkg){
         if(getConfig(requestpkg,getCachePathOnXML(),getGrantUserConfigName()) == null){
             writeConfig(requestpkg,requestpkg.equals("com.easymanager")?0:1,getCachePathOnXML(),getGrantUserConfigName());
         }
         return getConfig(requestpkg,getCachePathOnXML(),getGrantUserConfigName()) != null ? 1:-1;
+    }
+
+    public int addCleanAPPConfigTime(String requestpkg,int time){
+        if(getConfig(requestpkg,getCachePathOnXML(),getCleanAPPConfigName()) == null){
+            writeConfig(requestpkg,time,getCachePathOnXML(),getCleanAPPConfigName());
+        }
+        return getConfig(requestpkg,getCachePathOnXML(),getCleanAPPConfigName()) != null ? 1:-1;
+    }
+
+    public void deleteCleanAPPConfig(){
+        ft.deleteFile(getCachePathOnXML()+"/"+getCleanAPPConfigName());
     }
 
 

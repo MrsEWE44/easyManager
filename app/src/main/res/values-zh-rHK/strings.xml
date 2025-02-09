@@ -250,4 +250,14 @@
     <string name="help_clean_app_files_button">清理應用殘留</string>
     <string name="help_open_source_global_button">Github开源地址</string>
     <string name="help_open_source_china_button">Gitee开源地址</string>
+    <string name="clean_input_hint_tips">請輸入整數</string>
+    <string name="clean_input_time_second">秒</string>
+    <string name="clean_input_time_minute">分鐘</string>
+    <string name="clean_input_time_hour">小時</string>
+    <string name="clean_input_time_day">天</string>
+    <string name="clean_input_value_tips">請輸入值</string>
+    <string name="copy_app_detail">複製APP詳細資訊</string>
+    <string name="jump_app_detail">跳轉APP詳細資訊</string>
+    <string name="add_clean_list">添加計畫清潔清單</string>
+    <string name="added_clean_list_msg">已添加計畫清潔清單！</string>
 </resources>

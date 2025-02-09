@@ -21,6 +21,19 @@ easyManager的工作原理借鉴了Shizuku、AppOps,与它们两个类似,easyMa
 ![image](images/10.png) ![image](images/11.png)
 
 
+- V1.2.5
+
+1.修复了U盘模式选择单个iso文件卡死的问题。
+
+2.新增应用冻结、数据清楚、后台应用定时终止功能。
+
+3.提升compileSdk为35。
+
+4.优化功能体验。
+
+5.修改版本号为1.2.5
+
+
 - V1.2.4
   
 1.U盘模式新增单个文件选择功能。

@@ -60,6 +60,8 @@ public class PackageDialog extends DialogUtils {
                             break;
                         case AppManagerEnum.APP_DISABLE_COMPENT:
                             easyMUtils.setComponentOrPackageEnabledState(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,APP_PERMIS_INDEX==0? PackageAPI.COMPONENT_ENABLED_STATE_ENABLED:PackageAPI.COMPONENT_ENABLED_STATE_DISABLED_USER,uid));
+                            easyMUtils.setPackagesSuspend(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,APP_PERMIS_INDEX==0? -1:0,uid));
+                            easyMUtils.clearPackageData(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,0,uid));
                             break;
                         case AppManagerEnum.APP_INFO_LAYOUT:
                             if(APP_PERMIS_INDEX == AppInfoEnums.IS_PERMISSION){
@@ -106,7 +108,14 @@ public class PackageDialog extends DialogUtils {
                             break;
                         case AppManagerEnum.APP_CLEAN_PROCESS:
                             if(!pkginfo.getPkgname().equals(context.getPackageName())){
-                                easyMUtils.killpkg(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg, easyManagerEnums.KILL_PROCESS,uid));
+                                if(APP_PERMIS_INDEX == 0){
+                                    easyMUtils.killpkg(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg, easyManagerEnums.KILL_PROCESS,uid));
+                                }
+
+                                if(APP_PERMIS_INDEX == 1){
+                                    easyMUtils.addRunningAPPS(new TransmissionEntity(pkginfo.getPkgname(),opt_str,reqpkg,easyManagerEnums.ADD_RUNNING_PACKAGE,uid));
+                                }
+
                             }
                             break;
                         case AppManagerEnum.APP_BACKUP:

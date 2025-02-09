@@ -212,7 +212,7 @@ public class UsbModeLayoutActivity extends Activity {
         if(requestCode == 0){
             if(data != null && data.getData() != null) {
                 Uri uri = data.getData();
-                String fullPath = ft.uriToFilePath(uri, context);
+                String fullPath = ft.fileUriToRawFullPath(uri,ft.getSDPath(uid));
                 list.clear();
                 checkboxs.clear();
                 list.add(fullPath);

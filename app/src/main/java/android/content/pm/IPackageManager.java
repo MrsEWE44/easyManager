@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.IInterface;
+import android.os.PersistableBundle;
 import android.os.RemoteException;
 
 import java.util.List;
@@ -89,6 +90,30 @@ public interface IPackageManager extends IInterface {
     //android 4.1
     List<UserInfo> getUsers();
     UserInfo getUser(int userId);
+
+    //android15
+    String[] setPackagesSuspendedAsUser(String[] packageNames, boolean suspended,
+                                        PersistableBundle appExtras, PersistableBundle launcherExtras,
+                                        SuspendDialogInfo dialogInfo, int flags, String suspendingPackage,
+                                        int suspendingUserId, int targetUserId);
+
+    //android10-14
+    String[] setPackagesSuspendedAsUser(String[] packageNames, boolean suspended,
+                                        PersistableBundle appExtras, PersistableBundle launcherExtras,
+                                        SuspendDialogInfo dialogInfo, String callingPackage, int userId);
+
+
+    //android9
+    String[] setPackagesSuspendedAsUser(String[] packageNames, boolean suspended,
+                                        PersistableBundle appExtras, PersistableBundle launcherExtras,
+                                        String dialogMessage, String callingPackage, int userId);
+
+    //android7-8
+    String[] setPackagesSuspendedAsUser(String[] packageNames, boolean suspended, int userId);
+    boolean isPackageSuspendedForUser(String packageName, int userId);
+
+    void deleteApplicationCacheFilesAsUser(String packageName, int userId, IPackageDataObserver observer);
+
 
     abstract class Stub extends Binder implements IPackageManager {
 
