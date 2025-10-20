@@ -162,7 +162,8 @@ public class QueryDialog extends DialogUtils {
                         for (File f : listFiles) {
                             String name = f.getName();
                             name=name.replaceAll(".tar.gz","").replaceAll(".tar.xz","").replaceAll(".tar.bz","");
-                            PKGINFO pkginfo = new PKGINFO(name, f.getName(), f.getPath(), "-1", "-1", context.getResources().getDrawable(R.drawable.manager_grant_app_foreground), f.length());
+                            PKGINFO pkginfo = new PKGINFO(name, f.getName(), f.getPath(), "-1", "-1", f.length());
+                            pkginfo.setIconmode(1);
                             pkginfos.add(pkginfo);
                             checkboxs.add(false);
                         }

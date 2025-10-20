@@ -10,8 +10,8 @@ android {
         applicationId "com.easymanager"
         minSdk 14
         targetSdk 34
-        versionCode 11
-        versionName "1.2.5"
+        versionCode 12
+        versionName "1.2.6"
 
     }
 

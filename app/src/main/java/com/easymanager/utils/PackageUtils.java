@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 
 import com.easymanager.entitys.MyActivityInfo;
 import com.easymanager.entitys.MyApplicationInfo;
@@ -92,6 +93,18 @@ public class PackageUtils {
         queryPKGSCoreByUID(uid,activity,pkginfos,checkboxs,true,false,false,false);
     }
 
+    public Drawable getPKGIcon(Context context , String pkgname){
+        PackageManager packageManager = getPackageManager(context);
+        PackageInfo packageInfo = getPackageInfo(context, pkgname, 0);
+        return packageInfo.applicationInfo.loadIcon(packageManager);
+    }
+
+    public Drawable getPKGFileIcon(Context context , String filePath){
+        PackageManager packageManager = getPackageManager(context);
+        PackageInfo packageInfo = packageManager.getPackageArchiveInfo(filePath, PackageManager.GET_ACTIVITIES);
+        return packageInfo.applicationInfo.loadIcon(packageManager);
+    }
+
     public PKGINFO getPKGINFO(Context context , String pkgname){
         PackageManager packageManager = getPackageManager(context);
         PackageInfo packageInfo = getPackageInfo(context, pkgname, 0);
@@ -104,7 +117,7 @@ public class PackageUtils {
             applicationInfo.sourceDir=filePath;
             applicationInfo.publicSourceDir = filePath;
             Long filesieze = applicationInfo.sourceDir==null? 0: new File(applicationInfo.sourceDir).length();
-            return new PKGINFO(applicationInfo.packageName, applicationInfo.loadLabel(packageManager).toString(), applicationInfo.sourceDir,applicationInfo.uid+"",packageInfo.versionName, applicationInfo.loadIcon(packageManager),filesieze) ;
+            return new PKGINFO(applicationInfo.packageName, applicationInfo.loadLabel(packageManager).toString(), applicationInfo.sourceDir,applicationInfo.uid+"",packageInfo.versionName,filesieze) ;
         }catch (Exception e){
             return null;
         }

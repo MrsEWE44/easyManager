@@ -1,7 +1,6 @@
 package com.easymanager.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,22 +13,26 @@ import android.widget.TextView;
 import com.easymanager.R;
 import com.easymanager.entitys.PKGINFO;
 import com.easymanager.utils.FileTools;
+import com.easymanager.utils.PackageUtils;
 
 import java.util.ArrayList;
 
 
 public class PKGINFOAdapter extends BaseAdapter {
 
-    public PKGINFOAdapter(ArrayList<PKGINFO> pkginfos, Context context, ArrayList<Boolean> checkboxs) {
+    public PKGINFOAdapter(ArrayList<PKGINFO> pkginfos, Context context, ArrayList<Boolean> checkboxs, PackageUtils pu) {
         this.pkginfos = (ArrayList<PKGINFO>) pkginfos.clone();
         this.context = context;
         this.checkboxs = checkboxs;
+        this.pu = pu;
         notifyDataSetChanged();
     }
 
     private ArrayList<PKGINFO> pkginfos;
     private Context context;
     private ArrayList<Boolean> checkboxs;
+    private PackageUtils pu;
+
 
     @Override
     public int getCount() {
@@ -73,7 +76,17 @@ public class PKGINFOAdapter extends BaseAdapter {
                 }
             });
             checkBox.setChecked(checkboxs.get(position));
-            imageView.setImageDrawable(pkginfos.get(position).getAppicon());
+            int mode=  pkginfo.getIconmode();
+            if(mode == 0){
+                imageView.setImageDrawable(pu.getPKGIcon(context,pkginfo.getPkgname()));
+            }
+            if(mode == 1){
+                imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.manager_grant_app_foreground));
+            }
+            if(mode == 2){
+                imageView.setImageDrawable(pu.getPKGFileIcon(context,pkginfo.getApkpath()));
+            }
+
             notifyDataSetChanged();
         }
         return convertView;

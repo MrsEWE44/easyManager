@@ -21,6 +21,15 @@ Moreover, the interface open to the public by EasyManager has been tested and su
 ![image](images/10.png) ![image](images/11.png)
 
 
+- V1.2.6
+
+1.Optimize the issue of taking too long when retrieving installed apps.
+
+2.Forgot what other issues were fixed.
+
+3.Change the version number to 1.2.6.
+
+
 - V1.2.5
 
 1.Fixed the problem that the single ISO file selected in U disk mode is stuck.

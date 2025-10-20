@@ -101,6 +101,7 @@ public class PackageAPI extends  baseAPI implements Serializable {
     private static final Map<String, IPermissionManager> I_PERMISSION_MANAGER_CACHE = new HashMap<>();
     private static final Map<String, IUserManager> I_USER_MANAGER_CACHE = new HashMap<>();
 
+
     private String[] disallowedPackages = null;
 
     public IActivityManager getIActivityManager(){
@@ -131,6 +132,7 @@ public class PackageAPI extends  baseAPI implements Serializable {
             iActivityManager.forceStopPackage(pkgname);
         }
     }
+
 
     public IPackageManager getIPackageManager(){
         IPackageManager iPackageManager = I_PACKAGE_MANAGER_CACHE.get("ipkgservice");
@@ -801,6 +803,7 @@ public class PackageAPI extends  baseAPI implements Serializable {
         return new MyPackageInfo(packageInfo.packageName,packageInfo.versionCode,packageInfo.versionName,
                 myApplicationInfo,myActivityInfo,myServices,myReceivers,packageInfo.requestedPermissions);
     }
+
 
     class ClearDataObserver extends IPackageDataObserver.Stub {
         boolean finished;

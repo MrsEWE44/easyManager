@@ -89,7 +89,7 @@ public class UserDialog extends DialogUtils {
                 String[] firstUsers = easyMUtils.getAppCloneUsers();
                 for (Integer i = 1; i <= count; i++) {
                     easyMUtils.createAppClone(context);
-                    sendProcessBarHandlerSum(mUpdateProgressHandler,i,count,new PKGINFO(i+"",i+"",null,null,null,null,null));
+                    sendProcessBarHandlerSum(mUpdateProgressHandler,i,count,new PKGINFO(i+"",i+"",null,null,null,null));
                 }
                 int currentUser = easyMUtils.getCurrentUserID();
                 String[] users = easyMUtils.getAppCloneUsers();

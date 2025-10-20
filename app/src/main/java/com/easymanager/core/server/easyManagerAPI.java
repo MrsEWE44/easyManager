@@ -451,6 +451,4 @@ public class easyManagerAPI extends baseAPI {
 
     public int strOpToOp(String op){return appopsAPI.strOpToOp(op);}
 
-
-
 }

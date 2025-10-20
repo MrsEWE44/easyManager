@@ -137,7 +137,7 @@ public class DialogUtils extends DialogBaseUtils {
 
     //显示检索完毕后的应用列表
     public void showPKGS(Context context , ListView listView, ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
-        PKGINFOAdapter pkginfoAdapter = new PKGINFOAdapter(pkginfos, context, checkboxs);
+        PKGINFOAdapter pkginfoAdapter = new PKGINFOAdapter(pkginfos, context, checkboxs,packageUtils);
         listView.setAdapter(pkginfoAdapter);
     }
 

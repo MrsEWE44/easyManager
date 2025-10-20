@@ -1,12 +1,10 @@
 package com.easymanager.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
@@ -15,6 +13,7 @@ import android.widget.TextView;
 import com.easymanager.R;
 import com.easymanager.entitys.PKGINFO;
 import com.easymanager.utils.FileTools;
+import com.easymanager.utils.PackageUtils;
 import com.easymanager.utils.easyManagerUtils;
 
 import java.util.ArrayList;
@@ -30,6 +29,8 @@ public class ManagerGrantUserAdapter extends BaseAdapter {
     private ArrayList<PKGINFO> pkginfos;
     private ArrayList<Boolean> switbs;
     private Context context;
+    private PackageUtils pu = new PackageUtils();
+
 
     @Override
     public int getCount() {
@@ -65,7 +66,7 @@ public class ManagerGrantUserAdapter extends BaseAdapter {
             mguilappversion.setText(pkginfo.getAppversionname());
             mguilappsize.setText(new FileTools().getSize(pkginfo.getFilesize(),0));
             mguilappuid.setText(pkginfo.getApkuid());
-            mguilappicon.setImageDrawable(pkginfos.get(position).getAppicon());
+            mguilappicon.setImageDrawable(pu.getPKGIcon(context, pkginfo.getPkgname()));
             mguilsb.setChecked(switbs.get(position));
             mguilsb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override

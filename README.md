@@ -21,6 +21,15 @@ easyManager的工作原理借鉴了Shizuku、AppOps,与它们两个类似,easyMa
 ![image](images/10.png) ![image](images/11.png)
 
 
+- V1.2.6
+
+1.优化获取已安装应用时，时间太久的问题。
+
+2.其它忘了修复什么问题了。
+
+3.修改版本号为1.2.6。
+
+
 - V1.2.5
 
 1.修复了U盘模式选择单个iso文件卡死的问题。

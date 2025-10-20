@@ -3,6 +3,7 @@ package com.easymanager.activitys;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -85,7 +86,8 @@ public class AppInfoLayoutActivity extends Activity {
         aillv1 = findViewById(R.id.aillv1);
         ailsp1.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, getAppChoicesOPT()));
         PKGINFO pkginfo = acu.getUd().packageUtils.getPKGINFO(context, pkgname);
-        ailappicon.setImageDrawable(pkginfo.getAppicon());
+        Drawable pkginfoicon = acu.getUd().packageUtils.getPKGIcon(context,pkgname);
+        ailappicon.setImageDrawable(pkginfoicon);
         ailappname.setText(pkginfo.getAppname());
         ailapppkgname.setText(pkginfo.getPkgname());
         ailappversion.setText(pkginfo.getAppversionname());
@@ -119,7 +121,7 @@ public class AppInfoLayoutActivity extends Activity {
                 ArrayList<PKGINFO> pkginfos = new ArrayList<>();
                 for (int i = 0; i < checkboxs.size(); i++) {
                     String s = list.get(i);
-                    PKGINFO pkginfo = new PKGINFO(pkgname,s,  (switbs.get(i) ? "true" : "false"), null, null, null, null);
+                    PKGINFO pkginfo = new PKGINFO(pkgname,s,  (switbs.get(i) ? "true" : "false"), null, null, null);
                     if(menus_index == 0){
                         if(checkboxs.get(i)){
                             pkginfos.add(pkginfo);

@@ -103,7 +103,7 @@ public class AppCloneLayoutActivity extends Activity {
                 if(mode == AppManagerEnum.APP_CLONE_REMOVE){
                     ArrayList<PKGINFO> list = new ArrayList<>();
                     for (int i = 0; i < strlist.size(); i++) {
-                        PKGINFO pkginfo = new PKGINFO(strlist.get(i),null,null,null,null,null,null);
+                        PKGINFO pkginfo = new PKGINFO(strlist.get(i),null,null,null,null,null);
                         if(APP_CHOICES_INDEX == 0){
                             if(strcheckboxs.get(i)){
                                 list.add(pkginfo);

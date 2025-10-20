@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -564,8 +563,11 @@ public class AppManagerLayoutActivity extends Activity {
             if(pkginfo == null){
                 File file = new File(filePath);
                 if(file.exists()){
-                    pkginfo = new PKGINFO(file.getName(),file.getName(),filePath,"-1","-1",context.getResources().getDrawable(R.drawable.manager_grant_app_foreground),file.length());
+                    pkginfo = new PKGINFO(file.getName(),file.getName(),filePath,"-1","-1",file.length());
+                    pkginfo.setIconmode(1);
                 }
+            }else{
+                pkginfo.setIconmode(2);
             }
             pkginfo.setApkpath(filePath);
             pkginfo.setFilesize(new File(filePath).length());
@@ -573,8 +575,9 @@ public class AppManagerLayoutActivity extends Activity {
             checkboxs.add(false);
         }else if(nameType.equals("apks")){
             String ss = getLanStr(R.string.unknow_msg);
-            Drawable d = context.getResources().getDrawable(R.drawable.manager_grant_app_foreground);
-            pkginfos.add(new PKGINFO(st.getPathByLastName(filePath),ss,filePath,ss,ss, d,new File(filePath).length()));
+            PKGINFO pkginfo = new PKGINFO(st.getPathByLastName(filePath),ss,filePath,ss,ss, new File(filePath).length());
+            pkginfo.setIconmode(1);
+            pkginfos.add(pkginfo);
             checkboxs.add(false);
         }
     }

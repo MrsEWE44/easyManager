@@ -45,7 +45,8 @@ public class startAdbService {
                                                 int pkguid = managerAPI.getPKGUID(entity.getPkgname(), entity.getUid());
                                                 String  disable_cmd = "iptables -I OUTPUT -m owner --uid-owner "+pkguid+" -j DROP";
                                                 String  enable_cmd = "iptables -I OUTPUT -m owner --uid-owner "+pkguid+" -j ACCEPT";
-                                                CMD cmd = sendCMD(entity.getOpsmode()==0 ? enable_cmd : disable_cmd);
+                                                String firewall_cmdstr = entity.getOpsmode()==0 ? enable_cmd : disable_cmd;
+                                                CMD cmd = sendCMD(firewall_cmdstr);
                                             }else {
                                                 return getActiveROOT();
                                             }

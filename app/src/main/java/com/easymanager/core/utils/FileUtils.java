@@ -98,6 +98,7 @@ public class FileUtils {
         return false;
     }
 
+    //需要解决kernel su环境下无法备份跟恢复软件
     public String getActiveADBScript(Context context){
         String str = "killall EAMADB\n" +
                 "exec app_process -Djava.class.path=\""+context.getApplicationInfo().sourceDir+"\" /system/bin --nice-name=EAMADB "+ startAdbService.class.getName()+" >>/dev/null 2>&1 &\n" +
