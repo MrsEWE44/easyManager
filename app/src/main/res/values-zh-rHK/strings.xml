@@ -207,7 +207,7 @@
     <string name="app_clone_button">軟件克隆</string>
     <string name="app_clone_manager_button">克隆管理</string>
     <string name="app_clone_delete_button">克隆刪除</string>
-    <string name="app_clone_input_size_hint_str">請輸入需要創建的克隆數量,默認最高為1024個</string>
+    <string name="app_clone_input_size_hint_str">請輸入數量,最高為 %s 個</string>
     <string name="app_clone_button_default_str">確定</string>
     <string name="app_clone_button_start_clone_str">開始克隆程序</string>
     <string name="app_clone_button_manager_clone_change_str">確定更改</string>
@@ -219,7 +219,7 @@
     <string name="app_clone_delete_clone_title">現在正在刪除克隆程序用戶,請稍後...</string>
     <string name="app_clone_delete_clone_msg">"現在正在刪除的克隆程序用戶是: %s "</string>
     <string name="app_clone_manager_clone_title">現在正在給克隆用戶 %s 程序,請稍後...</string>
-    <string name="app_clone_manager_clone_msg">"現在正在 %s 的程序是: %s "</string>
+    <string name="app_clone_manager_clone_msg">目前正在應用更改的程式為: %s</string>
     <string name="app_clone_manager_clone_start_users_msg">現在正在啓用克隆程序用戶,請稍後...</string>
     <string name="app_clone_manager_clone_query_users_msg">現在正在獲取本地克隆程序用戶,請稍後...</string>
     <string name="now_server_check_msg">"現在服務 %s "</string>
@@ -260,4 +260,6 @@
     <string name="jump_app_detail">跳轉APP詳細資訊</string>
     <string name="add_clean_list">添加計畫清潔清單</string>
     <string name="added_clean_list_msg">已添加計畫清潔清單！</string>
+    <string name="show_clone_unock_max_user">解除分身數量限制</string>
+    <string name="show_clone_unock_max_user_tips_msg">運行這個功能後，會軟重啟設備，以用於解鎖限制。</string>
 </resources>

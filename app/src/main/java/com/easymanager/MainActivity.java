@@ -49,7 +49,7 @@ public class MainActivity extends Activity {
         }
         initView();
         dialogUtils.showHelp(this,HelpDialogUtils.MAIN_HELP,0);
-        new NetUtilsDialog().checkupdate(this);
+//        new NetUtilsDialog().checkupdate(this);
     }
 
     public void initView(){

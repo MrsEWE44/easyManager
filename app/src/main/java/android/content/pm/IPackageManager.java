@@ -1,6 +1,7 @@
 package android.content.pm;
 
 import android.content.ComponentName;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
@@ -77,8 +78,11 @@ public interface IPackageManager extends IInterface {
     boolean setApplicationHiddenSettingAsUser(String packageName, boolean hidden, int userId);
     boolean getApplicationHiddenSettingAsUser(String packageName, int userId);
 
+    int installExistingPackage(String packageName);
     int installExistingPackageAsUser(String packageName, int userId);
 
+    int installExistingPackageAsUser(String packageName, int userId, int installFlags,int installReason);
+    int installExistingPackageAsUser(String packageName, int userId, int installFlags,int installReason, List<String> whiteListedPermissions);
     void installPackageAsUser(String originPath,
                                IPackageInstallObserver2 observer,
                               int flags,
@@ -114,6 +118,8 @@ public interface IPackageManager extends IInterface {
 
     void deleteApplicationCacheFilesAsUser(String packageName, int userId, IPackageDataObserver observer);
 
+
+    ParceledListSlice queryIntentActivities(Intent intent, String resolvedType, long flags, int userId);
 
     abstract class Stub extends Binder implements IPackageManager {
 

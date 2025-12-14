@@ -93,7 +93,7 @@
     <string name="button_add_share_app">Add Share Application</string>
     <string name="button_start_share">Start Share</string>
     <string name="button_home_permission">Permissions Manage</string>
-    <string name="button_home_disable">Hide and Disable</string>
+    <string name="button_home_disable">Suspend / Disable</string>
     <string name="button_home_network">Network Manage</string>
     <string name="button_home_install_local_file">Install Local File</string>
     <string name="button_home_dump_app">Extract App</string>
@@ -207,7 +207,7 @@
     <string name="app_clone_button">Software Cloning</string>
     <string name="app_clone_manager_button">Software Clone Management</string>
     <string name="app_clone_delete_button">Software Clone Remove</string>
-    <string name="app_clone_input_size_hint_str">Please enter the number of clones to be created, the default maximum is 1024</string>
+    <string name="app_clone_input_size_hint_str">Please enter, maximum: %s</string>
     <string name="app_clone_button_default_str">Apply Changes</string>
     <string name="app_clone_button_start_clone_str">Start Clone</string>
     <string name="app_clone_button_manager_clone_change_str">Apply Changes</string>
@@ -219,7 +219,7 @@
     <string name="app_clone_delete_clone_title">The cloner user is being deleted now, please wait...</string>
     <string name="app_clone_delete_clone_msg">"The cloner user being deleted now is: %s "</string>
     <string name="app_clone_manager_clone_title">Currently %s a program to the clone user, please wait...</string>
-    <string name="app_clone_manager_clone_msg">The program being  %s  now is: %s</string>
+    <string name="app_clone_manager_clone_msg">The program currently applying changes is: %s</string>
     <string name="app_clone_manager_clone_start_users_msg">Clone program users are being enabled now, please wait...</string>
     <string name="app_clone_manager_clone_query_users_msg">Retrieving local cloner users now, please wait...</string>
     <string name="now_server_check_msg">"NOW SERVER %s "</string>
@@ -260,4 +260,6 @@
     <string name="add_clean_list">Add scheduled cleaning list</string>
     <string name="added_clean_list_msg">Is Added scheduled cleaning list!</string>
     <string name="clean_input_hint_tips">Please enter an integer</string>
+    <string name="show_clone_unock_max_user">Unlock Max Limit</string>
+    <string name="show_clone_unock_max_user_tips_msg">After running this function, the device will soft reboot to unlock restrictions.</string>
 </resources>

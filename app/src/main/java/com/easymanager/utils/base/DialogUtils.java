@@ -153,7 +153,12 @@ public class DialogUtils extends DialogBaseUtils {
                     case 1:
                         // 隐藏当前下载对话框
                         permittedDismissDialog(alertDialog);
-                        showInfoMsg(context,tu.getLanguageString(context,R.string.tips),tu.getLanguageString(context,R.string.its_ok_msg));
+                        if(easyMUtils.isDead() && !easyMUtils.getSkipError()){
+                            showInfoMsg(context,tu.getLanguageString(context,R.string.error_tips),easyMUtils.getERRORMSG());
+                            easyMUtils.dead();
+                        }else {
+                            showInfoMsg(context,tu.getLanguageString(context,R.string.tips),tu.getLanguageString(context,R.string.its_ok_msg));
+                        }
                         break;
                     case 2:
                         PKGINFO pkginfo = (PKGINFO) msg.obj;

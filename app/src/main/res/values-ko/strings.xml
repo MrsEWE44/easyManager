@@ -93,7 +93,7 @@
     <string name="button_add_share_app">공유 응용 프로그램 추가</string>
     <string name="button_start_share">공유 시작</string>
     <string name="button_home_permission">권한 관리</string>
-    <string name="button_home_disable">숨기기 및 비활성화</string>
+    <string name="button_home_disable">일시 중지 / 비활성화</string>
     <string name="button_home_network">네트워크 관리</string>
     <string name="button_home_install_local_file">로컬 파일 설치</string>
     <string name="button_home_dump_app">추출 응용 프로그램</string>
@@ -207,7 +207,7 @@
     <string name="app_clone_button">소프트웨어 복제</string>
     <string name="app_clone_manager_button">소프트웨어 클론 관리</string>
     <string name="app_clone_delete_button">소프트웨어 복제 제거</string>
-    <string name="app_clone_input_size_hint_str">생성할 클론 수를 입력하십시오. 기본 최대값은 1024입니다.</string>
+    <string name="app_clone_input_size_hint_str">입력해 주세요, 최대: %s</string>
     <string name="app_clone_button_default_str">변경 승인</string>
     <string name="app_clone_button_start_clone_str">복제 시작</string>
     <string name="app_clone_button_manager_clone_change_str">변경 승인</string>
@@ -219,7 +219,7 @@
     <string name="app_clone_delete_clone_title">복제 사용자를 지금 삭제하는 중입니다. 잠시 기다려 주십시오...</string>
     <string name="app_clone_delete_clone_msg">"지금 삭제 중인 복제 사용자는 다음과 같습니다: %s "</string>
     <string name="app_clone_manager_clone_title">복제 사용자 %s 프로그램이 현재 진행 중입니다. 잠시 기다려 주십시오...</string>
-    <string name="app_clone_manager_clone_msg">현재 %s 중인 프로그램은 다음과 같습니다: %s</string>
+    <string name="app_clone_manager_clone_msg">현재 변경 사항을 적용 중인 프로그램은: %s</string>
     <string name="app_clone_manager_clone_start_users_msg">지금 복제 프로그램 사용자를 활성화하는 중입니다. 잠시 기다려 주십시오...</string>
     <string name="app_clone_manager_clone_query_users_msg">지금 로컬 클로너 사용자를 검색하는 중입니다. 잠시 기다려 주십시오...</string>
     <string name="now_server_check_msg">"지금 서버 %s "</string>
@@ -260,4 +260,6 @@
     <string name="jump_app_detail">점프 APP 상세 정보</string>
     <string name="add_clean_list">예정된 청소 목록 추가</string>
     <string name="added_clean_list_msg">예약된 청소 목록이 추가되었습니다!</string>
+    <string name="show_clone_unock_max_user">최대 한도 해제</string>
+    <string name="show_clone_unock_max_user_tips_msg">이 기능을 실행하면 제한 해제를 위해 장치가 소프트 리부트됩니다.</string>
 </resources>

@@ -70,6 +70,7 @@ public class easyManagerAPI extends baseAPI {
     public int getPKGUID(String pkgname , int uid){return packageAPI.getPKGUID(pkgname, uid);}
     public void installAPK(String apkpath){packageAPI.InstallAPK(apkpath);}
     public void installAPK(String apkpath,int uid){packageAPI.InstallAPK(apkpath,uid);}
+    public void installExistingPKG(String pkgname,int uid){packageAPI.InstallExistingPKG(pkgname,uid);}
     public void uninstallApp(String pkgname,int uid){
         killpkg(pkgname, uid);
         packageAPI.UninstallPKG(pkgname,uid);
@@ -77,6 +78,10 @@ public class easyManagerAPI extends baseAPI {
     public void setComponentOrPackageEnabledState(String pkgname_or_compname,int state,int uid){
         killpkg(pkgname_or_compname, uid);
         packageAPI.setComponentOrPackageEnabledState(pkgname_or_compname, state,uid);
+    }
+
+    public int getComponentOrPackageEnabledState(String pkgname_or_compname,int uid){
+        return packageAPI.getComponentOrPackageEnabledState(pkgname_or_compname, uid);
     }
     public void setPackageHideState(String pkgname,boolean hide,int uid){
         killpkg(pkgname, uid);
@@ -89,7 +94,7 @@ public class easyManagerAPI extends baseAPI {
         killpkg(pkgname, uid);
         packageAPI.setPackagesSuspendedAsUser(pkgname, suspended, uid);
     }
-    public boolean isPackageSuspendedForUser(String packageName,int uid){return packageAPI.isPackageSuspendedForUser(packageName, uid);}
+    public int isPackageSuspendedForUser(String packageName,int uid){return packageAPI.isPackageSuspendedForUser(packageName, uid);}
 
     public void clearPackageData(String packageName,int uid){
         killpkg(packageName, uid);
@@ -417,6 +422,10 @@ public class easyManagerAPI extends baseAPI {
 
     public int requestGrantUserState(String requestpkg){
         return myConfigUtils.requestGrantUserState(requestpkg);
+    }
+
+    public int getMaxSupportedUsers(){
+        return packageAPI.getMaxSupportedUsers();
     }
 
     public void createAppClone(){

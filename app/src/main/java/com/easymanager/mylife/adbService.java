@@ -1,13 +1,13 @@
 package com.easymanager.mylife;
 
-import android.os.StrictMode;
-
 import com.easymanager.core.entity.easyManagerClientEntity;
 import com.easymanager.core.entity.easyManagerServiceEntity;
 import com.easymanager.core.utils.CMD;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -51,6 +51,10 @@ public class adbService {
         CMD cmd;
         Object o;
 
+        String errorMSG;
+
+        boolean isDead = false;
+
         public processMsg(Socket s) {
             socket = s;
         }
@@ -61,9 +65,19 @@ public class adbService {
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                 easyManagerClientEntity adbee2 = (easyManagerClientEntity) ois.readObject();
                 cmd = listener.sendCMD(adbee2.getCmdstr());
-                o = listener.doSomeThing(adbee2);
+                try{
+                    o = listener.doSomeThing(adbee2);
+                    errorMSG = "";
+                    isDead = false;
+                }catch (Exception e){
+                    isDead = true;
+                    StringWriter sw = new StringWriter();
+                    e.printStackTrace(new PrintWriter(sw));
+                    errorMSG = sw.toString();
+                    System.err.println(sw);
+                }
                 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                easyManagerServiceEntity a = new easyManagerServiceEntity(cmd,o);
+                easyManagerServiceEntity a = new easyManagerServiceEntity(cmd,o,isDead,errorMSG);
                 oos.writeObject(a);
                 oos.flush();
                 oos.close();

@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Message;
+import android.os.UserManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
@@ -36,7 +38,7 @@ public class UserDialog extends DialogUtils {
         alertDialog.show();
         preventDismissDialog(alertDialog);
         dpbtv2.setText(size+"");
-        Handler mUpdateProgressHandler = getProcessBarDialogHandler(context,mProgressBar,alertDialog,dpbtv1,dpbtv2,dpbtv3,String.format(tu.getLanguageString(context,R.string.app_clone_manager_clone_msg),tmp));
+        Handler mUpdateProgressHandler = getProcessBarDialogHandler(context,mProgressBar,alertDialog,dpbtv1,dpbtv2,dpbtv3,tu.getLanguageString(context,R.string.app_clone_manager_clone_msg));
         String reqpkg = context.getPackageName();
         new Thread(new Runnable() {
             @Override
@@ -47,7 +49,7 @@ public class UserDialog extends DialogUtils {
                     for (String s : strlist) {
                         int uid = Integer.valueOf(s);
                         if(APP_PERMIS_INDEX == 0){
-                            easyMUtils.installAPK(new TransmissionEntity(packageUtils.getPKGINFO(context,pkginfo.getPkgname()).getApkpath(),null,reqpkg,0,uid));
+                            easyMUtils.installExistingPKG(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,0,uid));
                         }else{
                             easyMUtils.uninstallAPK(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,0,uid));
                         }
@@ -81,31 +83,37 @@ public class UserDialog extends DialogUtils {
         dpbtv2.setText(count+"");
         Handler mUpdateProgressHandler = getProcessBarDialogHandler(context,mProgressBar,alertDialog,dpbtv1,dpbtv2,dpbtv3,text);
         String reqpkg = context.getPackageName();
+        easyMUtils.setSkipError(true);
+        int currentUser = easyMUtils.getCurrentUserID();
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String cmdstr = "setprop persist.sys.max_profiles 1024 && setprop fw.max_users 1024 && setprop fw.show_multiuserui 1";
-                easyMUtils.runCMD(cmdstr);
+
                 String[] firstUsers = easyMUtils.getAppCloneUsers();
-                for (Integer i = 1; i <= count; i++) {
+                for (int i = 1; i <= count; i++) {
                     easyMUtils.createAppClone(context);
                     sendProcessBarHandlerSum(mUpdateProgressHandler,i,count,new PKGINFO(i+"",i+"",null,null,null,null));
                 }
-                int currentUser = easyMUtils.getCurrentUserID();
+
+
                 String[] users = easyMUtils.getAppCloneUsers();
                 for (int j = 0; j < list.size(); j++) {
                     PKGINFO pkginfo = list.get(j);
                     for (String s : users) {
                         if(!isFirstUser(firstUsers,s)){
-                            easyMUtils.installAPK(new TransmissionEntity(packageUtils.getPKGINFO(context,pkginfo.getPkgname()).getApkpath(),null,reqpkg,0,Integer.valueOf(s)));
+                            easyMUtils.installExistingPKG(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,0,Integer.valueOf(s)));
                         }
                     }
                 }
-                for (int i = 0; i < users.length; i++) {
-                    if(!users[i].equals(currentUser)){
-                        easyMUtils.startAppClone(context,Integer.valueOf(users[i]));
+
+
+                for (String user : users) {
+                    int uid = Integer.valueOf(user);
+                    if(!user.equals(String.valueOf(currentUser)) && uid < 900){
+                        easyMUtils.startAppClone(context,uid);
                     }
                 }
+
                 mUpdateProgressHandler.sendEmptyMessage(1);
             }
         }).start();
@@ -119,13 +127,42 @@ public class UserDialog extends DialogUtils {
             public void run() {
                 String[] users = easyMUtils.getAppCloneUsers();
                 for (String user : users) {
-                    if(!user.equals(String.valueOf(currentUserID))){
-                        easyMUtils.startAppClone(context,Integer.valueOf(user));
+                    int uid = Integer.valueOf(user);
+                    if(!user.equals(String.valueOf(currentUserID)) && uid < 900){
+                        easyMUtils.startAppClone(context,uid);
                     }
                 }
                 sendHandlerMSG(handler,0);
             }
         }).start();
+    }
+
+    public void unlockMaxLimit(Context context, Activity activity) {
+        AlertDialog.Builder ab = new AlertDialog.Builder(context);
+        ab.setTitle(tu.getLanguageString(context,R.string.tips));
+        ab.setMessage(tu.getLanguageString(context,R.string.show_clone_unock_max_user_tips_msg));
+        ab.setNegativeButton(tu.getLanguageString(context, R.string.dialog_sure_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+                ProgressDialog show = showMyDialog(context,tu.getLanguageString(context,R.string.execute_cmd));
+                Handler handler = dismissDialogHandler(0,show);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String cmdstr = "resetprop ro.debuggable 1;setprop persist.sys.max_profiles 1024 ; setprop fw.max_users 1024 ; setprop fw.show_multiuserui 1;am restart;";
+                        easyMUtils.runCMD(cmdstr);
+                        sendHandlerMSG(handler,0);
+                    }
+                }).start();
+            }
+        });
+
+        AlertDialog alertDialog = ab.create();
+        alertDialog.show();
+        TextView tv = alertDialog.getWindow().getDecorView().findViewById(android.R.id.message);
+        tv.setTextIsSelectable(true);
+
     }
 
     public void queryLocalAppCloneUserProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<String> strings, ArrayList<Boolean> checkboxs){

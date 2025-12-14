@@ -90,6 +90,7 @@ public class AppCloneLayoutActivity extends Activity {
             clmbt1.setText(getLanStr(R.string.app_clone_button_delete_clone_str));
         }
         btClicked();
+        acmet1.setHint(String.format(getLanStr(R.string.app_clone_input_size_hint_str),acu.getPd().easyMUtils.getMaxSupportedUsers(context)));
         new HelpDialogUtils().showHelp(context,HelpDialogUtils.APP_MANAGE_HELP,mode);
     }
 
@@ -271,6 +272,14 @@ public class AppCloneLayoutActivity extends Activity {
 
         if(itemId == 13){
             acu.getUd().startAppCloneUsers(context,activity);
+        }
+
+        if(itemId == 14){
+            if(isRoot){
+                acu.getUd().unlockMaxLimit(context,activity);
+            }else{
+                acu.getUd().showInfoMsg(context,getLanStr(R.string.tips),getLanStr(R.string.need_root_msg));
+            }
         }
 
         if(itemId == 6){

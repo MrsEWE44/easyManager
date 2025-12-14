@@ -74,6 +74,13 @@ public class startAdbService {
                                                 return getActiveADB();
                                             }
                                             break;
+                                        case easyManagerEnums.INSTALL_EXISTING_APK:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                managerAPI.installExistingPKG(entity.getPkgname(),entity.getUid());
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                            break;
                                         case easyManagerEnums.UNINSTALL_APK:
                                             if(managerAPI.isRoot() || managerAPI.isADB()){
                                                 managerAPI.uninstallApp(entity.getPkgname(),entity.getUid());
@@ -82,7 +89,7 @@ public class startAdbService {
                                             }
                                             break;
                                         case easyManagerEnums.SET_COMPONENT_OR_PACKAGE_ENABLE_STATE:
-                                            if(managerAPI.isRoot()){
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
                                                 managerAPI.setComponentOrPackageEnabledState(entity.getPkgname(),entity.getOpsmode(),entity.getUid());
                                             }else {
                                                 return getActiveROOT();
@@ -154,6 +161,12 @@ public class startAdbService {
                                                 return getActiveADB();
                                             }
                                             break;
+                                        case easyManagerEnums.GET_MAX_USERS:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                return managerAPI.getMaxSupportedUsers();
+                                            }else {
+                                                return getActiveADB();
+                                            }
                                         case easyManagerEnums.APP_CLONE:
                                             if(managerAPI.isRoot() || managerAPI.isADB()){
                                                 managerAPI.createAppClone();
@@ -193,6 +206,12 @@ public class startAdbService {
                                             }else {
                                                 return getActiveADB();
                                             }
+                                        case easyManagerEnums.GET_COMPONENT_OR_PACKAGE_ENABLE_STATE:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                return managerAPI.getComponentOrPackageEnabledState(entity.getPkgname(),entity.getUid());
+                                            }else {
+                                                return getActiveADB();
+                                            }
                                         case easyManagerEnums.CHECK_OP:
                                             if(managerAPI.isRoot() || managerAPI.isADB()){
                                                 return managerAPI.checkOp(entity.getOpmodestr(), entity.getPkgname(), entity.getUid());
@@ -205,60 +224,64 @@ public class startAdbService {
                                             }else {
                                                 return getActiveADB();
                                             }
-                                            case easyManagerEnums.GET_APPOPS_PERMISSION_TO_OP:
-                                                if(managerAPI.isRoot() || managerAPI.isADB()){
-                                                    return managerAPI.permissionToOp(entity.getOpmodestr());
-                                                }else {
-                                                    return getActiveADB();
-                                                }
-                                            case easyManagerEnums.GET_APPOPS_PERMISSION_TO_OP_CODE:
-                                                if(managerAPI.isRoot() || managerAPI.isADB()){
-                                                    return managerAPI.strOpToOp(entity.getOpmodestr());
-                                                }else {
-                                                    return getActiveADB();
-                                                }
-                                            case easyManagerEnums.CHECK_PM_PERMISSION_CODE:
-                                                if(managerAPI.isRoot() || managerAPI.isADB()){
-                                                    return managerAPI.checkPermission(entity.getPkgname(),entity.getOpmodestr(),entity.getUid());
-                                                }else {
-                                                    return getActiveADB();
-                                                }
-                                            case easyManagerEnums.GET_PATH_ALL_FILES:
-                                                if(managerAPI.isRoot() || managerAPI.isADB()){
-                                                    return managerAPI.getPathALLFiles(entity.getOpmodestr());
-                                                }else {
-                                                    return getActiveADB();
-                                                }
-                                            case easyManagerEnums.SET_PACKAGE_SUSPEND:
-                                                if(managerAPI.isRoot() || managerAPI.isADB()){
-                                                    managerAPI.setPackagesSuspendedAsUser(entity.getPkgname(),entity.getOpsmode()==0,entity.getUid());
-                                                }else {
-                                                    return getActiveADB();
-                                                }
-                                            case easyManagerEnums.GET_PACKAGE_SUSPEND:
-                                                if(managerAPI.isRoot() || managerAPI.isADB()){
-                                                    return managerAPI.isPackageSuspendedForUser(entity.getPkgname(),entity.getUid());
-                                                }else {
-                                                    return getActiveADB();
-                                                }
-                                            case easyManagerEnums.CLEAR_PACKAGE_DATA:
-                                                if(managerAPI.isRoot() || managerAPI.isADB()){
-                                                    managerAPI.clearPackageData(entity.getPkgname(), entity.getUid());
-                                                }else {
-                                                    return getActiveADB();
-                                                }
+                                        case easyManagerEnums.GET_APPOPS_PERMISSION_TO_OP:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                return managerAPI.permissionToOp(entity.getOpmodestr());
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                        case easyManagerEnums.GET_APPOPS_PERMISSION_TO_OP_CODE:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                return managerAPI.strOpToOp(entity.getOpmodestr());
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                        case easyManagerEnums.CHECK_PM_PERMISSION_CODE:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                return managerAPI.checkPermission(entity.getPkgname(),entity.getOpmodestr(),entity.getUid());
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                        case easyManagerEnums.GET_PATH_ALL_FILES:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                return managerAPI.getPathALLFiles(entity.getOpmodestr());
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                        case easyManagerEnums.SET_PACKAGE_SUSPEND:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                managerAPI.setPackagesSuspendedAsUser(entity.getPkgname(),entity.getOpsmode()==0,entity.getUid());
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                            break;
+                                        case easyManagerEnums.GET_PACKAGE_SUSPEND:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                return managerAPI.isPackageSuspendedForUser(entity.getPkgname(),entity.getUid());
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                        case easyManagerEnums.CLEAR_PACKAGE_DATA:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                managerAPI.clearPackageData(entity.getPkgname(), entity.getUid());
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                            break;
                                         case easyManagerEnums.ADD_RUNNING_PACKAGE:
                                             if(managerAPI.isRoot() || managerAPI.isADB()){
                                                 managerAPI.addRunningApps(entity.getPkgname(),entity.getOpmodestr(),entity.getUid());
                                             }else {
                                                 return getActiveADB();
                                             }
+                                            break;
                                         case easyManagerEnums.START_STOP_RUNNING_PACKAGE:
                                             if(managerAPI.isRoot() || managerAPI.isADB()){
                                                 managerAPI.startStopRunningAPP(entity.getUid());
                                             }else {
                                                 return getActiveADB();
                                             }
+                                            break;
 
 
                                     }

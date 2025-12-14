@@ -59,9 +59,29 @@ public class PackageDialog extends DialogUtils {
                             }
                             break;
                         case AppManagerEnum.APP_DISABLE_COMPENT:
-                            easyMUtils.setComponentOrPackageEnabledState(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,APP_PERMIS_INDEX==0? PackageAPI.COMPONENT_ENABLED_STATE_ENABLED:PackageAPI.COMPONENT_ENABLED_STATE_DISABLED_USER,uid));
-                            easyMUtils.setPackagesSuspend(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,APP_PERMIS_INDEX==0? -1:0,uid));
-                            easyMUtils.clearPackageData(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,0,uid));
+                            easyMUtils.setSkipError(true);
+                            if(APP_PERMIS_INDEX==0){
+                                int state = easyMUtils.getComponentOrPackageEnabledState(context,pkginfo.getPkgname(),null,uid);
+                                if(state == PackageAPI.COMPONENT_ENABLED_STATE_DISABLED || state == PackageAPI.COMPONENT_ENABLED_STATE_DISABLED_USER || state == PackageAPI.COMPONENT_ENABLED_STATE_DISABLED_UNTIL_USED){
+                                    easyMUtils.setComponentOrPackageEnabledState(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,PackageAPI.COMPONENT_ENABLED_STATE_ENABLED,uid));
+                                }
+                                state = easyMUtils.getPackageSuspend(context,pkginfo.getPkgname(),uid);
+                                if(state == 0){
+                                    easyMUtils.setPackagesSuspend(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,-1,uid));
+                                }
+                            }else{
+                                easyMUtils.setComponentOrPackageEnabledState(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,PackageAPI.COMPONENT_ENABLED_STATE_DISABLED,uid));
+                                int state = easyMUtils.getComponentOrPackageEnabledState(context,pkginfo.getPkgname(),null,uid);
+                                if(state != PackageAPI.COMPONENT_ENABLED_STATE_DISABLED){
+                                    easyMUtils.setComponentOrPackageEnabledState(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,PackageAPI.COMPONENT_ENABLED_STATE_DISABLED_USER,uid));
+                                    state = easyMUtils.getComponentOrPackageEnabledState(context,pkginfo.getPkgname(),null,uid);
+                                    if(state != PackageAPI.COMPONENT_ENABLED_STATE_DISABLED_USER){
+                                        easyMUtils.setPackagesSuspend(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,0,uid));
+                                    }
+                                }
+                                easyMUtils.clearPackageData(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,0,uid));
+                            }
+
                             break;
                         case AppManagerEnum.APP_INFO_LAYOUT:
                             if(APP_PERMIS_INDEX == AppInfoEnums.IS_PERMISSION){

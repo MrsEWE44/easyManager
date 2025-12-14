@@ -19,7 +19,7 @@ public class easyManagerEnums {
     public final static  int GRANT_USER=44566;
     public final static  int CHANGE_USER=44567;
     public final static  int GET_GRANT_USERS=44568;
-    public final static  int GET_SERVER_STATUS=47;
+    public final static  int GET_SERVER_STATUS=44569;
     public final static  int SET_APPOPS_CORE=12;
     public final static  int APP_CLONE=13;
     public final static  int APP_CLONE_MANAGER=14;
@@ -55,6 +55,9 @@ public class easyManagerEnums {
     public final static  int ADD_RUNNING_PACKAGE=44;
     public final static  int START_STOP_RUNNING_PACKAGE=45;
     public final static  int DELETE_CLEAN_APP_CONFIG=46;
+    public final static  int GET_COMPONENT_OR_PACKAGE_ENABLE_STATE=47;
+    public final static  int INSTALL_EXISTING_APK=48;
+    public final static  int GET_MAX_USERS=49;
 
 
 

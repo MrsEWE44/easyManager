@@ -22,11 +22,13 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
 import android.content.pm.ParceledListSlice;
+import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.content.pm.SuspendDialogInfo;
 import android.content.pm.UserInfo;
 import android.content.pm.VerificationParams;
 import android.content.pm.VersionedPackage;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -50,7 +52,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,6 +96,7 @@ public class PackageAPI extends  baseAPI implements Serializable {
             = "android.content.pm.extra.FAILURE_EXISTING_PACKAGE";
 
     public static final int INSTALL_ALL_WHITELIST_RESTRICTED_PERMISSIONS = 0x00400000;
+    public static final int INSTALL_REASON_UNKNOWN = 0;
     public static final String USER_TYPE_PROFILE_MANAGED = "android.os.usertype.profile.MANAGED";
     public static final String USER_TYPE_PROFILE_CLONE = "android.os.usertype.profile.CLONE";
     public static final int FLAG_MANAGED_PROFILE = 0x00000020;
@@ -238,6 +245,25 @@ public class PackageAPI extends  baseAPI implements Serializable {
     }
 
 
+    public void InstallExistingPKGQ(String pkgname,int userId){
+        int installFlags = INSTALL_ALL_WHITELIST_RESTRICTED_PERMISSIONS;
+        int installReason = INSTALL_REASON_UNKNOWN;
+        int res = getIPackageManager().installExistingPackageAsUser(pkgname,userId,installFlags,installReason,null);
+        System.out.println("InstallExistingPKGQ res ::: " + res);
+    }
+
+    public void InstallExistingPKGO(String pkgname,int userId){
+        int installFlags = 0;
+        int installReason = INSTALL_REASON_UNKNOWN;
+        int res = getIPackageManager().installExistingPackageAsUser(pkgname,userId,installFlags,installReason);
+        System.out.println("InstallExistingPKGO res ::: " + res);
+    }
+
+    public void InstallExistingPKGJKLMN(String pkgname,int userId){
+        int res = getIPackageManager().installExistingPackageAsUser(pkgname,userId);
+        System.out.println("InstallExistingPKGJKLMN res ::: " + res);
+    }
+
 
     /**
      *
@@ -254,10 +280,10 @@ public class PackageAPI extends  baseAPI implements Serializable {
                 PackageInstaller.Session session = new PackageInstaller.Session(iPackageInstaller.openSession(sessionID));
                 try (OutputStream packageInSession = session.openWrite("package", 0, -1);
                      InputStream is = new FileInputStream(apkPath)) {
-                    byte[] buffer = new byte[16384];
-                    int n;
-                    while ((n = is.read(buffer)) >= 0) {
-                        packageInSession.write(buffer, 0, n);
+                        byte[] buffer = new byte[16384];
+                        int n;
+                        while ((n = is.read(buffer)) >= 0) {
+                            packageInSession.write(buffer, 0, n);
                     }
                 }
                 doCommintSession(iPackageInstaller,sessionID,session);
@@ -265,7 +291,9 @@ public class PackageAPI extends  baseAPI implements Serializable {
                     session = new PackageInstaller.Session(iPackageInstaller.openSession(sessionID));
                     session.abandon();
                 }catch (Exception e){
-
+                    StringWriter sw = new StringWriter();
+                    e.printStackTrace(new PrintWriter(sw));
+                    System.err.println("InstallAPKS Error : " + sw);
                 }finally {
                     closeSession(session);
                 }
@@ -409,6 +437,19 @@ public class PackageAPI extends  baseAPI implements Serializable {
         }
     }
 
+    public void InstallExistingPKG(String pkgname, int userId){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+            InstallExistingPKGQ(pkgname,userId);
+        }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            InstallExistingPKGO(pkgname,userId);
+        }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
+            InstallExistingPKGJKLMN(pkgname,userId);
+        }else {
+            int res = getIPackageManager().installExistingPackage(pkgname);
+            System.out.println("InstallExistingPKGJ res ::: " + res);
+        }
+    }
+
     public void UninstallPKG(String pkgname ,int uid){
         UninstallPKG(pkgname,uid,-1);
     }
@@ -530,8 +571,26 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
     }
 
-    public boolean isPackageSuspendedForUser(String packageName,int uid){
-        return getIPackageManager().isPackageSuspendedForUser(packageName,uid);
+    public int getComponentOrPackageEnabledState(String pkgname_or_compname,int uid){
+        IPackageManager iPackageManager = getIPackageManager();
+        ComponentName componentName = ComponentName.unflattenFromString(pkgname_or_compname);
+        if(componentName == null){
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                return iPackageManager.getApplicationEnabledSetting(pkgname_or_compname,uid);
+            }else{
+                return iPackageManager.getApplicationEnabledSetting(pkgname_or_compname);
+            }
+        }else{
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+                return iPackageManager.getComponentEnabledSetting(componentName,uid);
+            }else {
+                return iPackageManager.getComponentEnabledSetting(componentName);
+            }
+        }
+    }
+
+    public int isPackageSuspendedForUser(String packageName,int uid){
+        return getIPackageManager().isPackageSuspendedForUser(packageName,uid)?0:1;
     }
 
     public void clearPackageData(String packageName,int uid){
@@ -642,6 +701,50 @@ public class PackageAPI extends  baseAPI implements Serializable {
         }
     }
 
+    public List<String> getLauncherApps(String pkgName) {
+        Intent intent = new Intent();
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        intent.setAction(Intent.ACTION_MAIN);
+        if(pkgName != null){
+            intent.setPackage(pkgName);
+        }
+
+        IPackageManager iPackageManager = getIPackageManager();
+        List<ResolveInfo> resolveInfoList = iPackageManager.queryIntentActivities(intent, intent.getType(),0,getTranslatedUserId()).getList();
+        List<String> list = new ArrayList<>();
+        for (ResolveInfo resolveInfo : resolveInfoList) {
+            list.add(resolveInfo.activityInfo.packageName);
+        }
+        return list;
+    }
+
+    public int getMaxSupportedUsers() {
+        try {
+            // 1. 特殊 build 限制
+            if (Build.ID != null && Build.ID.startsWith("JVP")) {
+                return 1;
+            }
+
+            // 2. fw.max_users
+            Class<?> sp = Class.forName("android.os.SystemProperties");
+            Method getInt = sp.getMethod("getInt", String.class, int.class);
+            int fwMax = (int) getInt.invoke(null, "fw.max_users", -1);
+
+            // 3. config_multiuserMaximumUsers
+            Class<?> r = Class.forName("com.android.internal.R$integer");
+            Field f = r.getField("config_multiuserMaximumUsers");
+            int resId = f.getInt(null);
+            int configMax = Resources.getSystem().getInteger(resId);
+
+            // 4. framework 原始逻辑
+            return Math.max(1, fwMax >= 0 ? fwMax : configMax);
+
+        } catch (Throwable e) {
+            return 1;
+        }
+    }
+
+
     public void createUser() {
         IUserManager iUserManager = getIUserManager();
         String name = "EAMA";
@@ -650,10 +753,11 @@ public class PackageAPI extends  baseAPI implements Serializable {
         int flags = 0;
         int sdk_int = Build.VERSION.SDK_INT;
         if(disallowedPackages == null){
+            List<String> launcherApps = getLauncherApps(null);
             List<MyPackageInfo> installedPackages = getInstalledPackages(getCurrentUser());
             ArrayList<String> strings = new ArrayList<>();
             for (MyPackageInfo myPackageInfo : installedPackages) {
-                if(!isAllowPKG(myPackageInfo.packageName)){
+                if(checklauncherApps(launcherApps,myPackageInfo.packageName)){
                     strings.add(myPackageInfo.packageName);
                 }
             }
@@ -664,9 +768,11 @@ public class PackageAPI extends  baseAPI implements Serializable {
         }
         if(sdk_int >= Build.VERSION_CODES.R){
             iUserManager.createProfileForUserWithThrow(name,userType,flags,translatedUserId,disallowedPackages);
+//            iUserManager.createProfileForUserWithThrow(name,userType,flags,translatedUserId,null);
         }else if(sdk_int >= Build.VERSION_CODES.O){
             flags |= FLAG_MANAGED_PROFILE;
             iUserManager.createProfileForUser(name,flags,translatedUserId,disallowedPackages);
+//            iUserManager.createProfileForUser(name,flags,translatedUserId,null);
         }else{
             flags |= FLAG_MANAGED_PROFILE;
             iUserManager.createProfileForUser(name,flags,translatedUserId);
@@ -721,7 +827,15 @@ public class PackageAPI extends  baseAPI implements Serializable {
     }
 
     public void startUser(int userid){
-        getIActivityManager().startUserInBackground(userid);
+        IActivityManager iActivityManager = getIActivityManager();
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE){
+            iActivityManager.startProfileWithListener(userid,null);
+        }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+            iActivityManager.startUserInBackgroundWithListener(userid,null);
+        }else{
+            iActivityManager.startUserInBackground(userid);
+        }
+
     }
 
     public int getCurrentUser(){
@@ -950,6 +1064,15 @@ public class PackageAPI extends  baseAPI implements Serializable {
         public Intent getResult() throws InterruptedException {
             return mResult.take();
         }
+    }
+
+    private boolean checklauncherApps(List<String> noallowpkgs , String pkgname){
+        for (String s : noallowpkgs) {
+            if(pkgname.equals(s)){
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isAllowPKG(String pkgname){

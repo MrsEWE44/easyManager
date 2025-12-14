@@ -4,14 +4,14 @@ plugins {
 
 android {
     namespace 'com.easymanager'
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.easymanager"
         minSdk 14
-        targetSdk 34
-        versionCode 12
-        versionName "1.2.6"
+        targetSdk 36
+        versionCode 13
+        versionName "1.2.7"
 
     }
 

@@ -436,7 +436,7 @@
     <string name="app_clone_button">应用分身</string>
     <string name="app_clone_manager_button">分身管理</string>
     <string name="app_clone_delete_button">分身删除</string>
-    <string name="app_clone_input_size_hint_str">请输入需要开启的数量,默认设置最高为1024个</string>
+    <string name="app_clone_input_size_hint_str">请输入数量,最高为: %s 个</string>
     <string name="app_clone_button_default_str">应用</string>
     <string name="app_clone_button_start_clone_str">开始分身</string>
     <string name="app_clone_button_manager_clone_change_str">应用修改</string>
@@ -448,7 +448,7 @@
     <string name="app_clone_delete_clone_title">正在删除分身,请稍后...</string>
     <string name="app_clone_delete_clone_msg">目前正在删除的分身为: %s </string>
     <string name="app_clone_manager_clone_title">正在给分身 %s 应用,请稍后...</string>
-    <string name="app_clone_manager_clone_msg">"目前正在 %s 的应用为: %s "</string>
+    <string name="app_clone_manager_clone_msg">"目前正在应用更改的程序为: %s "</string>
     <string name="app_clone_manager_clone_start_users_msg">正在启动分身用户,请稍后...</string>
     <string name="app_clone_manager_clone_query_users_msg">正在获取本地分身用户,请稍后...</string>
     <string name="now_server_check_msg">当前服务 %s </string>
@@ -486,6 +486,8 @@
     <string name="jump_app_detail">跳转至应用详情</string>
     <string name="add_clean_list">添加到后台定时清理名单</string>
     <string name="added_clean_list_msg">已添加到后台定时清理名单！</string>
+    <string name="show_clone_unock_max_user">解锁分身数量限制</string>
+    <string name="show_clone_unock_max_user_tips_msg">运行这个功能后,会软重启设备,以用于解锁限制.</string>
 
 
 </resources>
