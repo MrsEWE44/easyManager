@@ -21,6 +21,20 @@ Moreover, the interface open to the public by EasyManager has been tested and su
 ![image](images/10.png) ![image](images/11.png)
 
 
+- V1.2.7
+
+1.Fixed the app cloning feature.
+
+2.Fixed app disable and freeze functions.
+
+3.Improved file sharing functionality.
+
+4.Initial version of the interface update.
+
+5.Updated target to 36.
+
+6.Changed version number to 1.2.7.
+
 - V1.2.6
 
 1.Optimize the issue of taking too long when retrieving installed apps.
