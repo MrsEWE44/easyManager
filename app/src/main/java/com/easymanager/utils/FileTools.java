@@ -70,9 +70,13 @@ public class FileTools extends FileUtils {
         }
     }
 
+    public String getExternalStorageDirectory(){
+        return Environment.getExternalStorageDirectory().toString();
+    }
+
     // 目标SD路径：/storage/emulated/0
     public String getSDPath(Integer uid){
-        String sdPath = "";
+        String sdPath = getExternalStorageDirectory();
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             String path = "/storage/emulated/"+uid+"/Android";
             File file = new File(path);
@@ -85,7 +89,7 @@ public class FileTools extends FileUtils {
             if(file.exists()){
                 sdPath = "/storage/emulated/legacy";
             }else{
-                sdPath = Environment.getExternalStorageDirectory().toString();
+                sdPath = getExternalStorageDirectory();
             }
         }
         return sdPath;

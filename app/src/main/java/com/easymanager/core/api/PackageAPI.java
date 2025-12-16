@@ -113,20 +113,23 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
     public IActivityManager getIActivityManager(){
         IActivityManager iActivityManager = I_ACTIVITY_MANAGER_CACHE.get("iaservice");
-        if(iActivityManager == null){
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-                Singleton<IActivityManager> iActivityManagerSingleton = new Singleton<IActivityManager>() {
-                    @Override
-                    protected IActivityManager create() {
-                        return IActivityManager.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService(Context.ACTIVITY_SERVICE)));
-                    }
-                };
-                iActivityManager = iActivityManagerSingleton.get();
-            }else{
-                iActivityManager= ActivityManagerNative.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService(Context.ACTIVITY_SERVICE)));
-            }
-            I_ACTIVITY_MANAGER_CACHE.put("iaservice",iActivityManager);
+        if(iActivityManager != null && iActivityManager.asBinder().isBinderAlive()){
+            return iActivityManager;
         }
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            Singleton<IActivityManager> iActivityManagerSingleton = new Singleton<IActivityManager>() {
+                @Override
+                protected IActivityManager create() {
+                    return IActivityManager.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService(Context.ACTIVITY_SERVICE)));
+                }
+            };
+            iActivityManager = iActivityManagerSingleton.get();
+        }else{
+            iActivityManager= ActivityManagerNative.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService(Context.ACTIVITY_SERVICE)));
+        }
+
+        I_ACTIVITY_MANAGER_CACHE.put("iaservice",iActivityManager);
         return iActivityManager;
     }
 
@@ -143,46 +146,49 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
     public IPackageManager getIPackageManager(){
         IPackageManager iPackageManager = I_PACKAGE_MANAGER_CACHE.get("ipkgservice");
-        if(iPackageManager == null){
-            Singleton<IPackageManager> iPackageManagerSingleton = new Singleton<IPackageManager>() {
-                @Override
-                protected IPackageManager create() {
-                    return IPackageManager.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService("package")));
-                }
-            };
-            iPackageManager = iPackageManagerSingleton.get();
-            I_PACKAGE_MANAGER_CACHE.put("ipkgservice",iPackageManager);
+        if(iPackageManager != null && iPackageManager.asBinder().isBinderAlive()){
+            return iPackageManager;
         }
+        Singleton<IPackageManager> iPackageManagerSingleton = new Singleton<IPackageManager>() {
+            @Override
+            protected IPackageManager create() {
+                return IPackageManager.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService("package")));
+            }
+        };
+        iPackageManager = iPackageManagerSingleton.get();
+        I_PACKAGE_MANAGER_CACHE.put("ipkgservice",iPackageManager);
         return iPackageManager;
     }
 
     public IUserManager getIUserManager(){
         IUserManager iUserManager = I_USER_MANAGER_CACHE.get("iuserservice");
-        if(iUserManager == null){
-            Singleton<IUserManager> iUserManagerSingleton = new Singleton<IUserManager>() {
-                @Override
-                protected IUserManager create() {
-                    return IUserManager.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService("user")));
-                }
-            };
-            iUserManager = iUserManagerSingleton.get();
-            I_USER_MANAGER_CACHE.put("iuserservice",iUserManager);
+        if(iUserManager != null && iUserManager.asBinder().isBinderAlive()){
+            return iUserManager;
         }
+        Singleton<IUserManager> iUserManagerSingleton = new Singleton<IUserManager>() {
+            @Override
+            protected IUserManager create() {
+                return IUserManager.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService("user")));
+            }
+        };
+        iUserManager = iUserManagerSingleton.get();
+        I_USER_MANAGER_CACHE.put("iuserservice",iUserManager);
         return iUserManager;
     }
 
     public IPermissionManager getIPermissionManager(){
         IPermissionManager iPermissionManager = I_PERMISSION_MANAGER_CACHE.get("ipermservice");
-        if(iPermissionManager == null){
-            Singleton<IPermissionManager> iPermissionManagerSingleton = new Singleton<IPermissionManager>() {
-                @Override
-                protected IPermissionManager create() {
-                    return IPermissionManager.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService("permissionmgr")));
-                }
-            };
-            iPermissionManager = iPermissionManagerSingleton.get();
-            I_PERMISSION_MANAGER_CACHE.put("ipermservice",iPermissionManager);
+        if(iPermissionManager != null && iPermissionManager.asBinder().isBinderAlive()){
+            return iPermissionManager;
         }
+        Singleton<IPermissionManager> iPermissionManagerSingleton = new Singleton<IPermissionManager>() {
+            @Override
+            protected IPermissionManager create() {
+                return IPermissionManager.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService("permissionmgr")));
+            }
+        };
+        iPermissionManager = iPermissionManagerSingleton.get();
+        I_PERMISSION_MANAGER_CACHE.put("ipermservice",iPermissionManager);
         return iPermissionManager;
     }
 
@@ -710,7 +716,14 @@ public class PackageAPI extends  baseAPI implements Serializable {
         }
 
         IPackageManager iPackageManager = getIPackageManager();
-        List<ResolveInfo> resolveInfoList = iPackageManager.queryIntentActivities(intent, intent.getType(),0,getTranslatedUserId()).getList();
+        List<ResolveInfo> resolveInfoList = null;
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            resolveInfoList = iPackageManager.queryIntentActivities(intent, intent.getType(),0L,getTranslatedUserId()).getList();
+        }else{
+            resolveInfoList = iPackageManager.queryIntentActivities(intent, intent.getType(),0,getMyuid()).getList();
+        }
+
         List<String> list = new ArrayList<>();
         for (ResolveInfo resolveInfo : resolveInfoList) {
             list.add(resolveInfo.activityInfo.packageName);
@@ -748,7 +761,7 @@ public class PackageAPI extends  baseAPI implements Serializable {
     public void createUser() {
         IUserManager iUserManager = getIUserManager();
         String name = "EAMA";
-        int translatedUserId = getTranslatedUserId();
+        int userID = 0;//这个uid设置为0，是因为每个手机用户只有一个主用户，通常它的uid是0，同时也只有这个用户的权限最高
         String userType = USER_TYPE_PROFILE_MANAGED;
         int flags = 0;
         int sdk_int = Build.VERSION.SDK_INT;
@@ -767,15 +780,15 @@ public class PackageAPI extends  baseAPI implements Serializable {
             }
         }
         if(sdk_int >= Build.VERSION_CODES.R){
-            iUserManager.createProfileForUserWithThrow(name,userType,flags,translatedUserId,disallowedPackages);
+            iUserManager.createProfileForUserWithThrow(name,userType,flags,userID,disallowedPackages);
 //            iUserManager.createProfileForUserWithThrow(name,userType,flags,translatedUserId,null);
         }else if(sdk_int >= Build.VERSION_CODES.O){
             flags |= FLAG_MANAGED_PROFILE;
-            iUserManager.createProfileForUser(name,flags,translatedUserId,disallowedPackages);
+            iUserManager.createProfileForUser(name,flags,userID,disallowedPackages);
 //            iUserManager.createProfileForUser(name,flags,translatedUserId,null);
         }else{
             flags |= FLAG_MANAGED_PROFILE;
-            iUserManager.createProfileForUser(name,flags,translatedUserId);
+            iUserManager.createProfileForUser(name,flags,userID);
         }
     }
 

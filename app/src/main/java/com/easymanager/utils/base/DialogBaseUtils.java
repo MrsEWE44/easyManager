@@ -3,6 +3,8 @@ package com.easymanager.utils.base;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.TextView;
 
 import com.easymanager.R;
@@ -13,11 +15,28 @@ import java.lang.reflect.Field;
 public class DialogBaseUtils {
 
     public TextUtils tu = new TextUtils();
+
+    public View getCustomeDialog(Context con,String title , String msg){
+        // 创建自定义布局的 AlertDialog
+        LayoutInflater inflater = LayoutInflater.from(con);
+        View dialogView = inflater.inflate(R.layout.custom_alert_dialog, null);
+
+// 设置标题
+        TextView titleView = dialogView.findViewById(R.id.dialog_title);
+        titleView.setText(title);
+
+// 设置消息
+        TextView messageView = dialogView.findViewById(R.id.dialog_message);
+        messageView.setText(msg);
+        messageView.setTextIsSelectable(true);
+        return dialogView;
+    }
+
     //显示一个弹窗
     public void showInfoMsg(Context con,String title , String msg){
+        View customeDialog = getCustomeDialog(con, title, msg);
         AlertDialog.Builder ab = new AlertDialog.Builder(con);
-        ab.setTitle(title);
-        ab.setMessage(msg);
+        ab.setView(customeDialog);
         ab.setNegativeButton(tu.getLanguageString(con, R.string.dialog_sure_text), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -27,8 +46,7 @@ public class DialogBaseUtils {
 
         AlertDialog alertDialog = ab.create();
         alertDialog.show();
-        TextView tv = alertDialog.getWindow().getDecorView().findViewById(android.R.id.message);
-        tv.setTextIsSelectable(true);
+
     }
 
     /**

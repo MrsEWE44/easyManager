@@ -34,8 +34,10 @@ public class easyManagerUtils {
             }
         });
         ee = ac.getAdbEntity();
-        isDead = ee.isDead();
-        currentErrorStr = ee.getErrorMsg();
+        if(ee != null){
+            isDead =  ee.isDead();
+            currentErrorStr = ee.getErrorMsg();
+        }
     }
 
     private easyManagerServiceEntity getEasyManagerServiceEntity(){
@@ -430,4 +432,11 @@ public class easyManagerUtils {
 
     }
 
+    public void unlockMaxLimit(Context context, int maxNum) {
+        if(!isDead && skipError){
+            TransmissionEntity entity = new TransmissionEntity(null,null,context.getPackageName(),maxNum,0);
+            easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.UNLOCK_MAX_LIMIT);
+            putOptionOnServer(adben2);
+        }
+    }
 }

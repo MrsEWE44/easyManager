@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
-import android.widget.TextView;
+import android.view.View;
 
 import com.easymanager.R;
 import com.easymanager.utils.NetUtils;
@@ -37,9 +37,10 @@ public class NetUtilsDialog extends DialogUtils {
     }
 
     public void showUpdateDialog(Context con,boolean isUpdate){
+
+        View customeDialog = getCustomeDialog(con, tu.getLanguageString(con,R.string.check_app_update_title), isUpdate?con.getString(R.string.check_app_update_is_ok):con.getString(R.string.check_app_update_is_no));
         AlertDialog.Builder ab = new AlertDialog.Builder(con);
-        ab.setTitle(R.string.check_app_update_title);
-        ab.setMessage(isUpdate?con.getString(R.string.check_app_update_is_ok):con.getString(R.string.check_app_update_is_no));
+        ab.setView(customeDialog);
         ab.setNegativeButton(tu.getLanguageString(con, R.string.dialog_sure_text), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -62,8 +63,7 @@ public class NetUtilsDialog extends DialogUtils {
 
         AlertDialog alertDialog = ab.create();
         alertDialog.show();
-        TextView tv = alertDialog.getWindow().getDecorView().findViewById(android.R.id.message);
-        tv.setTextIsSelectable(true);
+
     }
 
     public void openUrlWithBrowser(Context context){

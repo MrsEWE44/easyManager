@@ -181,6 +181,15 @@ public class startAdbService {
                                                 return getActiveADB();
                                             }
                                             break;
+                                        case easyManagerEnums.UNLOCK_MAX_LIMIT:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                String cmdstr = String.format("resetprop ro.debuggable 1;setprop persist.sys.max_profiles %d ; setprop fw.max_users %d ; setprop fw.show_multiuserui 1;am restart;",entity.getOpsmode(),entity.getOpsmode());
+                                                CMD cmd = new CMD(cmdstr,false);
+                                                System.exit(0);
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                            break;
                                         case easyManagerEnums.QUERY_PACKAGES_UID:
                                             if(managerAPI.isRoot() || managerAPI.isADB()){
                                                 return managerAPI.getInstalledPackages(entity.getUid());

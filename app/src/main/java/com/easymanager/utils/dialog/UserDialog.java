@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Message;
-import android.os.UserManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
@@ -138,9 +137,9 @@ public class UserDialog extends DialogUtils {
     }
 
     public void unlockMaxLimit(Context context, Activity activity) {
+        View customeDialog = getCustomeDialog(context, tu.getLanguageString(context, R.string.tips), tu.getLanguageString(context, R.string.show_clone_unock_max_user_tips_msg));
         AlertDialog.Builder ab = new AlertDialog.Builder(context);
-        ab.setTitle(tu.getLanguageString(context,R.string.tips));
-        ab.setMessage(tu.getLanguageString(context,R.string.show_clone_unock_max_user_tips_msg));
+        ab.setView(customeDialog);
         ab.setNegativeButton(tu.getLanguageString(context, R.string.dialog_sure_text), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -150,8 +149,7 @@ public class UserDialog extends DialogUtils {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        String cmdstr = "resetprop ro.debuggable 1;setprop persist.sys.max_profiles 1024 ; setprop fw.max_users 1024 ; setprop fw.show_multiuserui 1;am restart;";
-                        easyMUtils.runCMD(cmdstr);
+                        easyMUtils.unlockMaxLimit(context,1024);
                         sendHandlerMSG(handler,0);
                     }
                 }).start();
@@ -160,9 +158,6 @@ public class UserDialog extends DialogUtils {
 
         AlertDialog alertDialog = ab.create();
         alertDialog.show();
-        TextView tv = alertDialog.getWindow().getDecorView().findViewById(android.R.id.message);
-        tv.setTextIsSelectable(true);
-
     }
 
     public void queryLocalAppCloneUserProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<String> strings, ArrayList<Boolean> checkboxs){

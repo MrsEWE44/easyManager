@@ -262,4 +262,7 @@
     <string name="added_clean_list_msg">已添加計畫清潔清單！</string>
     <string name="show_clone_unock_max_user">解除分身數量限制</string>
     <string name="show_clone_unock_max_user_tips_msg">運行這個功能後，會軟重啟設備，以用於解鎖限制。</string>
+    <string name="get_all_apps_by_clone">正在獲取分身用戶所有的應用列表(包括禁用，請稍後...)</string>
+    <string name="get_user_apps_by_clone">正在獲取分身用戶的應用列表(包括禁用，請稍後...)</string>
+    <string name="button_stop_share">停止共用</string>
 </resources>

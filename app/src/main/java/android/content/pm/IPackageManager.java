@@ -120,7 +120,7 @@ public interface IPackageManager extends IInterface {
 
 
     ParceledListSlice queryIntentActivities(Intent intent, String resolvedType, long flags, int userId);
-
+    ParceledListSlice queryIntentActivities(Intent intent,String resolvedType, int flags, int userId);
     abstract class Stub extends Binder implements IPackageManager {
 
         public static IPackageManager asInterface(IBinder obj) {

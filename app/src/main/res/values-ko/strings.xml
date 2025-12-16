@@ -262,4 +262,7 @@
     <string name="added_clean_list_msg">예약된 청소 목록이 추가되었습니다!</string>
     <string name="show_clone_unock_max_user">최대 한도 해제</string>
     <string name="show_clone_unock_max_user_tips_msg">이 기능을 실행하면 제한 해제를 위해 장치가 소프트 리부트됩니다.</string>
+    <string name="get_all_apps_by_clone">분신 사용자의 모든 앱 목록을 가져오는 중입니다(비활성화된 앱 포함, 잠시만 기다려 주세요...)</string>
+    <string name="get_user_apps_by_clone">복제 사용자 앱 목록을 가져오는 중입니다(사용 중지된 앱 포함, 잠시만 기다려 주세요...)</string>
+    <string name="button_stop_share">공유 중지</string>
 </resources>

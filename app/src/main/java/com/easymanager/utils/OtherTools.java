@@ -41,13 +41,14 @@ public class OtherTools {
     }
 
     public void setBtColor(Button b , boolean needRoot , boolean needADB , Boolean isRoot , Boolean isADB){
+
         if(isADB != null && isADB){
             if(needRoot && needADB){
-                b.setBackgroundColor(Color.YELLOW);
+                b.setBackgroundColor(Color.parseColor("#FFF8E1"));
             }
 
             if(needRoot && !needADB){
-                b.setBackgroundColor(Color.RED);
+                b.setBackgroundColor(Color.parseColor("#FFEBEE"));
                 b.setEnabled(false);
             }
 
@@ -55,10 +56,11 @@ public class OtherTools {
 
         if(isRoot != null && !isRoot && isADB != null && !isADB){
             if(needADB || needRoot){
-                b.setBackgroundColor(Color.RED);
+                b.setBackgroundColor(Color.parseColor("#FFEBEE"));
                 b.setEnabled(false);
             }
         }
+
 
     }
 
@@ -108,7 +110,6 @@ public class OtherTools {
             menu.add(Menu.NONE,2,0,tv.getLanguageString(context,R.string.menu_get_user_all_app));
             menu.add(Menu.NONE,3,0,tv.getLanguageString(context,R.string.menu_get_user_all_app2));
             menu.add(Menu.NONE,4,0,tv.getLanguageString(context,R.string.menu_get_user_all_disable_app));
-            menu.add(Menu.NONE,14,0,tv.getLanguageString(context,R.string.show_clone_unock_max_user));
             menu.add(Menu.NONE,5,0,help);
             menu.add(Menu.NONE,6,0,exit);
         }

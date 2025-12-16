@@ -57,6 +57,7 @@ public class AppCloneLayoutActivity extends Activity {
         }else {
             initBt();
         }
+
     }
 
     private void initBt() {
@@ -176,7 +177,6 @@ public class AppCloneLayoutActivity extends Activity {
         });
 
     }
-
 
     private String[] getManagerMode() {
         return new String[]{getLanStr(R.string.app_clone_manager_clone_mode_str1),getLanStr(R.string.app_clone_manager_clone_mode_str2)};

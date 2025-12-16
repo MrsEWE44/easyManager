@@ -23,7 +23,7 @@ public class QueryDialog extends DialogUtils {
     }
 
     public void queryAllPKGSByAppCloneProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
-        queryAppClonePKGProcessDialog(context,activity,"正在获取分身用户所有的应用列表(包括禁用,请稍后...)",lv1,pkginfos,checkboxs,0);
+        queryAppClonePKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_all_apps_by_clone),lv1,pkginfos,checkboxs,0);
     }
 
     public void queryAllEnablePKGSProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, int uid) {
@@ -39,7 +39,7 @@ public class QueryDialog extends DialogUtils {
     }
 
     public void queryUserAllPKGSByAppCloneProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
-        queryAppClonePKGProcessDialog(context,activity,"正在获取分身用户的应用列表(包括禁用,请稍后...)",lv1,pkginfos,checkboxs,3);
+        queryAppClonePKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_user_apps_by_clone),lv1,pkginfos,checkboxs,3);
     }
     public void queryLocalBackupProcessDialog(Context context, Activity activity, ListView apllv1, ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, int uid) {
         queryPKGProcessDialog(context,activity,tu.getLanguageString(context, R.string.scan_local_backup_file_msg),apllv1,pkginfos,checkboxs,7,uid);

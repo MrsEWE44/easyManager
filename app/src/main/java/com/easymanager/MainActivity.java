@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
@@ -21,12 +22,12 @@ import com.easymanager.utils.dialog.HelpDialogUtils;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.ShellUtils;
 import com.easymanager.utils.TextUtils;
-import com.easymanager.utils.dialog.NetUtilsDialog;
 import com.easymanager.utils.easyManagerUtils;
 import com.easymanager.utils.permissionRequest;
 
 public class MainActivity extends Activity {
     private ImageView amiv1,amiv2,amiv3;
+    private View amv1,amv2,amv3;
     private FragmentManager fragmentManager;
     private Fragment homeFragment , helpFragment , manageFragment , currentFragment;
     private Boolean isRoot,isADB;
@@ -59,6 +60,9 @@ public class MainActivity extends Activity {
         amiv1 =findViewById(R.id.amiv1);
         amiv2 =findViewById(R.id.amiv2);
         amiv3 =findViewById(R.id.amiv3);
+        amv1 =findViewById(R.id.amv1);
+        amv2 =findViewById(R.id.amv2);
+        amv3 =findViewById(R.id.amv3);
         imclick(amiv1);
         imclick(amiv2);
         imclick(amiv3);
@@ -152,6 +156,9 @@ public class MainActivity extends Activity {
         String tag = null;
         if (fragment instanceof HelpFragmentLayout) {
             tag = "help";
+            amv3.setBackgroundColor(Color.parseColor("#6200EE"));
+            amv2.setBackgroundColor(Color.parseColor("#FFFFFF"));
+            amv1.setBackgroundColor(Color.parseColor("#FFFFFF"));
         }
 
         if(fragment instanceof  HomeFragmentLayout){
@@ -193,16 +200,25 @@ public class MainActivity extends Activity {
                     currentFragment = new ManagerGrantUserFragmentLayout(isRoot,isADB);
                     amiv2.setSelected(false);
                     amiv3.setSelected(false);
+                    amv1.setBackgroundColor(Color.parseColor("#6200EE"));
+                    amv2.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                    amv3.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 }
                 if(id == R.id.amiv2){
                     currentFragment = new HomeFragmentLayout(isRoot,isADB,uid);
                     amiv1.setSelected(false);
                     amiv3.setSelected(false);
+                    amv2.setBackgroundColor(Color.parseColor("#6200EE"));
+                    amv1.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                    amv3.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 }
                 if(id == R.id.amiv3){
                     currentFragment = new HelpFragmentLayout(isRoot,isADB,uid);
                     amiv1.setSelected(false);
                     amiv2.setSelected(false);
+                    amv3.setBackgroundColor(Color.parseColor("#6200EE"));
+                    amv2.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                    amv1.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 }
                 fragmentTransaction.replace(R.id.amfl1, currentFragment);
                 fragmentTransaction.commit();

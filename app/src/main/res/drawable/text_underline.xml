@@ -7,7 +7,7 @@
         <shape>
             <stroke
                 android:width="3dp"
-                android:color="#008577" />
+                android:color="#6200EE" />
         </shape>
     </item>
 </layer-list>

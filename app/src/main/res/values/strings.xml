@@ -262,4 +262,7 @@
     <string name="clean_input_hint_tips">Please enter an integer</string>
     <string name="show_clone_unock_max_user">Unlock Max Limit</string>
     <string name="show_clone_unock_max_user_tips_msg">After running this function, the device will soft reboot to unlock restrictions.</string>
+    <string name="get_all_apps_by_clone">Fetching the list of all apps for the cloned user (including disabled ones, please wait...)</string>
+    <string name="get_user_apps_by_clone">Retrieving the app list for the cloned user (including disabled apps, please wait...)</string>
+    <string name="button_stop_share">Stop shareing</string>
 </resources>

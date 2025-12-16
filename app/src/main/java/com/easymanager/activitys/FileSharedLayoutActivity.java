@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
@@ -23,37 +24,49 @@ import android.widget.TextView;
 import com.easymanager.R;
 import com.easymanager.entitys.PKGINFO;
 import com.easymanager.utils.base.DialogUtils;
-import com.easymanager.utils.FileTools;
 import com.easymanager.utils.dialog.HelpDialogUtils;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
 import com.easymanager.utils.PackageUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.URLEncoder;
+import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class FileSharedLayoutActivity extends Activity {
 
     private ArrayList<String> list = new ArrayList<>();
 
     private EditText fsisharedip , fsisharedport;
-    private Button fsladdfile,fsladdapp,fslstartshared;
+    private Button fsladdfile,fsladdapp,fslstartshared,fslstopshared;
     private ListView fsllv;
     private Context context;
     private Activity activity;
     private int mode,default_port = 25444;
 
+    private HttpServer httpServer;
 
     private DialogUtils du = new DialogUtils();
 
@@ -76,6 +89,7 @@ public class FileSharedLayoutActivity extends Activity {
         fsladdfile = findViewById(R.id.fsladdfile);
         fsladdapp = findViewById(R.id.fsladdapp);
         fslstartshared = findViewById(R.id.fslstartshared);
+        fslstopshared = findViewById(R.id.fslstopshared);
         fsllv = findViewById(R.id.fsllv);
         clickBt();
         new HelpDialogUtils().showHelp(context,HelpDialogUtils.APP_MANAGE_HELP,mode);
@@ -86,19 +100,38 @@ public class FileSharedLayoutActivity extends Activity {
         fsisharedip.setFocusableInTouchMode(false);
         fsisharedip.setText(ip);
         fsisharedport.setHint(getLanStr(R.string.default_port) + default_port);
-
+        fslstopshared.setEnabled(false);
 
         fslstartshared.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fslstartshared.setEnabled(false);
                 view.post(new Runnable() {
                     @Override
                     public void run() {
                         fslstartshared.setText(getLanStr(R.string.now_is_file_share));
-                        new HttpServer().start(activity);
+                        httpServer = new HttpServer();
+                        httpServer.setSharedPaths(list);
+                        httpServer.start(activity);
+                        if(httpServer.isRunning){
+                            fslstartshared.setEnabled(false);
+                            fslstopshared.setEnabled(true);
+                        }
                     }
                 });
+            }
+        });
+
+        fslstopshared.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(httpServer != null && httpServer.isRunning){
+                    httpServer.stop();
+                    if(!httpServer.isRunning){
+                        fslstartshared.setEnabled(true);
+                        fslstartshared.setText(R.string.button_start_share);
+                        fslstopshared.setEnabled(false);
+                    }
+                }
             }
         });
 
@@ -120,7 +153,7 @@ public class FileSharedLayoutActivity extends Activity {
     }
 
     private void showSelectFileAndAppDialog(boolean isFile){
-        String extstorage = Environment.getExternalStorageDirectory().toString();
+        String extstorage = du.ft.getExternalStorageDirectory();
         ArrayList<String> flist = new ArrayList<>();
         ArrayList<PKGINFO> pkginfos = new ArrayList<>();
         ArrayList<Boolean> checkboxs = new ArrayList<>();
@@ -156,6 +189,9 @@ public class FileSharedLayoutActivity extends Activity {
                                         list.add(pkginfos.get(i1).getApkpath());
                                     }
                                 }
+                            }
+                            if(httpServer != null ){
+                                httpServer.setSharedPaths(list);
                             }
                             du.showUsers(context,fsllv,list,checkboxs);
                         }
@@ -251,7 +287,7 @@ public class FileSharedLayoutActivity extends Activity {
                     if(paaa.equals(extstorage)){
                         paaa = extstorage;
                     }
-                    Log.d("f2",file2.toString() + " ---- " + file2.getParent());
+//                    Log.d("f2",file2.toString() + " ---- " + file2.getParent());
                     getLocalFiles(extstorage, paaa, flist,checkboxs,fssdllv);
                 } else {
                     if (file.isDirectory()) {
@@ -285,9 +321,12 @@ public class FileSharedLayoutActivity extends Activity {
         int itemId = item.getItemId();
 
         if(itemId == android.R.id.home){
+            if(httpServer != null ){
+                httpServer.stop();
+            }
             activity.onBackPressed();
-            MyActivityManager.getIns().kill(activity);
-            System.exit(0);
+//            MyActivityManager.getIns().kill(activity);
+//            System.exit(0);
         }
 
         if(itemId == 5){
@@ -303,218 +342,573 @@ public class FileSharedLayoutActivity extends Activity {
 
     @Override
     public void onBackPressed() {
+        if(httpServer != null ){
+            httpServer.stop();
+        }
         super.onBackPressed();
-        MyActivityManager.getIns().kill(activity);
-        System.exit(0);
+//        MyActivityManager.getIns().kill(activity);
+//        System.exit(0);
     }
 
-    //http服务器内部类
+
+    private String getLanStr(int id){
+        return du.tu.getLanguageString(context,id);
+    }
+
     private class HttpServer {
+        private static final String TAG = "HttpServer";
+        private ServerSocket serverSocket;
+        private boolean isRunning = false;
+        private int port = default_port; // 默认端口
+        private ExecutorService executorService;
+        private Activity activity;
+        private Handler mainHandler;
 
-        //判断是否为第一次访问
-        private boolean isFirst = true;
+        // 全局共享列表
+        private ArrayList<String> sharedPaths = new ArrayList<>();
+        private Map<String, String> mimeTypes = new HashMap<>();
 
-        //临时list
-        private ArrayList<String> tempList = new ArrayList<>();
+        public HttpServer() {
+            executorService = Executors.newFixedThreadPool(10);
+            mainHandler = new Handler(Looper.getMainLooper());
+            initMimeTypes();
+        }
 
-        //保留上一级路径
-        private String parenPath;
+        // 设置共享路径（从外部传入）
+        public void setSharedPaths(ArrayList<String> paths) {
+            this.sharedPaths = paths;
+        }
 
-        //获取端口
-        private String s = fsisharedport.getText().toString();
+        private  String etos(Exception e){
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            return sw.toString();
+        }
 
-        //获取ip
-        private String s2 = fsisharedip.getText().toString();
+        // 添加共享路径
+        public void addSharedPath(String path) {
+            if (!sharedPaths.contains(path)) {
+                sharedPaths.add(path);
+            }
+        }
 
-        private String ipAndPort = s2 + ":" + (s.isEmpty() ? default_port : s);
+        // 移除共享路径
+        public void removeSharedPath(String path) {
+            sharedPaths.remove(path);
+        }
 
-        //html界面头部
-        private String htmlhead = "<html>\n" +
-                "<head>\n" +
-                "\n" +
-                "<h1 style=\"text-align: center;\">easyManager file download web page</h1>\n" +
-                "<meta charset=\"utf-8\">\n" +
-                "\n" +
-                "</head>\n" +
-                "<body>\n";
+        public void start(Activity activity) {
+            this.activity = activity;
+            if (isRunning) {
+                return;
+            }
 
-        //html界面尾部
-        private String htmlend = "</body>\n" +
-                "</html>\n" +
-                "\n" +
-                "<script>\n" +
-                "function bt(a){\n" +
-                "\twindow.open(\"http://" + ipAndPort + "/easyManager?file=\"+a)\n" +
-                "}\n" +
-                "</script>";
+            String ip = fsisharedip.getText().toString().trim();
+            String portstr = fsisharedport.getText().toString().trim();
 
-        private Context context;
+            if(portstr == null || portstr.isEmpty()){
+                port = 25444;
+            }else{
+                port = Integer.valueOf(portstr);
+            }
 
-        private ServerSocket serverSocket = null;
-        private Socket socket = null;
-
-        public void start(Context context2) {
-            context = context2;
-            tempList.addAll(list);
-            String extstorage = Environment.getExternalStorageDirectory().toString();
+            isRunning = true;
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        serverSocket = new ServerSocket(s.isEmpty() ? default_port : Integer.valueOf(s));
-                        Log.d(FileSharedLayoutActivity.class.getName(), "listen port : " + serverSocket.getLocalPort());
+                        System.out.println(TAG+ "  Server starting at: http://" + ip + ":" + port);
 
-                        while (true) {//死循环时刻监听客户端链接
-                            //开始服务
+                        serverSocket = new ServerSocket(port);
+
+                        while (isRunning) {
                             try {
-                                socket = serverSocket.accept();
-                                Log.d(FileSharedLayoutActivity.class.getName(), "new con : " + socket.getInetAddress() + ":" + socket.getPort());
-
-                                //读取HTTP请求信息
-                                InputStream socketIn = socket.getInputStream();
-                                int size = socketIn.available();
-                                byte[] b = new byte[size];
-                                socketIn.read(b);
-                                String request = new String(b);
-                                String[] split = request.split("\r\n");
-//                                Log.d("request",request);
-                                //创建HTTP响应结果
-                                //创建响应协议、状态
-                                String httpStatus = "HTTP/1.1 200 OK\r\n";
-                                for (String s : split) {
-                                    if (s.indexOf("GET") != -1) {
-                                        String path = s.split(" ")[1];
-                                        //判断是否为请求easyManager
-                                        if (path.indexOf("easyManager") != -1) {
-                                            String parm = path.split("\\?")[1];
-                                            Log.d("parm", parm);
-                                            //判断是否为请求easyManager的文件列表以及文件下载
-                                            if (parm.indexOf("file") != -1) {
-                                                parm = parm.split("=")[1];
-                                                Integer index = Integer.valueOf(parm.trim());
-                                                String data = isFirst ? list.get(index) : tempList.get(index);
-                                                //判断是否点击的“上一页”
-                                                if(data.equals(getLanStr(R.string.file_share_previous_text)) && extstorage.equals(parenPath)){
-                                                    tempList.clear();
-                                                    tempList.addAll(list);
-                                                    returnFileList(list, httpStatus, socket);
-                                                }else{
-                                                    if (data.equals(getLanStr(R.string.file_share_previous_text))) {
-                                                        data = parenPath;
-                                                    }
-                                                    data = data.replaceAll("//", "/");
-                                                    File file = new File(data);
-//                                                    Log.d("data",data + " -- " + parenPath + " -- " + file.getAbsolutePath());
-                                                    if (file.isDirectory()) {
-                                                        tempList.clear();
-                                                        File[] files = file.listFiles();
-                                                        if (files != null && files.length > 0) {
-                                                            for (File listFile : files) {
-                                                                tempList.add(listFile.getAbsolutePath());
-                                                            }
-                                                        }
-                                                        Collections.sort(tempList, String::compareTo);
-
-                                                        if (tempList.size() >0 && tempList.get(0).length() > extstorage.length()) {
-                                                            tempList.add(0, getLanStr(R.string.file_share_previous_text));
-                                                        }else{
-                                                            tempList.add(getLanStr(R.string.file_share_previous_text));
-                                                        }
-                                                        parenPath = file.getParent();
-                                                        returnFileList(tempList, httpStatus, socket);
-
-                                                    } else {
-                                                        String contentType = "attachment;filename=" + URLEncoder.encode(file.getName(), "utf-8");
-                                                        //创建响应头
-                                                        String responseHeader = "Content-Description:File Transfer\r\nContent-disposition:" + contentType + "\r\nContent-Length: " + file.length() + "\r\nContent-Transfer-Encoding:binary\r\n\r\n";
-                                                        OutputStream socketOut = socket.getOutputStream();
-                                                        //发送响应协议、状态码及响应头、正文
-                                                        socketOut.write(httpStatus.getBytes());
-                                                        socketOut.write(responseHeader.getBytes());
-                                                        InputStream in = new FileInputStream(file);
-                                                        byte[] b2 = new byte[1024];
-                                                        int len = in.read(b2);
-                                                        try {
-                                                            while (len != -1) {
-                                                                //在这里会出现下载出错的问题，需要改善一下。
-                                                                //2023年1月30日18点32分
-                                                                //2024年3月3日15点27分，修复失败，暂时不清楚什么原因导致，安卓4.4无法正常使用
-                                                                socketOut.write(b2, 0, len);
-                                                                len = in.read(b2);
-                                                            }
-                                                        } catch (Exception e) {
-                                                            e.printStackTrace();
-                                                        } finally {
-                                                            in.close();
-                                                            socketOut.close();
-                                                            socket.close();
-                                                        }
-
-                                                    }
-                                                }
-                                            } else {
-                                                returnText(httpStatus, socket, getLanStr(R.string.parm_error));
-                                            }
-
-                                        } else {
-                                            returnFileList(list, httpStatus, socket);
-                                        }
-
-                                    }
+                                Socket clientSocket = serverSocket.accept();
+                                executorService.execute(new ClientHandler(clientSocket));
+                            } catch (IOException e) {
+                                if (isRunning) {
+                                    System.err.println(TAG+ "  Error accepting connection :: " + etos(e) );
                                 }
-                                if(!socket.isClosed()){
-                                    socket.close();
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
                             }
-                            isFirst=false;
                         }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } catch (IOException e) {
+                        System.err.println(TAG + "  Failed to start server ::: " + etos(e) );
                     }
                 }
             }).start();
         }
 
-        //返回文件列表
-        public void returnFileList(ArrayList<String> slist, String httpStatus, Socket socket) throws Exception {
-            StringBuilder sb = new StringBuilder();
-            sb.append(htmlhead);
-            if (slist.size() < 1) {
-                sb.append("<h1>"+getLanStr(R.string.file_share_not_select_file)+"</h1>");
-            } else {
-                for (int i = 0; i < slist.size(); i++) {
-                    File file = new File(slist.get(i));
-                    if (file.isDirectory() || file.toString().equals(getLanStr(R.string.file_share_previous_text))) {
-                        sb.append("<div><table border=\"1\"><td><a href=\"" + "http://" + ipAndPort + "/easyManager?file=" + i + "\" <h1>" + file.getName() + "</h1></a></td></table></div>");
-                    } else {
-                        sb.append("<div><table border=\"1\"><td>" + file.getName() + "</td><td>" + new FileTools().getSize(file.length(), 0) + "</td><td><button onclick=\"bt(" + i + ")\">"+getLanStr(R.string.file_share_start_download)+"</button></td></table></div>");
-                    }
+        public void stop() {
+            isRunning = false;
+            if (serverSocket != null) {
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                    System.err.println(TAG + "  Error closing server socket ::: " + etos(e) );
                 }
             }
-            sb.append(htmlend);
-            returnText(httpStatus, socket, sb.toString());
+            executorService.shutdown();
+            System.out.println(TAG + " Server is stoppend....");
         }
 
-        //返回文本内容给浏览器
-        public void returnText(String httpStatus, Socket socket, String text) throws Exception {
-            String contentType = "text/html;text/plain;charset=UTF-8";
-            //创建响应头
-            String responseHeader = "Content-Type:" + contentType + "\r\n\r\n";
-            OutputStream socketOut = socket.getOutputStream();
-            //发送响应协议、状态码及响应头、正文
-            socketOut.write(httpStatus.getBytes());
-            socketOut.write(responseHeader.getBytes());
-            socketOut.write(text.getBytes());
-            socketOut.close();
+        // 初始化MIME类型
+        private void initMimeTypes() {
+            mimeTypes.put("html", "text/html");
+            mimeTypes.put("htm", "text/html");
+            mimeTypes.put("txt", "text/plain");
+            mimeTypes.put("css", "text/css");
+            mimeTypes.put("js", "application/javascript");
+            mimeTypes.put("json", "application/json");
+            mimeTypes.put("png", "image/png");
+            mimeTypes.put("jpg", "image/jpeg");
+            mimeTypes.put("jpeg", "image/jpeg");
+            mimeTypes.put("gif", "image/gif");
+            mimeTypes.put("pdf", "application/pdf");
+            mimeTypes.put("zip", "application/zip");
+            mimeTypes.put("mp3", "audio/mpeg");
+            mimeTypes.put("mp4", "video/mp4");
+            mimeTypes.put("avi", "video/x-msvideo");
+            mimeTypes.put("mov", "video/quicktime");
+            mimeTypes.put("doc", "application/msword");
+            mimeTypes.put("docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+            mimeTypes.put("xls", "application/vnd.ms-excel");
+            mimeTypes.put("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            mimeTypes.put("ppt", "application/vnd.ms-powerpoint");
+            mimeTypes.put("pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation");
         }
 
-    }
+        // 客户端处理器
+        private class ClientHandler implements Runnable {
+            private Socket clientSocket;
 
-    private String getLanStr(int id){
-        return du.tu.getLanguageString(context,id);
+            public ClientHandler(Socket socket) {
+                this.clientSocket = socket;
+            }
+
+            @Override
+            public void run() {
+                try {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                    OutputStream out = clientSocket.getOutputStream();
+
+                    // 读取请求
+                    String requestLine = in.readLine();
+                    if (requestLine == null) {
+                        return;
+                    }
+
+                    System.out.println(TAG + "  Request: " + requestLine);
+
+                    // 解析请求
+                    String[] requestParts = requestLine.split(" ");
+                    if (requestParts.length < 2) {
+                        sendError(out, 400, "Bad Request");
+                        return;
+                    }
+
+                    String method = requestParts[0];
+                    String requestPath = URLDecoder.decode(requestParts[1], "UTF-8");
+
+                    // 处理不同的HTTP方法
+                    if (method.equals("GET")) {
+                        handleGet(requestPath, out, in);
+                    } else if (method.equals("POST")) {
+                        handlePost(requestPath, out, in);
+                    } else {
+                        sendError(out, 405, "Method Not Allowed");
+                    }
+
+                    in.close();
+                    out.close();
+                    clientSocket.close();
+                } catch (Exception e) {
+                    System.err.println(TAG + "  Error handling client ::: " + etos(e) );
+                }
+            }
+
+            // 处理GET请求
+            private void handleGet(String requestPath, OutputStream out, BufferedReader in) throws IOException {
+                String ppp = "/browse/"+du.ft.getExternalStorageDirectory();
+                if(requestPath.equals(ppp)){
+                    requestPath = "/";
+                }
+
+                // 如果请求根路径，显示共享列表
+                if (requestPath.equals("/") || requestPath.equals("/index.html") || requestPath.equals(Environment.getExternalStorageDirectory().toString())) {
+                    sendDirectoryListing(out, "/");
+                    return;
+                }
+
+                // 处理文件下载
+                if (requestPath.startsWith("/download/")) {
+                    String filePath = requestPath.substring(9); // 去掉/download/
+                    serveFile(filePath, out, true);
+                    return;
+                }
+
+                // 处理文件预览
+                if (requestPath.startsWith("/preview/")) {
+                    String filePath = requestPath.substring(8); // 去掉/preview/
+                    serveFile(filePath, out, false);
+                    return;
+                }
+
+                // 处理浏览目录
+                if (requestPath.startsWith("/browse/")) {
+                    String browsePath = requestPath.substring(8);
+                    sendDirectoryListing(out, browsePath);
+                    return;
+                }
+
+                // 默认处理文件
+                serveFile(requestPath, out, false);
+            }
+
+            // 处理POST请求（文件上传）
+            private void handlePost(String requestPath, OutputStream out, BufferedReader in) throws IOException {
+                if (requestPath.equals("/upload")) {
+                    handleFileUpload(out, in);
+                } else {
+                    sendError(out, 404, "Not Found");
+                }
+            }
+
+            // 处理文件上传
+            private void handleFileUpload(OutputStream out, BufferedReader reader) throws IOException {
+                // 读取请求头
+                String line;
+                int contentLength = 0;
+                String boundary = null;
+
+                while ((line = reader.readLine()) != null && !line.isEmpty()) {
+                    if (line.startsWith("Content-Length:")) {
+                        contentLength = Integer.parseInt(line.substring(15).trim());
+                    } else if (line.startsWith("Content-Type:")) {
+                        int boundaryIndex = line.indexOf("boundary=");
+                        if (boundaryIndex != -1) {
+                            boundary = line.substring(boundaryIndex + 9);
+                        }
+                    }
+                }
+
+                if (boundary == null || contentLength == 0) {
+                    sendError(out, 400, "Bad Request");
+                    return;
+                }
+
+                // 读取文件数据
+                char[] buffer = new char[contentLength];
+                int read = reader.read(buffer, 0, contentLength);
+                String requestBody = new String(buffer, 0, read);
+
+                // 解析multipart/form-data
+                String[] parts = requestBody.split("--" + boundary);
+
+                String fileName = null;
+                String fileContent = null;
+                String uploadPath = null;
+
+                for (String part : parts) {
+                    if (part.contains("filename=")) {
+                        // 提取文件名
+                        int nameIndex = part.indexOf("filename=\"");
+                        if (nameIndex != -1) {
+                            int endIndex = part.indexOf("\"", nameIndex + 10);
+                            fileName = part.substring(nameIndex + 10, endIndex);
+                        }
+
+                        // 提取文件内容
+                        int contentStart = part.indexOf("\r\n\r\n");
+                        if (contentStart != -1) {
+                            fileContent = part.substring(contentStart + 4, part.length() - 2);
+                        }
+                    } else if (part.contains("name=\"path\"")) {
+                        // 提取上传路径
+                        int contentStart = part.indexOf("\r\n\r\n");
+                        if (contentStart != -1) {
+                            uploadPath = part.substring(contentStart + 4, part.length() - 2);
+                        }
+                    }
+                }
+
+                if (fileName != null && fileContent != null && uploadPath != null) {
+                    // 保存文件
+                    File uploadDir = new File(uploadPath);
+                    if (!uploadDir.exists()) {
+                        uploadDir.mkdirs();
+                    }
+
+                    File file = new File(uploadDir, fileName);
+                    FileOutputStream fos = new FileOutputStream(file);
+                    fos.write(fileContent.getBytes());
+                    fos.close();
+
+                    // 发送成功响应
+                    String response = "HTTP/1.1 200 OK\r\n" +
+                            "Content-Type: text/html\r\n" +
+                            "\r\n" +
+                            "<html><body>" +
+                            "<h2>File uploaded successfully!</h2>" +
+                            "<p>File: " + fileName + "</p>" +
+                            "<p>Path: " + uploadPath + "</p>" +
+                            "<a href='/browse/" + uploadPath + "'>Go Back</a>" +
+                            "</body></html>";
+                    out.write(response.getBytes());
+                } else {
+                    sendError(out, 400, "Invalid upload data");
+                }
+            }
+
+            // 发送目录列表
+            private void sendDirectoryListing(OutputStream out, String path) throws IOException {
+                StringBuilder html = new StringBuilder();
+                html.append("<html><head>");
+                html.append("<title>File Server</title>");
+                html.append("<style>");
+                html.append("body { font-family: Arial, sans-serif; margin: 20px; }");
+                html.append("h1 { color: #333; }");
+                html.append("table { border-collapse: collapse; width: 100%; margin: 20px 0; }");
+                html.append("th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }");
+                html.append("th { background-color: #f2f2f2; }");
+                html.append("tr:hover { background-color: #f5f5f5; }");
+                html.append("a { text-decoration: none; color: #0066cc; }");
+                html.append("a:hover { text-decoration: underline; }");
+                html.append(".upload-form { margin: 20px 0; padding: 20px; background: #f9f9f9; border: 1px solid #ddd; }");
+                html.append("</style>");
+                html.append("</head><body>");
+
+                html.append("<h1>File Server</h1>");
+
+                // 显示当前路径
+                html.append("<p>Current Path: ").append(path).append("</p>");
+
+                // 添加上传功能
+                html.append("<div class='upload-form'>");
+                html.append("<h3>Upload File to Current Directory</h3>");
+                html.append("<form action='/upload' method='post' enctype='multipart/form-data'>");
+                html.append("<input type='hidden' name='path' value='").append(path).append("'>");
+                html.append("<input type='file' name='file'>");
+                html.append("<input type='submit' value='Upload'>");
+                html.append("</form>");
+                html.append("</div>");
+
+                // 刷新按钮
+                html.append("<button onclick=\"location.reload()\">Refresh</button>");
+
+                // 目录和文件列表
+                html.append("<table>");
+                html.append("<tr><th>Type</th><th>Name</th><th>Size</th><th>Actions</th></tr>");
+
+                // 添加上一级目录链接
+                if (!path.equals("/")) {
+                    String parentPath = new File(path).getParent();
+                    if (parentPath == null) parentPath = "/";
+                    html.append("<tr>");
+                    html.append("<td>📁</td>");
+                    html.append("<td><a href='/browse/").append(parentPath).append("'>.. (Parent Directory)</a></td>");
+                    html.append("<td>-</td>");
+                    html.append("<td></td>");
+                    html.append("</tr>");
+                }
+
+                // 获取共享路径下的文件和文件夹
+                List<FileInfo> fileList = new ArrayList<>();
+
+                for (String sharedPath : sharedPaths) {
+                    File baseDir = new File(sharedPath);
+                    if (baseDir.exists() && path.equals("/")) {
+                        // 根目录显示共享路径
+                        fileList.add(new FileInfo(baseDir.getName(), baseDir.getAbsolutePath(),
+                                baseDir.isDirectory(), baseDir.length()));
+                    } else if (path.startsWith(sharedPath) || sharedPath.startsWith(path)) {
+                        // 浏览子目录
+                        File currentDir = new File(path);
+                        if (currentDir.exists() && currentDir.isDirectory()) {
+                            File[] files = currentDir.listFiles();
+                            if (files != null) {
+                                for (File file : files) {
+                                    fileList.add(new FileInfo(file.getName(), file.getAbsolutePath(),
+                                            file.isDirectory(), file.length()));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // 排序：文件夹在前，文件在后
+                Collections.sort(fileList, new Comparator<FileInfo>() {
+                    @Override
+                    public int compare(FileInfo f1, FileInfo f2) {
+                        if (f1.isDirectory && !f2.isDirectory) return -1;
+                        if (!f1.isDirectory && f2.isDirectory) return 1;
+                        return f1.name.compareToIgnoreCase(f2.name);
+                    }
+                });
+
+                // 显示文件和文件夹
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                for (FileInfo fileInfo : fileList) {
+                    html.append("<tr>");
+
+                    // 类型图标
+                    if (fileInfo.isDirectory) {
+                        html.append("<td>📁</td>");
+                    } else {
+                        html.append("<td>📄</td>");
+                    }
+
+                    // 名称
+                    html.append("<td>");
+                    if (fileInfo.isDirectory) {
+                        html.append("<a href='/browse/").append(fileInfo.path).append("'>");
+                        html.append(fileInfo.name).append("/");
+                        html.append("</a>");
+                    } else {
+                        html.append(fileInfo.name);
+                    }
+                    html.append("</td>");
+
+                    // 大小
+                    html.append("<td>");
+                    if (fileInfo.isDirectory) {
+                        html.append("-");
+                    } else {
+                        html.append(formatFileSize(fileInfo.size));
+                    }
+                    html.append("</td>");
+
+                    // 操作
+                    html.append("<td>");
+                    if (fileInfo.isDirectory) {
+                        html.append("<a href='/browse/").append(fileInfo.path).append("'>Open</a>");
+                    } else {
+                        html.append("<a href='/download/").append(fileInfo.path).append("'>Download</a> | ");
+                        html.append("<a href='/preview/").append(fileInfo.path).append("'>Preview</a>");
+                    }
+                    html.append("</td>");
+
+                    html.append("</tr>");
+                }
+
+                html.append("</table>");
+                html.append("</body></html>");
+
+                String response = "HTTP/1.1 200 OK\r\n" +
+                        "Content-Type: text/html\r\n" +
+                        "Content-Length: " + html.length() + "\r\n" +
+                        "\r\n" +
+                        html.toString();
+
+                out.write(response.getBytes());
+            }
+
+            // 提供文件服务
+            private void serveFile(String filePath, OutputStream out, boolean download) throws IOException {
+                File file = new File(filePath);
+
+                if (!file.exists()) {
+                    sendError(out, 404, "File not found: " + filePath);
+                    return;
+                }
+
+                if (!file.canRead()) {
+                    sendError(out, 403, "Access denied");
+                    return;
+                }
+
+                // 检查文件是否在共享路径中
+                boolean isShared = false;
+                for (String sharedPath : sharedPaths) {
+                    if (file.getAbsolutePath().startsWith(sharedPath)) {
+                        isShared = true;
+                        break;
+                    }
+                }
+
+                if (!isShared) {
+                    sendError(out, 403, "Access denied - File not in shared paths");
+                    return;
+                }
+
+                // 获取MIME类型
+                String mimeType = getMimeType(file.getName());
+
+                // 设置响应头
+                String header = "HTTP/1.1 200 OK\r\n";
+                header += "Content-Type: " + mimeType + "\r\n";
+                header += "Content-Length: " + file.length() + "\r\n";
+
+                if (download) {
+                    header += "Content-Disposition: attachment; filename=\"" + file.getName() + "\"\r\n";
+                }
+
+                header += "\r\n";
+
+                out.write(header.getBytes());
+
+                // 发送文件内容
+                FileInputStream fis = new FileInputStream(file);
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+
+                while ((bytesRead = fis.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+
+                fis.close();
+            }
+
+            // 发送错误响应
+            private void sendError(OutputStream out, int code, String message) throws IOException {
+                String response = "HTTP/1.1 " + code + " " + message + "\r\n" +
+                        "Content-Type: text/html\r\n" +
+                        "\r\n" +
+                        "<html><body>" +
+                        "<h1>" + code + " " + message + "</h1>" +
+                        "</body></html>";
+                out.write(response.getBytes());
+            }
+
+            // 获取MIME类型
+            private String getMimeType(String fileName) {
+                int dotIndex = fileName.lastIndexOf('.');
+                if (dotIndex != -1) {
+                    String ext = fileName.substring(dotIndex + 1).toLowerCase();
+                    if (mimeTypes.containsKey(ext)) {
+                        return mimeTypes.get(ext);
+                    }
+                }
+                return "application/octet-stream";
+            }
+
+            // 格式化文件大小
+            private String formatFileSize(long size) {
+                if (size < 1024) {
+                    return size + " B";
+                } else if (size < 1024 * 1024) {
+                    return String.format("%.1f KB", size / 1024.0);
+                } else if (size < 1024 * 1024 * 1024) {
+                    return String.format("%.1f MB", size / (1024.0 * 1024.0));
+                } else {
+                    return String.format("%.1f GB", size / (1024.0 * 1024.0 * 1024.0));
+                }
+            }
+        }
+
+        // 文件信息类
+        private class FileInfo {
+            String name;
+            String path;
+            boolean isDirectory;
+            long size;
+
+            FileInfo(String name, String path, boolean isDirectory, long size) {
+                this.name = name;
+                this.path = path;
+                this.isDirectory = isDirectory;
+                this.size = size;
+            }
+        }
     }
 
 

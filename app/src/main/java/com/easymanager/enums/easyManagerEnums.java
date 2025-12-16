@@ -58,11 +58,5 @@ public class easyManagerEnums {
     public final static  int GET_COMPONENT_OR_PACKAGE_ENABLE_STATE=47;
     public final static  int INSTALL_EXISTING_APK=48;
     public final static  int GET_MAX_USERS=49;
-
-
-
-
-
-
-
+    public static final int UNLOCK_MAX_LIMIT = 50;
 }
