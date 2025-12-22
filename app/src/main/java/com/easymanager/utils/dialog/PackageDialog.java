@@ -61,25 +61,9 @@ public class PackageDialog extends DialogUtils {
                         case AppManagerEnum.APP_DISABLE_COMPENT:
                             easyMUtils.setSkipError(true);
                             if(APP_PERMIS_INDEX==0){
-                                int state = easyMUtils.getComponentOrPackageEnabledState(context,pkginfo.getPkgname(),null,uid);
-                                if(state == PackageAPI.COMPONENT_ENABLED_STATE_DISABLED || state == PackageAPI.COMPONENT_ENABLED_STATE_DISABLED_USER || state == PackageAPI.COMPONENT_ENABLED_STATE_DISABLED_UNTIL_USED){
-                                    easyMUtils.setComponentOrPackageEnabledState(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,PackageAPI.COMPONENT_ENABLED_STATE_ENABLED,uid));
-                                }
-                                state = easyMUtils.getPackageSuspend(context,pkginfo.getPkgname(),uid);
-                                if(state == 0){
-                                    easyMUtils.setPackagesSuspend(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,-1,uid));
-                                }
+                                easyMUtils.setEnablePKG(context,pkginfo.getPkgname(),uid);
                             }else{
-                                easyMUtils.setComponentOrPackageEnabledState(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,PackageAPI.COMPONENT_ENABLED_STATE_DISABLED,uid));
-                                int state = easyMUtils.getComponentOrPackageEnabledState(context,pkginfo.getPkgname(),null,uid);
-                                if(state != PackageAPI.COMPONENT_ENABLED_STATE_DISABLED){
-                                    easyMUtils.setComponentOrPackageEnabledState(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,PackageAPI.COMPONENT_ENABLED_STATE_DISABLED_USER,uid));
-                                    state = easyMUtils.getComponentOrPackageEnabledState(context,pkginfo.getPkgname(),null,uid);
-                                    if(state != PackageAPI.COMPONENT_ENABLED_STATE_DISABLED_USER){
-                                        easyMUtils.setPackagesSuspend(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,0,uid));
-                                    }
-                                }
-                                easyMUtils.clearPackageData(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,0,uid));
+                                easyMUtils.setDisablePKG(context,pkginfo.getPkgname(),uid);
                             }
 
                             break;
@@ -103,7 +87,7 @@ public class PackageDialog extends DialogUtils {
                             break;
                         case AppManagerEnum.APP_UNINSTALL:
                             if(!pkginfo.getPkgname().equals(context.getPackageName())){
-                                easyMUtils.uninstallAPK(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,0,uid));
+                                easyMUtils.uninstallAPK(context,pkginfo.getPkgname(),uid);
                             }
                             break;
                         case AppManagerEnum.APP_DUMP:
@@ -153,7 +137,7 @@ public class PackageDialog extends DialogUtils {
                             if(APP_PERMIS_INDEX == 0){
                                 easyMUtils.installAPK(new TransmissionEntity(packageUtils.getPKGINFO(context,pkginfo.getPkgname()).getApkpath(),null,reqpkg,0,uid));
                             }else{
-                                easyMUtils.uninstallAPK(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,0,uid));
+                                easyMUtils.uninstallAPK(context,pkginfo.getPkgname(),uid);
                             }
                             break;
                     }

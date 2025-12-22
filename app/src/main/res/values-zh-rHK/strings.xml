@@ -199,10 +199,10 @@
     <string name="help_question_2">它的優勢是什麽?</string>
     <string name="help_question_3">工作原理是什麽?</string>
     <string name="help_question_4">它與shizuku的區別是什麽?</string>
-    <string name="help_question_1_reply">easyManager是一個慶亮化、核心化、簡單易用的安卓系統管理工具,它非常適合在AOSP這種原生系統上使用,它還支持安卓4.0這種老設備,同時也支持安卓14的新設備,這個項目不會放棄任何還在服役或者日用的設備,它的未來充滿無限可能.</string>
-    <string name="help_question_2_reply">easyManager支持adb與root兩種模式運行，正如你所見到，它也支持將自己私有API公開給任何一個通過授權的應用訪問.\n它現在提供應用的批量許可權管理、後臺進程清理、軟件靜默安裝/卸載、單個應用服務/活動/廣播/許可權管理、應用網絡管控、備份與恢復、文件共亯等功能.\n它提供大量一鍵功能，你只需要看完幫助文檔，然後選擇對應的規則，最後點擊那個大大的按鈕，它就可以完成你的預期.</string>
-    <string name="help_question_3_reply">easyManager的工作原理借鑒了Shizuku、AppOps，與它們兩個類似，easyManager也需要開啟一個單獨的後臺進程到shell或者root shell裡面，才能正常工作.\n通過Socket進行TCP通信，執行對應的操作.</string>
-    <string name="help_question_4_reply">跟Shizuku不同的是，easyManager向下拓展了安卓4.0低版本的支持，同時對外也提供對應的SDK開發包工具，任何接入SDK的協力廠商程式，都可以通過SDK來使用easyManager完整的、私有的功能函數介面，大部分常用的功能都不需要開發者再次實現，easyManager已經全部封裝好了，開發者只需要關注介面互動部分.\n並且，easyManager對外開放的介面是經過測試的，支持安卓4.0-安卓14，它們工作穩定而且正常.</string>
+    <string name="help_question_1_reply">easyManager是一個輕量化、核心化、簡單易用的安卓系統管理工具，它非常適合在原生系統上使用，它還支援安卓4.0這種老設備上使用，同時也支援最新的安卓設備。正如你所看到的，它不會放棄任何還在使用的舊設備，它會一直支援下去，也許現在剛開始，並不完善，但它擁有無限的未來。</string>
+    <string name="help_question_2_reply">easyManager支持adb、root、設備管理員三種模式運行，正如你所看到，它也支持將自己私有API公開給任何一個通過授權的應用訪問。\n它現在提供應用的批量權限管理、凍結/禁用、後台進程清理、軟件靜默安裝/卸載、單個應用服務/活動/廣播/權限管理、應用網絡管控、備份與恢復、文件共享等功能。\n它提供大量一鍵功能，你只需要看完幫助文檔，然後選擇對應的規則，最後點擊那個大大的按鈕，它就可以完成你的預期。</string>
+    <string name="help_question_3_reply">easyManager的工作原理借鑑了Shizuku、AppOps、Hail等一眾優秀開源軟體，與它們兩個類似，easyManager也需要引導使用者執行一段指令，啟動一個單獨的後台進程到shell或者root shell裡面，才能正常工作。\n與它們不同的是，easyManager是透過Socket進行TCP通訊，發送對應的操作指令和參數來執行對應的操作，一切的操作都在單獨的一個shell裡面執行，你可以隨時停用它。</string>
+    <string name="help_question_4_reply">跟Shizuku不同的是，easyManager向下拓展了安卓4.0低版本的支持，同時對外也提供對應的SDK開發包工具，任何接入SDK的第三方程式，都可以透過SDK來使用easyManager完整的、私有的功能函數接口，大部分常用的功能都不需要開發者再次實現，easyManager已經全部封裝好了，開發者只需要關注界面交互部分。而且，easyManager對外開放的接口是經過測試的，支持安卓4.0到最新版本，它們工作穩定而且正常。</string>
     <string name="app_clone_menu">軟件克隆</string>
     <string name="app_clone_button">軟件克隆</string>
     <string name="app_clone_manager_button">克隆管理</string>
@@ -265,4 +265,10 @@
     <string name="get_all_apps_by_clone">正在獲取分身用戶所有的應用列表(包括禁用，請稍後...)</string>
     <string name="get_user_apps_by_clone">正在獲取分身用戶的應用列表(包括禁用，請稍後...)</string>
     <string name="button_stop_share">停止共用</string>
+    <string name="options_menu_remove_device_str">退出裝置管理員權限</string>
+    <string name="options_menu_active_device_str">啟用裝置管理員權限</string>
+    <string name="menu_active_device_help_str">如果你想要使用設備管理員權限功能，你需要先啟用ADB或者ROOT模式。</string>
+    <string name="clean_opt_item_clean">僅當前清理</string>
+    <string name="clean_opt_item_background_clean">後台定時清理</string>
+    <string name="run_cmd_stop_bt">停止</string>
 </resources>

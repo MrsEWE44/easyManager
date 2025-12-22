@@ -684,7 +684,8 @@ public class PackageAPI extends  baseAPI implements Serializable {
     public void setPackageHideState(String pkgname,boolean hide , int uid){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             IPackageManager iPackageManager = getIPackageManager();
-            iPackageManager.setApplicationHiddenSettingAsUser(pkgname, hide, uid);
+            boolean isHide = iPackageManager.setApplicationHiddenSettingAsUser(pkgname, hide, uid);
+            System.out.println("setPackageHideState -- " + isHide);
         }
     }
 
@@ -721,7 +722,7 @@ public class PackageAPI extends  baseAPI implements Serializable {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
             resolveInfoList = iPackageManager.queryIntentActivities(intent, intent.getType(),0L,getTranslatedUserId()).getList();
         }else{
-            resolveInfoList = iPackageManager.queryIntentActivities(intent, intent.getType(),0,getMyuid()).getList();
+            resolveInfoList = iPackageManager.queryIntentActivities(intent, intent.getType(),0,getTranslatedUserId()).getList();
         }
 
         List<String> list = new ArrayList<>();
@@ -729,6 +730,24 @@ public class PackageAPI extends  baseAPI implements Serializable {
             list.add(resolveInfo.activityInfo.packageName);
         }
         return list;
+    }
+
+    public String[] getDisallowedPackages(){
+        if(disallowedPackages == null){
+            List<String> launcherApps = getLauncherApps(null);
+            List<MyPackageInfo> installedPackages = getInstalledPackages(getCurrentUser());
+            ArrayList<String> strings = new ArrayList<>();
+            for (MyPackageInfo myPackageInfo : installedPackages) {
+                if(checklauncherApps(launcherApps,myPackageInfo.packageName)){
+                    strings.add(myPackageInfo.packageName);
+                }
+            }
+            disallowedPackages = new String[strings.size()];
+            for (int i = 0; i < strings.size(); i++) {
+                disallowedPackages[i] = strings.get(i);
+            }
+        }
+        return disallowedPackages;
     }
 
     public int getMaxSupportedUsers() {
@@ -765,20 +784,21 @@ public class PackageAPI extends  baseAPI implements Serializable {
         String userType = USER_TYPE_PROFILE_MANAGED;
         int flags = 0;
         int sdk_int = Build.VERSION.SDK_INT;
-        if(disallowedPackages == null){
-            List<String> launcherApps = getLauncherApps(null);
-            List<MyPackageInfo> installedPackages = getInstalledPackages(getCurrentUser());
-            ArrayList<String> strings = new ArrayList<>();
-            for (MyPackageInfo myPackageInfo : installedPackages) {
-                if(checklauncherApps(launcherApps,myPackageInfo.packageName)){
-                    strings.add(myPackageInfo.packageName);
-                }
-            }
-            disallowedPackages = new String[strings.size()];
-            for (int i = 0; i < strings.size(); i++) {
-                disallowedPackages[i] = strings.get(i);
-            }
-        }
+        disallowedPackages = getDisallowedPackages();
+//        if(disallowedPackages == null){
+//            List<String> launcherApps = getLauncherApps(null);
+//            List<MyPackageInfo> installedPackages = getInstalledPackages(getCurrentUser());
+//            ArrayList<String> strings = new ArrayList<>();
+//            for (MyPackageInfo myPackageInfo : installedPackages) {
+//                if(checklauncherApps(launcherApps,myPackageInfo.packageName)){
+//                    strings.add(myPackageInfo.packageName);
+//                }
+//            }
+//            disallowedPackages = new String[strings.size()];
+//            for (int i = 0; i < strings.size(); i++) {
+//                disallowedPackages[i] = strings.get(i);
+//            }
+//        }
         if(sdk_int >= Build.VERSION_CODES.R){
             iUserManager.createProfileForUserWithThrow(name,userType,flags,userID,disallowedPackages);
 //            iUserManager.createProfileForUserWithThrow(name,userType,flags,translatedUserId,null);
@@ -865,8 +885,8 @@ public class PackageAPI extends  baseAPI implements Serializable {
         int flags = 0;
         long flags2 = 0;
         //PackageManager.MATCH_UNINSTALLED_PACKAGES;加上这个flags会同步主用户的应用,建议不要添加,除非你需要排查所有应用
-//        flags |= PackageManager.MATCH_UNINSTALLED_PACKAGES;
-//        flags2 |= PackageManager.MATCH_UNINSTALLED_PACKAGES;
+        flags |=  PackageManager.MATCH_DISABLED_COMPONENTS | PackageManager.MATCH_UNINSTALLED_PACKAGES;
+        flags2 |=  PackageManager.MATCH_DISABLED_COMPONENTS | PackageManager.MATCH_UNINSTALLED_PACKAGES;
         IPackageManager iPackageManager = getIPackageManager();
         ArrayList<MyPackageInfo> myPackageInfos = new ArrayList<>();
         ParceledListSlice<PackageInfo> slice = Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU?iPackageManager.getInstalledPackages(flags2,userid):iPackageManager.getInstalledPackages(flags,userid);

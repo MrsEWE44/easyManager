@@ -17,13 +17,15 @@ import android.widget.TextView;
 
 import com.easymanager.R;
 import com.easymanager.adapters.RunCMDFilterAdapter;
-import com.easymanager.core.utils.CMD;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
 import com.easymanager.utils.base.DialogUtils;
 import com.easymanager.utils.dialog.HelpDialogUtils;
 import com.easymanager.utils.easyManagerUtils;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class RunCommandLayoutActivity extends Activity {
@@ -35,9 +37,10 @@ public class RunCommandLayoutActivity extends Activity {
 
     private String cmdresult;
     private boolean isRoot,isADB;
+    private boolean isStop;
     private int mode,uid;
     private AutoCompleteTextView rclactv1;
-    private Button rclruncmdbt;
+    private Button rclruncmdbt,rclstopcmdbt;
     private EditText rclet1;
     private TextView rcltv1;
     private DialogUtils du = new DialogUtils();
@@ -62,12 +65,16 @@ public class RunCommandLayoutActivity extends Activity {
         uid = intent.getIntExtra("uid",0);
         rclactv1 = findViewById(R.id.rclactv1);
         rclruncmdbt = findViewById(R.id.rclruncmdbt);
+        rclstopcmdbt = findViewById(R.id.rclstopcmdbt);
         rclet1 = findViewById(R.id.rclet1);
         rcltv1 = findViewById(R.id.rcltv1);
         rcltv1.setText(eu.isROOT()?"# ":"$ ");
         rclet1.setKeyListener(null);
+        isStop = false;
         btClicked();
-        scanLocalCMDFile();
+        if(isRoot || isADB){
+            scanLocalCMDFile();
+        }
         new HelpDialogUtils().showHelp(context,HelpDialogUtils.RUN_COMMAND_HELP,mode);
     }
 
@@ -75,15 +82,19 @@ public class RunCommandLayoutActivity extends Activity {
         rclruncmdbt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                isStop = false;
                 String cmdstr =  rclactv1.getText().toString();
                 if(cmdstr != null && !cmdstr.isEmpty()){
-                    ProgressDialog show = du.showMyDialog(context,du.tu.getLanguageString(context,R.string.execute_cmd));
                     Handler handler = new Handler(){
                         @Override
                         public void handleMessage(Message msg) {
                             if(msg.what==0){
-                                show.dismiss();
+//                                System.out.println("cmdresult ::: " + cmdresult);
                                 rclet1.append(cmdresult+"\n");
+                            }
+
+                            if(msg.what == 1){
+                                rclet1.setText("");
                             }
 
                         }
@@ -92,15 +103,56 @@ public class RunCommandLayoutActivity extends Activity {
                         @Override
                         public void run() {
                             if(cmdstr.equals("clear") || cmdstr.equals("cls")){
-                                cmdresult = "";
+                                du.sendHandlerMSG(handler,1);
                             }else{
-                                CMD cmd = eu.getServerStatus() ? eu.runCMD(cmdstr) : new CMD(cmdstr,false);
-                                cmdresult = cmd.getResult();
-                                du.sendHandlerMSG(handler,0);
+                                String cmdhead = isRoot ?"su":"sh" ;
+                                System.out.println("RunCommandLayoutActivity cmdstr ::: " + cmdstr);
+                                try{
+                                    String cmds[] = {cmdhead,"-c",cmdstr};
+                                    ProcessBuilder processBuilder = new ProcessBuilder(cmds);
+                                    processBuilder.redirectErrorStream(true);
+                                    Process exec = processBuilder.start();
+                                    DataOutputStream dos  = new DataOutputStream(exec.getOutputStream());
+                                    dos.writeBytes(cmdstr + "\n");
+                                    dos.flush();
+                                    dos.writeBytes("exit\n");
+                                    dos.flush();
+                                    BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream(),"UTF-8"));
+                                    String line="";
+                                    while((line=reader.readLine()) != null){
+                                        if(!isStop){
+                                            System.out.println(line);
+                                            cmdresult = line;
+                                            du.sendHandlerMSG(handler,0);
+                                        }
+                                        if(isStop){
+                                            break;
+                                        }
+                                    }
+                                    int resultCode = exec.waitFor();
+                                    reader.close();
+//                                    cmdresult = ""+resultCode;
+//                                    du.sendHandlerMSG(handler,0);
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+
                             }
                         }
                     }).start();
                 }
+            }
+        });
+
+        rclstopcmdbt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        isStop = true;
+                    }
+                }).start();
             }
         });
 

@@ -96,7 +96,7 @@ public class startAdbService {
                                             }
                                             break;
                                         case easyManagerEnums.SET_PACKAGE_HIDE_STATE:
-                                            if(managerAPI.isRoot()){
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
                                                 managerAPI.setPackageHideState(entity.getPkgname(),entity.getOpsmode()==0,entity.getUid());
                                             }else {
                                                 return getActiveROOT();
@@ -291,6 +291,32 @@ public class startAdbService {
                                                 return getActiveADB();
                                             }
                                             break;
+                                        case easyManagerEnums.SET_DEVICE_OWNER:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                managerAPI.setDeviceOwner(entity.getPkgname(), entity.getUid());
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                            break;
+                                        case easyManagerEnums.REMOVE_DEVICE_OWNER:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                managerAPI.removeActiveDeviceOwner(entity.getPkgname(), entity.getUid());
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                            break;
+                                        case easyManagerEnums.GET_ACTIVE_ADMINS:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                return managerAPI.getActiveAdmins(entity.getUid());
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                        case easyManagerEnums.GET_DISALLOWED_PACKAGES:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                return managerAPI.getDisallowedPackages();
+                                            }else {
+                                                return getActiveADB();
+                                            }
 
 
                                     }

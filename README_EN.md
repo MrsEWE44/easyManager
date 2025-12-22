@@ -1,16 +1,15 @@
-easyManager was born based on the FQAOSP project by cutting out some old content and coupling its new content. It eliminated many design flaws, improved execution and development efficiency, and opened many external development interfaces.
+EasyManager was born based on the FQASOSP project to reduce some old content and couple it with new content, eliminating numerous design flaws, improving execution and development efficiency, and opening up many external development interfaces
 
-EasyManager is a lightweight, core, and easy-to-use Android system management tool that is perfect for use on native systems. It also supports old devices like Android 4.0, as well as new devices like Android 14. As you can see, it will not give up on any old devices that are still in use, and it will continue to support it. Although it may not be perfect at the beginning, it has an infinite future.
+EasyManager is a lightweight, hardcore, and easy-to-use Android system management tool that is perfect for use on native systems. It also supports older devices such as Android 4.0, as well as the latest Android devices As you can see, it won't give up any old devices that are still in use, it will continue to support it, maybe it's just starting now and not perfect, but it has an infinite future
 
-EasyManager supports both adb and root modes of operation, and as you can see, it also supports exposing its private API to any authorized application for access
-It now provides batch permission management for applications, background process cleaning, silent software installation/uninstallation, individual application services/activities/broadcasting/permission management, application network control, backup and recovery, file sharing and other functions
-It provides a large number of one click functions. You just need to read the help document, select the corresponding rule, and finally click the big button to complete your expectations.
+easyManager supports three modes of operation: adb, root, and device administrator. As you can see, it also supports exposing its private APIs to any authorized application for access
+It now provides functions such as batch permission management, freezing/disabling, background process cleanup, silent software installation/uninstallation, individual application service/activity/broadcast/permission management, application network control, backup and recovery, and file sharing
+It provides a plethora of one-click functions. All you need to do is read through the help documentation, select the corresponding rule, and finally click that big button, and it will fulfill your expectations
 
-The working principle of easyManager draws inspiration from Shizuku and AppOps. Similar to these two, easyManager also needs to open a separate backend process into the shell or root shell in order to function properly
-Perform TCP communication through Socket and perform corresponding operations.
+The working principle of easyManager draws inspiration from a series of excellent open-source software such as Shizuku, AppOps, and Hail. Similar to these two, easyManager also requires users to execute a command to launch a separate background process into the shell or root shell in order to function properly
+Unlike them, easyManager performs TCP communication through Socket, sending corresponding operation instructions and parameters to execute specific operations. All operations are executed within a single shell, and you can disable it at any time
 
-Unlike Shizuku, EasyManager has expanded its support for Android 4.0 lower versions and also provides corresponding SDK development kit tools externally. Any third-party program that connects to the SDK can use EasyManager's complete and private functional interfaces through the SDK. Most commonly used functions do not require developers to implement them again. EasyManager has already been fully encapsulated, and developers only need to focus on the interface interaction part
-Moreover, the interface open to the public by EasyManager has been tested and supports Android 4.0 to Android 14. They work stably and normally.
+Unlike Shizuku, easyManager extends its support down to low versions of Android 4.0 and also provides corresponding SDK development kit tools externally. Any third-party programs that integrate with the SDK can use easyManager's complete and proprietary functional API through the SDK. Most commonly used functions do not require developers to implement them again, as easyManager has already encapsulated them. Developers only need to focus on the interface interaction part. Moreover, the externally open interfaces of easyManager have been tested and support Android 4.0 to the latest version, working stably and normally
 
 
 [easyMangerSDK Development Kit](https://github.com/MrsEWE44/easyManagerSDK)
@@ -19,6 +18,22 @@ Moreover, the interface open to the public by EasyManager has been tested and su
 ![image](images/3.jpg) ![image](images/2.jpg) ![image](images/4.jpg) ![image](images/5.jpg)
 ![image](images/6.png) ![image](images/8.png) ![image](images/7.png) ![image](images/9.png)
 ![image](images/10.png) ![image](images/11.png)
+
+
+- V1.2.8
+
+1.Improved app cloning feature, supporting automatic deletion of redundant components on Android versions below 8.
+
+2.Fixed the execute command feature.
+
+3.Added device administrator permissions feature, supporting app stop and icon hide functions.
+
+4.Modified some text descriptions.
+
+5.Changed the package naming format.
+
+6.Updated version number to 1.2.8.
+
 
 
 - V1.2.7

@@ -78,7 +78,12 @@ public class PKGINFOAdapter extends BaseAdapter {
             checkBox.setChecked(checkboxs.get(position));
             int mode=  pkginfo.getIconmode();
             if(mode == 0){
-                imageView.setImageDrawable(pu.getPKGIcon(context,pkginfo.getPkgname()));
+
+                try{
+                    imageView.setImageDrawable(pu.getPKGIcon(context,pkginfo.getPkgname()));
+                }catch (Exception e){
+                    imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.manager_grant_app_foreground));
+                }
             }
             if(mode == 1){
                 imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.manager_grant_app_foreground));

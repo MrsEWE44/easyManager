@@ -1,8 +1,12 @@
 package com.easymanager.utils;
 
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.os.Build;
 import android.os.Process;
 
+import com.easymanager.core.api.PackageAPI;
 import com.easymanager.entitys.MyAppopsInfo;
 import com.easymanager.entitys.MyPackageInfo;
 import com.easymanager.core.entity.TransmissionEntity;
@@ -12,8 +16,10 @@ import com.easymanager.core.utils.CMD;
 import com.easymanager.core.utils.FileUtils;
 import com.easymanager.enums.easyManagerEnums;
 import com.easymanager.mylife.adbClient;
+import com.easymanager.mylife.easyMDeviceAdminReceiver;
 import com.easymanager.mylife.startAdbService;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,10 +27,14 @@ import java.util.List;
 public class easyManagerUtils {
 
     private easyManagerServiceEntity ee = null;
+    private DevicePolicyManager easyMDPM = null;
 
     private boolean skipError = true;
     private boolean isDead = false;
+
+
     private String currentErrorStr ;
+    private ComponentName easyMDPMComName = null;
 
     private void putOptionOnServer(easyManagerClientEntity adben2){
         adbClient ac = new adbClient(adben2, new adbClient.SocketListener() {
@@ -61,6 +71,68 @@ public class easyManagerUtils {
 
     public String getERRORMSG(){
         return currentErrorStr;
+    }
+
+    public DevicePolicyManager getEasyMDPM(Context context){
+        if(easyMDPM == null){
+            easyMDPM = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+        }
+        return easyMDPM;
+    }
+
+    public ComponentName getEasyMDPMComName(Context context){
+        if(easyMDPMComName == null){
+            easyMDPMComName = new ComponentName(context, easyMDeviceAdminReceiver.class);
+        }
+        return easyMDPMComName;
+    }
+
+    public boolean isDeviceOwner(Context context){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            return getEasyMDPM(context).isDeviceOwnerApp(context.getPackageName());
+        }
+        return false;
+    }
+
+    public boolean isProfileOwner(Context context){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return getEasyMDPM(context).isProfileOwnerApp(context.getPackageName());
+        }
+        return false;
+    }
+
+    public boolean isAdminActive(Context context){
+        return getEasyMDPM(context).isAdminActive(getEasyMDPMComName(context));
+    }
+
+    public boolean isDeviceOwnerActive(Context context){
+        return isDeviceOwner(context) && isAdminActive(context);
+    }
+
+    public void removeDeviceOwner(Context context){
+        if(isDeviceOwnerActive(context)){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getEasyMDPM(context).clearDeviceOwnerApp(context.getPackageName());
+            }
+        }
+    }
+
+    public void forceRemoveDeviceOwner(Context context){
+        if(isDeviceOwnerActive(context)){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getEasyMDPM(context).clearDeviceOwnerApp(context.getPackageName());
+            }
+        }
+
+        if(isProfileOwner(context)){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                getEasyMDPM(context).clearProfileOwner(getEasyMDPMComName(context));
+            }
+        }
+
+        if(isAdminActive(context)){
+            getEasyMDPM(context).removeActiveAdmin(getEasyMDPMComName(context));
+        }
     }
 
     public void activeRoot(Context context) {
@@ -129,15 +201,17 @@ public class easyManagerUtils {
             putOptionOnServer(adben2);
         }
     }
-    public void installExistingPKG(TransmissionEntity entity){
+    public void installExistingPKG(Context context , String pkgname,int uid){
         if(!isDead && skipError){
+            TransmissionEntity entity = new TransmissionEntity(pkgname, null, context.getPackageName(), 0, uid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.INSTALL_EXISTING_APK);
             putOptionOnServer(adben2);
         }
     }
 
-    public void uninstallAPK(TransmissionEntity entity){
+    public void uninstallAPK(Context context , String pkgname,int uid){
         if(!isDead && skipError){
+            TransmissionEntity entity = new TransmissionEntity(pkgname, null, context.getPackageName(), 0, uid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.UNINSTALL_APK);
             putOptionOnServer(adben2);
         }
@@ -150,15 +224,58 @@ public class easyManagerUtils {
         }
     }
 
-    public void setPackagesSuspend(TransmissionEntity entity){
-        if(!isDead && skipError){
-            easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.SET_PACKAGE_SUSPEND);
-            putOptionOnServer(adben2);
+    public void setPackagesSuspend(Context context ,boolean status, String pkgname,int uid){
+        int mode=  status ? 0 : -1;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isDeviceOwnerActive(context)){
+            String[] strings = getEasyMDPM(context).setPackagesSuspended(getEasyMDPMComName(context), new String[]{pkgname}, status);
+            boolean b = getEasyMDPM(context).setApplicationHidden(getEasyMDPMComName(context), pkgname, status);
+        }else {
+            if(!isDead && skipError){
+                TransmissionEntity entity = new TransmissionEntity(pkgname,null,context.getPackageName(),mode,uid);
+                easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.SET_PACKAGE_SUSPEND);
+                putOptionOnServer(adben2);
+            }
         }
     }
 
-    public void clearPackageData(TransmissionEntity entity){
+    public void setEnablePKG(Context context , String pkgname,int uid){
+        if(isDeviceOwnerActive(context)){
+            setPackagesSuspend(context,false,pkgname,uid);
+        }else{
+            int state = getComponentOrPackageEnabledState(context,pkgname,null,uid);
+            if(state == PackageAPI.COMPONENT_ENABLED_STATE_DISABLED || state == PackageAPI.COMPONENT_ENABLED_STATE_DISABLED_USER || state == PackageAPI.COMPONENT_ENABLED_STATE_DISABLED_UNTIL_USED){
+                setComponentOrPackageEnabledState(new TransmissionEntity(pkgname,null, context.getPackageName(), PackageAPI.COMPONENT_ENABLED_STATE_ENABLED,uid));
+            }
+            state = getPackageSuspend(context,pkgname,uid);
+            if(state == 0){
+                setPackagesSuspend(context,false,pkgname,uid);
+                setPackageHideState(context,false,pkgname,uid);
+            }
+        }
+    }
+
+    public void setDisablePKG(Context context , String pkgname,int uid){
+        if(isDeviceOwnerActive(context)){
+            setPackagesSuspend(context,true,pkgname,uid);
+        }else{
+            clearPackageData(context,pkgname,uid);
+            setComponentOrPackageEnabledState(new TransmissionEntity(pkgname,null, context.getPackageName(), PackageAPI.COMPONENT_ENABLED_STATE_DISABLED,uid));
+            int state = getComponentOrPackageEnabledState(context,pkgname,null,uid);
+            if(state != PackageAPI.COMPONENT_ENABLED_STATE_DISABLED){
+                setComponentOrPackageEnabledState(new TransmissionEntity(pkgname,null, context.getPackageName(), PackageAPI.COMPONENT_ENABLED_STATE_DISABLED_USER,uid));
+                state = getComponentOrPackageEnabledState(context,pkgname,null,uid);
+                if(state != PackageAPI.COMPONENT_ENABLED_STATE_DISABLED_USER){
+                    setPackagesSuspend(context,true,pkgname,uid);
+                    setPackageHideState(context,true,pkgname,uid);
+                }
+            }
+
+        }
+    }
+
+    public void clearPackageData(Context context , String pkgname,int uid){
         if(!isDead && skipError){
+            TransmissionEntity entity = new TransmissionEntity(pkgname,null,context.getPackageName(),0,uid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.CLEAR_PACKAGE_DATA);
             putOptionOnServer(adben2);
         }
@@ -178,8 +295,10 @@ public class easyManagerUtils {
         }
     }
 
-    public void setPackageHideState(TransmissionEntity entity){
+    public void setPackageHideState(Context context ,boolean status, String pkgname,int uid){
+        int mode=  status ? 0 : -1;
         if(!isDead && skipError){
+            TransmissionEntity entity = new TransmissionEntity(pkgname,null,context.getPackageName(),mode,uid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.SET_PACKAGE_HIDE_STATE);
             putOptionOnServer(adben2);
         }
@@ -258,6 +377,16 @@ public class easyManagerUtils {
         easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.GET_GRANT_USERS);
         putOptionOnServer(adben2);
         return (HashMap<String,Integer>) getEasyManagerServiceEntity().getObject();
+    }
+
+    public String[] getDisallowedPackages(Context context) {
+        if(!isDead && skipError){
+            TransmissionEntity entity = new TransmissionEntity(null,null,context.getPackageName(),0,getCurrentUserID());
+            easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.GET_DISALLOWED_PACKAGES);
+            putOptionOnServer(adben2);
+            return (String[]) getEasyManagerServiceEntity().getObject();
+        }
+        return null;
     }
 
     public int getMaxSupportedUsers(Context context) {
@@ -439,4 +568,31 @@ public class easyManagerUtils {
             putOptionOnServer(adben2);
         }
     }
+
+    public void setDeviceOwner(Context context , String componentstr,int uid){
+        if(!isDead && skipError){
+            TransmissionEntity transmissionEntity = new TransmissionEntity(componentstr, null, context.getPackageName(), 0, uid);
+            easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.SET_DEVICE_OWNER);
+            putOptionOnServer(adben2);
+        }
+    }
+
+    public void removeDeviceOwner(Context context , String componentstr,int uid){
+        if(!isDead && skipError){
+            TransmissionEntity transmissionEntity = new TransmissionEntity(componentstr, null, context.getPackageName(), 0, uid);
+            easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.REMOVE_DEVICE_OWNER);
+            putOptionOnServer(adben2);
+        }
+    }
+
+    public List<String> getActiveAdmins(Context context , int uid){
+        if(!isDead && skipError){
+            TransmissionEntity transmissionEntity = new TransmissionEntity(null, null, context.getPackageName(), 0, uid);
+            easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.GET_ACTIVE_ADMINS);
+            putOptionOnServer(adben2);
+            return (List<String>) getEasyManagerServiceEntity().getObject();
+        }
+        return null;
+    }
+
 }

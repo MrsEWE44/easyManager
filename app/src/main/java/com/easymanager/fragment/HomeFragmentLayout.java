@@ -33,13 +33,14 @@ public class HomeFragmentLayout extends Fragment {
 
     public HomeFragmentLayout(){}
 
-    public HomeFragmentLayout(Boolean isRoot, Boolean isADB, int uid) {
+    public HomeFragmentLayout(Boolean isRoot, Boolean isADB , Boolean isDevice, int uid) {
         this.isRoot = isRoot;
         this.isADB = isADB;
+        this.isDevice = isDevice;
         this.uid = uid;
     }
 
-    private Boolean isRoot,isADB;
+    private Boolean isRoot,isADB,isDevice;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -97,20 +98,20 @@ public class HomeFragmentLayout extends Fragment {
 
     private void initBtColor(){
 
-        ot.setBtColor(hflinlocalapk,true,true,isRoot,isADB);
-        ot.setBtColor(hflbackupapp,true,false,isRoot,isADB);
-        ot.setBtColor(hflrestoryapp,true,false,isRoot,isADB);
-        ot.setBtColor(hflmountlocalimg,true,false,isRoot,isADB);
-        ot.setBtColor(hflcreateimg,true,false,isRoot,isADB);
-        ot.setBtColor(hflsetrate,true,true,isRoot,isADB);
-        ot.setBtColor(hfldelx,true,true,isRoot,isADB);
-        ot.setBtColor(hflsetntp,true,true,isRoot,isADB);
-        ot.setBtColor(hflfileshared,false,false,isRoot,isADB);
-        ot.setBtColor(hflappclone,true,true,isRoot,isADB);
-        ot.setBtColor(hflappclonemanage,true,true,isRoot,isADB);
-        ot.setBtColor(hflappcloneremove,true,true,isRoot,isADB);
-        ot.setBtColor(hflappmanagerbt,true,true,isRoot,isADB);
-        ot.setBtColor(hflruncmd,true,true,isRoot,isADB);
+        ot.setBtColor(hflinlocalapk,true,true,false,isRoot,isADB,isDevice);
+        ot.setBtColor(hflbackupapp,true,false,false,isRoot,isADB,isDevice);
+        ot.setBtColor(hflrestoryapp,true,false,false,isRoot,isADB,isDevice);
+        ot.setBtColor(hflmountlocalimg,true,false,false,isRoot,isADB,isDevice);
+        ot.setBtColor(hflcreateimg,true,false,false,isRoot,isADB,isDevice);
+        ot.setBtColor(hflsetrate,true,true,false,isRoot,isADB,isDevice);
+        ot.setBtColor(hfldelx,true,true,false,isRoot,isADB,isDevice);
+        ot.setBtColor(hflsetntp,true,true,false,isRoot,isADB,isDevice);
+        ot.setBtColor(hflfileshared,false,false,false,isRoot,isADB,isDevice);
+        ot.setBtColor(hflappclone,true,true,false,isRoot,isADB,isDevice);
+        ot.setBtColor(hflappclonemanage,true,true,false,isRoot,isADB,isDevice);
+        ot.setBtColor(hflappcloneremove,true,true,false,isRoot,isADB,isDevice);
+        ot.setBtColor(hflappmanagerbt,true,true,true,isRoot,isADB,isDevice);
+        ot.setBtColor(hflruncmd,false,false,false,isRoot,isADB,isDevice);
 
     }
 
@@ -135,7 +136,7 @@ public class HomeFragmentLayout extends Fragment {
             clazz = AppCloneLayoutActivity.class;
         }
 
-        ot.jump(getActivity(),clazz,mode,isRoot,isADB,uid);
+        ot.jump(getActivity(),clazz,mode,isRoot,isADB,isDevice,uid);
 
     }
 

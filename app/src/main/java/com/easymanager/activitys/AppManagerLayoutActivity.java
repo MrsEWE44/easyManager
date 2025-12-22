@@ -57,7 +57,7 @@ public class AppManagerLayoutActivity extends Activity {
 
     private Context context;
     private Activity activity;
-    private Boolean isRoot , isADB;
+    private Boolean isRoot , isADB,isDevice;
     private Integer uid;
     private String APP_PERMIS_OPT1_VALUES[] = {"default", "ignore","deny","allow","foreground"};
     private String APP_PERMIS_OPT2_VALUES[] = {"active", "working_set","frequent","rare","restricted"};
@@ -90,6 +90,7 @@ public class AppManagerLayoutActivity extends Activity {
         mode = intent.getIntExtra("mode",-1);
         isRoot = intent.getBooleanExtra("isRoot",false);
         isADB = intent.getBooleanExtra("isADB",false);
+        isDevice = intent.getBooleanExtra("isDevice",false);
         uid = intent.getIntExtra("uid",0);
         context = this;
         activity = this;
@@ -149,7 +150,9 @@ public class AppManagerLayoutActivity extends Activity {
         spinnerChange(amlsp3,2);
         spinnerChange(amlsp4,3);
         spinnerChange(amlsp5,4);
-
+        if(isDevice){
+            amlsp5.setSelection(1,true);
+        }
         amlapplybt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -243,6 +246,7 @@ public class AppManagerLayoutActivity extends Activity {
                     intent.putExtra("uid",uid);
                     intent.putExtra("isRoot",isRoot);
                     intent.putExtra("isADB",isADB);
+                    intent.putExtra("isDevice",isDevice);
                     startActivity(intent);
                 } catch (PackageManager.NameNotFoundException e) {
                     Toast.makeText(context, getLanStr(R.string.not_installed_app), Toast.LENGTH_SHORT).show();
@@ -397,6 +401,9 @@ public class AppManagerLayoutActivity extends Activity {
                                     amlsp1.setEnabled(false);
                                     amlsp2.setEnabled(true);
                                     amlsp2.setAdapter(getSpinnerAdapter(getAppDisableOrEnableOPT()));
+                                    if(isDevice){
+                                        amlsp5.setEnabled(false);
+                                    }
                                     break;
                                 case 2:
                                     mode = AppManagerEnum.APP_FIREWALL;
@@ -672,7 +679,7 @@ public class AppManagerLayoutActivity extends Activity {
     }
 
     private String[] getAppCleanOPT() {
-        return new String[]{"仅当前清理","后台定时清理"};
+        return new String[]{getString(R.string.clean_opt_item_clean),getString(R.string.clean_opt_item_background_clean)};
     }
 
     private String[] getAppDisableOrEnableOPT(){

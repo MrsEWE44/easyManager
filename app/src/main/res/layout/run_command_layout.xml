@@ -35,6 +35,11 @@
                 android:layout_height="fill_parent"
                 android:text="@string/run_cmd_run_bt"
                 android:id="@+id/rclruncmdbt"></Button>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:text="@string/run_cmd_stop_bt"
+                android:id="@+id/rclstopcmdbt"></Button>
 
         </LinearLayout>
 

@@ -20,7 +20,7 @@ import com.easymanager.utils.dialog.NetUtilsDialog;
 
 public class HelpFragmentLayout extends Fragment {
 
-    private Boolean isRoot, isADB;
+    private Boolean isRoot, isADB,isDevice;
     private int uid;
 
     private Context context;
@@ -33,9 +33,10 @@ public class HelpFragmentLayout extends Fragment {
     public HelpFragmentLayout() {
     }
 
-    public HelpFragmentLayout(Boolean isRoot, Boolean isADB , int uid) {
+    public HelpFragmentLayout(Boolean isRoot, Boolean isADB ,Boolean isDevice, int uid) {
         this.isRoot = isRoot;
         this.isADB = isADB;
+        this.isDevice = isDevice;
         this.uid = uid;
     }
 
@@ -90,10 +91,10 @@ public class HelpFragmentLayout extends Fragment {
 
     private void initBtColor(){
 
-        ot.setBtColor(hflcheckupdate,false,false,isRoot,isADB);
-        ot.setBtColor(hflcleanfile,true,true,isRoot,isADB);
-        ot.setBtColor(hflopengithub,false,false,isRoot,isADB);
-        ot.setBtColor(hflopengitee,false,false,isRoot,isADB);
+        ot.setBtColor(hflcheckupdate,false,false,false,isRoot,isADB,isDevice);
+        ot.setBtColor(hflcleanfile,true,true,false,isRoot,isADB,isDevice);
+        ot.setBtColor(hflopengithub,false,false,false,isRoot,isADB,isDevice);
+        ot.setBtColor(hflopengitee,false,false,false,isRoot,isADB,isDevice);
     }
 
 

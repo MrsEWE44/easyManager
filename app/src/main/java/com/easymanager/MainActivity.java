@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.ComponentName;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,14 +27,17 @@ import com.easymanager.utils.TextUtils;
 import com.easymanager.utils.easyManagerUtils;
 import com.easymanager.utils.permissionRequest;
 
+import java.util.List;
+
 public class MainActivity extends Activity {
     private ImageView amiv1,amiv2,amiv3;
     private View amv1,amv2,amv3;
     private FragmentManager fragmentManager;
     private Fragment homeFragment , helpFragment , manageFragment , currentFragment;
-    private Boolean isRoot,isADB;
+    private Boolean isRoot,isADB,isDevice;
     private int stop_time = 5000;
     private int uid;
+    private List<String> activeAdmins = null;
     private easyManagerUtils ee = new easyManagerUtils();
     private HelpDialogUtils dialogUtils = new HelpDialogUtils();
     private TextUtils tu = dialogUtils.tu;
@@ -77,6 +82,7 @@ public class MainActivity extends Activity {
         permissionRequest.getExternalStorageManager(this,this);
         isRoot = shellUtils.testRoot();
         isADB = false;
+        isDevice = ee.isDeviceOwnerActive(this);
         if(isRoot){
             isRoot = ee.isROOT();
             if(!isRoot){
@@ -102,16 +108,26 @@ public class MainActivity extends Activity {
                 }
             }
         }
+
         if(!isRoot){
-            if(ee.getServerStatus()){
+            if(isDevice && !ee.getServerStatus()){
+                isDevice = ee.isDeviceOwnerActive(this);
+            }else if(isDevice && ee.getServerStatus()){
                 isRoot = ee.isROOT();
                 isADB = ee.isADB();
+                activeAdmins = ee.getActiveAdmins(this, ee.getCurrentUserID());
+                isDevice = ee.isDeviceOwnerActive(this);
+            }else if(ee.getServerStatus()){
+                isRoot = ee.isROOT();
+                isADB = ee.isADB();
+                activeAdmins = ee.getActiveAdmins(this, ee.getCurrentUserID());
             }else {
                 String name = "start.sh";
                 String path = null;
                 try {
                     path = this.getExternalCacheDir().toString();
                     fileUtils.writeActiveADBScript(this,path,name);
+
                 }catch (Exception e){
                     try {
                         path = Environment.getExternalStorageDirectory().toString();
@@ -121,7 +137,7 @@ public class MainActivity extends Activity {
                         name="";
                     }
                 }
-                dialogUtils.showInfoMsg(this,tu.getLanguageString(this,R.string.general_tips),tu.getLanguageString(this,R.string.general_tips_str_head)+path+"/"+name+tu.getLanguageString(this,R.string.general_tips_str_end));
+                dialogUtils.showInfoMsg(this,tu.getLanguageString(this,R.string.general_tips),tu.getLanguageString(this,R.string.general_tips_str_head)+path+"/"+name+"\n\n"+tu.getLanguageString(this,R.string.general_tips_str_end));
             }
         }
 
@@ -129,6 +145,8 @@ public class MainActivity extends Activity {
             setTitle("easyManager [ ROOT ] [ "+uid+" ]");
         }else if(isADB!=null && isADB){
             setTitle("easyManager [ ADB ] [ "+uid+" ]");
+        }else if(isDevice!=null && isDevice){
+            setTitle("easyManager [ DEVICE ] [ "+uid+" ]");
         }else{
             setTitle("easyManager [ General ] [ "+uid+" ]");
         }
@@ -138,10 +156,10 @@ public class MainActivity extends Activity {
             ee.startStopRunningAPP(new TransmissionEntity(null,null,this.getPackageName(),-1,uid));
         }
         if (homeFragment == null) {
-            homeFragment = new HomeFragmentLayout(isRoot,isADB,uid);
+            homeFragment = new HomeFragmentLayout(isRoot,isADB,isDevice,uid);
         }
         if (helpFragment == null) {
-            helpFragment =  new HelpFragmentLayout(isRoot,isADB,uid);
+            helpFragment =  new HelpFragmentLayout(isRoot,isADB,isDevice,uid);
         }
 
         if(manageFragment == null){
@@ -205,7 +223,7 @@ public class MainActivity extends Activity {
                     amv3.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 }
                 if(id == R.id.amiv2){
-                    currentFragment = new HomeFragmentLayout(isRoot,isADB,uid);
+                    currentFragment = new HomeFragmentLayout(isRoot,isADB,isDevice,uid);
                     amiv1.setSelected(false);
                     amiv3.setSelected(false);
                     amv2.setBackgroundColor(Color.parseColor("#6200EE"));
@@ -213,7 +231,7 @@ public class MainActivity extends Activity {
                     amv3.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 }
                 if(id == R.id.amiv3){
-                    currentFragment = new HelpFragmentLayout(isRoot,isADB,uid);
+                    currentFragment = new HelpFragmentLayout(isRoot,isADB,isDevice,uid);
                     amiv1.setSelected(false);
                     amiv2.setSelected(false);
                     amv3.setBackgroundColor(Color.parseColor("#6200EE"));
@@ -234,6 +252,16 @@ public class MainActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(Menu.NONE,0,0,tu.getLanguageString(this,R.string.options_menu_help_str));
+        if(ee.getServerStatus()){
+            if(activeAdmins != null && activeAdmins.size() > 0){
+                menu.add(Menu.NONE,3,0,tu.getLanguageString(this,R.string.options_menu_remove_device_str));
+            }else{
+                menu.add(Menu.NONE,3,0,tu.getLanguageString(this,R.string.options_menu_active_device_str));
+            }
+        }else{
+            menu.add(Menu.NONE,3,0,tu.getLanguageString(this,isDevice ? R.string.options_menu_remove_device_str : R.string.options_menu_active_device_str));
+        }
+
         menu.add(Menu.NONE,1,0,tu.getLanguageString(this,R.string.options_menu_full_exit));
         menu.add(Menu.NONE,2,0,tu.getLanguageString(this,R.string.options_menu_exit));
         return super.onCreateOptionsMenu(menu);
@@ -247,11 +275,47 @@ public class MainActivity extends Activity {
                 dialogUtils.showHelp(this,HelpDialogUtils.MAIN_HELP,0);
                 break;
             case 1:
-                ee.dead();
+                if(ee.isDeviceOwnerActive(this)){
+                    ee.forceRemoveDeviceOwner(this);
+                }
+                if(ee.getServerStatus()){
+                    ee.dead();
+                }
                 MyActivityManager.getIns().killall();
                 break;
             case 2:
                 MyActivityManager.getIns().killall();
+                break;
+            case 3:
+                if(!isDevice && !ee.getServerStatus()){
+                    dialogUtils.showInfoMsg(this,tu.getLanguageString(this,R.string.tips),tu.getLanguageString(this,R.string.menu_active_device_help_str));
+                }else{
+                    if(ee.getServerStatus()){
+                        if(activeAdmins != null && activeAdmins.size() > 0){
+                            for (String activeAdmin : activeAdmins) {
+                                ee.removeDeviceOwner(this,activeAdmin,ee.getCurrentUserID());
+                            }
+                        }else{
+                            if(activeAdmins == null || activeAdmins.size() == 0 && !isDevice){
+                                //暂时存在问题,不能调用
+//                            ee.setDeviceOwner(this,ee.getEasyMDPMComName(this).flattenToShortString(),ee.getCurrentUserID());
+
+                                //暂替方案
+                                String activeDeviceScriptStr = "dpm set-device-owner " + ee.getEasyMDPMComName(this).flattenToShortString();
+                                System.out.println(activeDeviceScriptStr);
+                                ee.runCMD(activeDeviceScriptStr);
+                                ee.dead();
+                            }
+                        }
+
+                    }else{
+                        if(ee.isDeviceOwnerActive(this)){
+                            ee.removeDeviceOwner(this);
+                        }
+                    }
+
+                    MyActivityManager.getIns().killall();
+                }
                 break;
         }
 

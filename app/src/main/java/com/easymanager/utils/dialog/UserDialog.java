@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.easymanager.R;
+import com.easymanager.core.api.PackageAPI;
 import com.easymanager.core.entity.TransmissionEntity;
 import com.easymanager.entitys.PKGINFO;
 import com.easymanager.utils.base.DialogUtils;
@@ -38,7 +40,6 @@ public class UserDialog extends DialogUtils {
         preventDismissDialog(alertDialog);
         dpbtv2.setText(size+"");
         Handler mUpdateProgressHandler = getProcessBarDialogHandler(context,mProgressBar,alertDialog,dpbtv1,dpbtv2,dpbtv3,tu.getLanguageString(context,R.string.app_clone_manager_clone_msg));
-        String reqpkg = context.getPackageName();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -48,9 +49,9 @@ public class UserDialog extends DialogUtils {
                     for (String s : strlist) {
                         int uid = Integer.valueOf(s);
                         if(APP_PERMIS_INDEX == 0){
-                            easyMUtils.installExistingPKG(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,0,uid));
+                            easyMUtils.installExistingPKG(context,pkginfo.getPkgname(),uid);
                         }else{
-                            easyMUtils.uninstallAPK(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,0,uid));
+                            easyMUtils.uninstallAPK(context,pkginfo.getPkgname(),uid);
                         }
                     }
                 }
@@ -81,7 +82,6 @@ public class UserDialog extends DialogUtils {
         preventDismissDialog(alertDialog);
         dpbtv2.setText(count+"");
         Handler mUpdateProgressHandler = getProcessBarDialogHandler(context,mProgressBar,alertDialog,dpbtv1,dpbtv2,dpbtv3,text);
-        String reqpkg = context.getPackageName();
         easyMUtils.setSkipError(true);
         int currentUser = easyMUtils.getCurrentUserID();
         new Thread(new Runnable() {
@@ -96,15 +96,30 @@ public class UserDialog extends DialogUtils {
 
 
                 String[] users = easyMUtils.getAppCloneUsers();
-                for (int j = 0; j < list.size(); j++) {
-                    PKGINFO pkginfo = list.get(j);
-                    for (String s : users) {
-                        if(!isFirstUser(firstUsers,s)){
-                            easyMUtils.installExistingPKG(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,0,Integer.valueOf(s)));
+                if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1){
+                    String[] disallowedPackages = easyMUtils.getDisallowedPackages(context);
+                    if(disallowedPackages!=null && disallowedPackages.length > 0){
+                        for (String user : users) {
+                            int userid = Integer.valueOf(user);
+                            if(!isFirstUser(firstUsers,user)){
+                                for (String aPackage : disallowedPackages) {
+                                    easyMUtils.uninstallAPK(context,aPackage,userid);
+                                }
+                            }
                         }
                     }
                 }
 
+                for (int j = 0; j < list.size(); j++) {
+                    PKGINFO pkginfo = list.get(j);
+                    for (String s : users) {
+                        int userid = Integer.valueOf(s);
+                        if(!isFirstUser(firstUsers,s)){
+                            easyMUtils.installExistingPKG(context,pkginfo.getPkgname(),userid);
+                            easyMUtils.setComponentOrPackageEnabledState(new TransmissionEntity(pkginfo.getPkgname(), null, context.getPackageName(), PackageAPI.COMPONENT_ENABLED_STATE_ENABLED,userid));
+                        }
+                    }
+                }
 
                 for (String user : users) {
                     int uid = Integer.valueOf(user);
@@ -112,7 +127,6 @@ public class UserDialog extends DialogUtils {
                         easyMUtils.startAppClone(context,uid);
                     }
                 }
-
                 mUpdateProgressHandler.sendEmptyMessage(1);
             }
         }).start();

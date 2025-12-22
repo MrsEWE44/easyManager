@@ -40,8 +40,8 @@ public class adbService {
                 executor.execute(new processMsg(socket));
             }
         } catch (Exception e) {
-            e.printStackTrace();
             System.out.println("SocketServer create Exception:" + e.toString());
+            e.printStackTrace();
         }
     }
 
@@ -74,7 +74,7 @@ public class adbService {
                     StringWriter sw = new StringWriter();
                     e.printStackTrace(new PrintWriter(sw));
                     errorMSG = sw.toString();
-                    System.err.println(sw);
+                    System.err.println("processMsg ::: " +sw);
                 }
                 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                 easyManagerServiceEntity a = new easyManagerServiceEntity(cmd,o,isDead,errorMSG);

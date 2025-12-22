@@ -13,11 +13,12 @@ import com.easymanager.enums.AppManagerEnum;
 public class OtherTools {
     private TextUtils tv = new TextUtils();
 
-    public void jump(Context context , Class clazz,int mode , Boolean isRoot , Boolean isADB , int uid){
+    public void jump(Context context , Class clazz,int mode , Boolean isRoot , Boolean isADB ,Boolean isDevice, int uid){
         Intent intent = new Intent(context, clazz);
         intent.putExtra("mode",mode);
         intent.putExtra("isRoot",isRoot);
         intent.putExtra("isADB",isADB);
+        intent.putExtra("isDevice",isDevice);
         intent.putExtra("uid",uid);
         context.startActivity(intent);
     }
@@ -40,9 +41,18 @@ public class OtherTools {
         });
     }
 
-    public void setBtColor(Button b , boolean needRoot , boolean needADB , Boolean isRoot , Boolean isADB){
+    public void setBtColor(Button b , boolean needRoot , boolean needADB, boolean needDevice , Boolean isRoot , Boolean isADB,Boolean isDevice){
 
-        if(isADB != null && isADB){
+        if(isDevice != null && isDevice){
+            if(needRoot && needADB && needDevice){
+                b.setBackgroundColor(Color.parseColor("#FFF8E1"));
+            }else if(!needRoot && !isRoot && !needADB && !isADB && !needDevice){
+                b.setEnabled(true);
+            }else{
+                b.setBackgroundColor(Color.parseColor("#FFEBEE"));
+                b.setEnabled(false);
+            }
+        }else if(isADB != null && isADB){
             if(needRoot && needADB){
                 b.setBackgroundColor(Color.parseColor("#FFF8E1"));
             }
@@ -52,10 +62,8 @@ public class OtherTools {
                 b.setEnabled(false);
             }
 
-        }
-
-        if(isRoot != null && !isRoot && isADB != null && !isADB){
-            if(needADB || needRoot){
+        }else if(isRoot != null && !isRoot && isADB != null && !isADB && isDevice !=null && !isDevice){
+            if(needADB || needRoot || needDevice){
                 b.setBackgroundColor(Color.parseColor("#FFEBEE"));
                 b.setEnabled(false);
             }

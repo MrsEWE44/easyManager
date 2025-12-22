@@ -149,30 +149,32 @@ public class PackageUtils {
 
     public void appInfoAdd(PackageManager packageManager,PackageInfo packageInfo,ArrayList<PKGINFO> pkginfos , ArrayList<Boolean> checkboxs,Integer state){
         ApplicationInfo applicationInfo = packageInfo.applicationInfo;
-        switch (state){
-            case 0:
-                if(applicationInfo.enabled){
-                    checkBoxs(pkginfos,checkboxs,packageInfo,packageManager);
-                }
-                break;
-            case 1:
-                if(!applicationInfo.enabled){
-                    checkBoxs(pkginfos,checkboxs,packageInfo,packageManager);
-                }
-                break;
-            case 2:
-                if((applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0 && applicationInfo.enabled){
-                    checkBoxs(pkginfos,checkboxs,packageInfo,packageManager);
-                }
-                break;
-            case 3:
-                if((applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0){
-                    checkBoxs(pkginfos,checkboxs,packageInfo,packageManager);
-                }
-                break;
-            case 4:
+        if(state.equals(QUERY_ALL_ENABLE_PKG)){
+            if(applicationInfo.enabled){
                 checkBoxs(pkginfos,checkboxs,packageInfo,packageManager);
-                break;
+            }
+        }
+
+        if(state.equals(QUERY_ALL_DISABLE_PKG)){
+            if(!applicationInfo.enabled || (applicationInfo.flags & ApplicationInfo.FLAG_SUSPENDED) != 0 || (applicationInfo.flags & ApplicationInfo.FLAG_STOPPED) != 0){
+                checkBoxs(pkginfos,checkboxs,packageInfo,packageManager);
+            }
+        }
+
+        if(state.equals(QUERY_ALL_USER_ENABLE_PKG)){
+            if((applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0 && applicationInfo.enabled){
+                checkBoxs(pkginfos,checkboxs,packageInfo,packageManager);
+            }
+        }
+
+        if(state.equals(QUERY_ALL_USER_PKG)){
+            if((applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0){
+                checkBoxs(pkginfos,checkboxs,packageInfo,packageManager);
+            }
+        }
+
+        if(state.equals(QUERY_ALL_DEFAULT_PKG)){
+            checkBoxs(pkginfos,checkboxs,packageInfo,packageManager);
         }
 
     }
@@ -193,7 +195,7 @@ public class PackageUtils {
 
     public void queryPKGSCore(Activity activity, ArrayList<PKGINFO> pkginfos , ArrayList<Boolean> checkboxs,Integer types,Integer state){
         PackageManager packageManager = activity.getPackageManager();
-        List<PackageInfo> installedPackages = packageManager.getInstalledPackages(types);
+        List<PackageInfo> installedPackages = packageManager.getInstalledPackages(types | PackageManager.MATCH_DISABLED_COMPONENTS | PackageManager.MATCH_UNINSTALLED_PACKAGES);
         for (PackageInfo packageInfo : installedPackages) {
             appInfoAdd(packageManager,packageInfo,pkginfos,checkboxs,state);
         }
@@ -205,8 +207,9 @@ public class PackageUtils {
         for (MyPackageInfo packageInfo : installedPackages) {
             MyApplicationInfo myapplicationInfo = packageInfo.myapplicationInfo;
             boolean isSystem = (myapplicationInfo.flags&ApplicationInfo.FLAG_SYSTEM) != 0;
-            if ((!listDisabled || !myapplicationInfo.enabled) &&
-                    (!listEnabled || myapplicationInfo.enabled) &&
+            boolean isSuspend = (myapplicationInfo.flags & ApplicationInfo.FLAG_SUSPENDED) != 0 || (myapplicationInfo.flags & ApplicationInfo.FLAG_STOPPED) != 0;
+            if ((!listDisabled || !myapplicationInfo.enabled || isSuspend) &&
+                    (!listEnabled || myapplicationInfo.enabled || !isSuspend) &&
                     (!listSystem || isSystem) &&
                     (!listThirdParty || !isSystem)) {
                 appInfoAdd(activity.getPackageManager(),packageInfo,pkginfos,checkboxs);

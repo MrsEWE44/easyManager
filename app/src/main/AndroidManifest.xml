@@ -30,6 +30,22 @@
         <activity android:name=".activitys.AppCloneLayoutActivity"/>
         <activity android:name=".activitys.RunCommandLayoutActivity"/>
 
+        <receiver android:name=".mylife.easyMDeviceAdminReceiver"
+            android:description="@string/app_name"
+            android:permission="android.permission.BIND_DEVICE_ADMIN"
+            android:exported="true"
+            tools:replace="android:exported" >
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin" />
+
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+                <action android:name="android.app.action.DEVICE_ADMIN_DISABLE_REQUESTED" />
+                <action android:name="android.app.action.DEVICE_ADMIN_DISABLED" />
+            </intent-filter>
+        </receiver>
+
 
 
     </application>

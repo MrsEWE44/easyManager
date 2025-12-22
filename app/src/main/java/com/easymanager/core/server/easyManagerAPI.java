@@ -7,6 +7,7 @@ import android.os.IBinder;
 
 import com.easymanager.core.api.AppopsAPI;
 import com.easymanager.core.api.FileCompressApi;
+import com.easymanager.core.api.FunctionAPI;
 import com.easymanager.core.api.PackageAPI;
 import com.easymanager.core.api.baseAPI;
 import com.easymanager.core.utils.MyConfigUtils;
@@ -26,6 +27,7 @@ public class easyManagerAPI extends baseAPI {
 
     private PackageAPI packageAPI = new PackageAPI();
     private AppopsAPI appopsAPI = new AppopsAPI();
+    private FunctionAPI functionAPI = new FunctionAPI();
 
     private FileCompressApi fileCompressApi = new FileCompressApi();
     private MyConfigUtils myConfigUtils = new MyConfigUtils();
@@ -33,10 +35,6 @@ public class easyManagerAPI extends baseAPI {
 
     public IBinder getSystemService( String name) {
         return easyManagerPortService.getSystemService(name);
-    }
-
-    public PackageAPI getPackageAPI(){
-        return packageAPI;
     }
 
 
@@ -424,6 +422,10 @@ public class easyManagerAPI extends baseAPI {
         return myConfigUtils.requestGrantUserState(requestpkg);
     }
 
+    public String[] getDisallowedPackages(){
+        return packageAPI.getDisallowedPackages();
+    }
+
     public int getMaxSupportedUsers(){
         return packageAPI.getMaxSupportedUsers();
     }
@@ -459,5 +461,18 @@ public class easyManagerAPI extends baseAPI {
     public String permissionToOp(String permission_str){return appopsAPI.permissionToOp(permission_str);}
 
     public int strOpToOp(String op){return appopsAPI.strOpToOp(op);}
+
+    public void setDeviceOwner(String component , int userid){
+        functionAPI.setDeviceOwner(component, userid);
+    }
+
+    public void removeActiveDeviceOwner(String component , int userid){
+        functionAPI.removeActiveDeviceOwner(component, userid);
+    }
+
+    public List<String> getActiveAdmins(int userid){
+        return functionAPI.getActiveAdmins(userid);
+    }
+
 
 }

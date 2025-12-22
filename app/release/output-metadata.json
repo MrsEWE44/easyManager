@@ -11,9 +11,9 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 13,
-      "versionName": "1.2.7",
-      "outputFile": "easyManager_release.apk"
+      "versionCode": 14,
+      "versionName": "1.2.8",
+      "outputFile": "easyManager_1.2.8_release.apk"
     }
   ],
   "elementType": "File",

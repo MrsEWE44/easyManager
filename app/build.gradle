@@ -10,15 +10,15 @@ android {
         applicationId "com.easymanager"
         minSdk 14
         targetSdk 36
-        versionCode 13
-        versionName "1.2.7"
+        versionCode 14
+        versionName "1.2.8"
 
     }
 
     // 自定义打包名称
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "easyManager_${buildType.name}.apk"
+            outputFileName = "easyManager_${defaultConfig.versionName}_${buildType.name}.apk"
         }
     }
 

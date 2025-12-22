@@ -104,49 +104,49 @@ public class QueryDialog extends DialogUtils {
         if(mode != null){
             switch (mode){
                 case 0:
-                    if(uid==currentUserID || Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+                    if(uid==currentUserID || easyMUtils.isDeviceOwnerActive(context) || Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
                         packageUtils.queryEnablePKGS(activity,pkginfos,checkboxs,0);
                     }else {
                         packageUtils.queryEnablePKGSByUID(uid,activity,pkginfos,checkboxs);
                     }
                     break;
                 case 1:
-                    if(uid == currentUserID || Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+                    if(uid == currentUserID || easyMUtils.isDeviceOwnerActive(context) || Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
                         packageUtils.queryPKGS(activity,pkginfos,checkboxs,0);
                     }else{
                         packageUtils.queryPKGSByUID(uid,activity,pkginfos,checkboxs);
                     }
                     break;
                 case 2:
-                    if(uid == currentUserID || Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+                    if(uid == currentUserID || easyMUtils.isDeviceOwnerActive(context) || Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
                         packageUtils.queryUserEnablePKGS(activity,pkginfos,checkboxs,0);
                     }else {
                         packageUtils.queryUserEnablePKGSByUID(uid,activity,pkginfos,checkboxs);
                     }
                     break;
                 case 3:
-                    if(uid == currentUserID || Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+                    if(uid == currentUserID || easyMUtils.isDeviceOwnerActive(context) || Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
                         packageUtils.queryUserPKGS(activity,pkginfos,checkboxs,0);
                     }else{
                         packageUtils.queryUserPKGSByUID(uid,activity,pkginfos,checkboxs);
                     }
                     break;
                 case 4:
-                    if(uid == currentUserID || Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+                    if(uid == currentUserID || easyMUtils.isDeviceOwnerActive(context) || Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
                         packageUtils.queryDisablePKGS(activity,pkginfos,checkboxs,0);
                     }else {
                         packageUtils.queryDisablePKGSByUID(uid,activity,pkginfos,checkboxs);
                     }
                     break;
                 case 5:
-                    if(uid == currentUserID || Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+                    if(uid == currentUserID || easyMUtils.isDeviceOwnerActive(context) || Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
                         processUtils.queryAllRunningPKGS(activity,pkginfos,checkboxs,0);
                     }else {
                         processUtils.queryAllRunningPKGSByUID(activity,pkginfos,checkboxs,uid);
                     }
                     break;
                 case 6:
-                    if(uid == currentUserID || Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+                    if(uid == currentUserID || easyMUtils.isDeviceOwnerActive(context) || Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
                         processUtils.queryRunningPKGS(activity,pkginfos,checkboxs,0);
                     }else {
                         processUtils.queryRunningPKGSByUID(activity,pkginfos,checkboxs,uid);
