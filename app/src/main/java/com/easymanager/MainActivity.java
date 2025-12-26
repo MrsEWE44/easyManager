@@ -16,6 +16,7 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
 import com.easymanager.core.entity.TransmissionEntity;
+import com.easymanager.core.utils.CMD;
 import com.easymanager.fragment.HelpFragmentLayout;
 import com.easymanager.fragment.HomeFragmentLayout;
 import com.easymanager.fragment.ManagerGrantUserFragmentLayout;
@@ -37,7 +38,6 @@ public class MainActivity extends Activity {
     private Boolean isRoot,isADB,isDevice;
     private int stop_time = 5000;
     private int uid;
-    private List<String> activeAdmins = null;
     private easyManagerUtils ee = new easyManagerUtils();
     private HelpDialogUtils dialogUtils = new HelpDialogUtils();
     private TextUtils tu = dialogUtils.tu;
@@ -80,66 +80,70 @@ public class MainActivity extends Activity {
         FileTools fileUtils = new FileTools();
         permissionRequest.requestExternalStoragePermission(this);
         permissionRequest.getExternalStorageManager(this,this);
-        isRoot = shellUtils.testRoot();
+        isRoot = false;
         isADB = false;
         isDevice = ee.isDeviceOwnerActive(this);
-        if(isRoot){
-            isRoot = ee.isROOT();
+        if(!isDevice){
+            isRoot = shellUtils.testRoot();
+            if(isRoot){
+                isRoot = ee.isROOT();
+                if(!isRoot){
+                    ee.activeRoot(this);
+                    // 开始时间
+                    long stime = System.currentTimeMillis();
+                    while(true){
+                        if(ee.isROOT()){
+                            isRoot = true;
+                            dialogUtils.showInfoMsg(this,tu.getLanguageString(this,R.string.tips),tu.getLanguageString(this,R.string.isrootmodestr));
+                            break;
+                        }
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        // 结束时间
+                        long etime = System.currentTimeMillis();
+                        if((etime - stime) > stop_time){
+                            break;
+                        }
+                    }
+                }
+            }
+
             if(!isRoot){
-                ee.activeRoot(this);
-                // 开始时间
-                long stime = System.currentTimeMillis();
-                while(true){
-                    if(ee.isROOT()){
-                        isRoot = true;
-                        dialogUtils.showInfoMsg(this,tu.getLanguageString(this,R.string.tips),tu.getLanguageString(this,R.string.isrootmodestr));
-                        break;
-                    }
+                if(isDevice && !ee.getServerStatus()){
+                    isDevice = ee.isDeviceOwnerActive(this);
+                }else if(isDevice && ee.getServerStatus()){
+                    isRoot = ee.isROOT();
+                    isADB = ee.isADB();
+                    isDevice = ee.isDeviceOwnerActive(this);
+                }else if(ee.getServerStatus()){
+                    isRoot = ee.isROOT();
+                    isADB = ee.isADB();
+//                    activeAdmins = ee.getActiveAdmins(this, ee.getCurrentUserID());
+                }else {
+                    String name = "start.sh";
+                    String path = null;
                     try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                        path = this.getExternalCacheDir().toString();
+                        fileUtils.writeActiveADBScript(this,path,name);
+
+                    }catch (Exception e){
+                        try {
+                            path = Environment.getExternalStorageDirectory().toString();
+                            fileUtils.writeDataToPath(fileUtils.getActiveADBScript(this),path+"/start.sh",false);
+                        }catch (Exception e2){
+                            path=fileUtils.getActiveADBScript(this);
+                            name="";
+                        }
                     }
-                    // 结束时间
-                    long etime = System.currentTimeMillis();
-                    if((etime - stime) > stop_time){
-                        break;
-                    }
+                    dialogUtils.showInfoMsg(this,tu.getLanguageString(this,R.string.general_tips),tu.getLanguageString(this,R.string.general_tips_str_head)+path+"/"+name+"\n\n"+tu.getLanguageString(this,R.string.general_tips_str_end));
                 }
             }
         }
 
-        if(!isRoot){
-            if(isDevice && !ee.getServerStatus()){
-                isDevice = ee.isDeviceOwnerActive(this);
-            }else if(isDevice && ee.getServerStatus()){
-                isRoot = ee.isROOT();
-                isADB = ee.isADB();
-                activeAdmins = ee.getActiveAdmins(this, ee.getCurrentUserID());
-                isDevice = ee.isDeviceOwnerActive(this);
-            }else if(ee.getServerStatus()){
-                isRoot = ee.isROOT();
-                isADB = ee.isADB();
-                activeAdmins = ee.getActiveAdmins(this, ee.getCurrentUserID());
-            }else {
-                String name = "start.sh";
-                String path = null;
-                try {
-                    path = this.getExternalCacheDir().toString();
-                    fileUtils.writeActiveADBScript(this,path,name);
 
-                }catch (Exception e){
-                    try {
-                        path = Environment.getExternalStorageDirectory().toString();
-                        fileUtils.writeDataToPath(fileUtils.getActiveADBScript(this),path+"/start.sh",false);
-                    }catch (Exception e2){
-                        path=fileUtils.getActiveADBScript(this);
-                        name="";
-                    }
-                }
-                dialogUtils.showInfoMsg(this,tu.getLanguageString(this,R.string.general_tips),tu.getLanguageString(this,R.string.general_tips_str_head)+path+"/"+name+"\n\n"+tu.getLanguageString(this,R.string.general_tips_str_end));
-            }
-        }
 
         if(isRoot!=null && isRoot){
             setTitle("easyManager [ ROOT ] [ "+uid+" ]");
@@ -253,7 +257,7 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(Menu.NONE,0,0,tu.getLanguageString(this,R.string.options_menu_help_str));
         if(ee.getServerStatus()){
-            if(activeAdmins != null && activeAdmins.size() > 0){
+            if(isDevice){
                 menu.add(Menu.NONE,3,0,tu.getLanguageString(this,R.string.options_menu_remove_device_str));
             }else{
                 menu.add(Menu.NONE,3,0,tu.getLanguageString(this,R.string.options_menu_active_device_str));
@@ -291,30 +295,40 @@ public class MainActivity extends Activity {
                     dialogUtils.showInfoMsg(this,tu.getLanguageString(this,R.string.tips),tu.getLanguageString(this,R.string.menu_active_device_help_str));
                 }else{
                     if(ee.getServerStatus()){
-                        if(activeAdmins != null && activeAdmins.size() > 0){
-                            for (String activeAdmin : activeAdmins) {
-                                ee.removeDeviceOwner(this,activeAdmin,ee.getCurrentUserID());
+                        if(isDevice){
+//                            for (String activeAdmin : activeAdmins) {
+//                                ee.removeDeviceOwner(this,activeAdmin,ee.getCurrentUserID());
+//                            }
+                            if(ee.isDeviceOwnerActive(this)){
+                                ee.removeDeviceOwner(this);
+                                MyActivityManager.getIns().killall();
                             }
                         }else{
-                            if(activeAdmins == null || activeAdmins.size() == 0 && !isDevice){
-                                //暂时存在问题,不能调用
+                            //暂时存在问题,不能调用
 //                            ee.setDeviceOwner(this,ee.getEasyMDPMComName(this).flattenToShortString(),ee.getCurrentUserID());
 
-                                //暂替方案
-                                String activeDeviceScriptStr = "dpm set-device-owner " + ee.getEasyMDPMComName(this).flattenToShortString();
-                                System.out.println(activeDeviceScriptStr);
-                                ee.runCMD(activeDeviceScriptStr);
+                            //暂替方案
+                            String activeDeviceScriptStr = "dpm set-device-owner " + ee.getEasyMDPMComName(this).flattenToShortString();
+                            System.out.println(activeDeviceScriptStr);
+                            CMD cmd = ee.runCMD(activeDeviceScriptStr);
+                            System.out.println(cmd.toString());
+                            if(cmd.getResultCode() == 0){
                                 ee.dead();
+                                MyActivityManager.getIns().killall();
+                            }else{
+                                dialogUtils.showInfoMsg(this,tu.getLanguageString(this,R.string.error_tips), activeDeviceScriptStr +"\n\n" +cmd.getResult());
                             }
+
                         }
 
                     }else{
                         if(ee.isDeviceOwnerActive(this)){
                             ee.removeDeviceOwner(this);
+                            MyActivityManager.getIns().killall();
                         }
                     }
 
-                    MyActivityManager.getIns().killall();
+
                 }
                 break;
         }

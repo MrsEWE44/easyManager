@@ -175,34 +175,34 @@ public class easyManagerUtils {
     }
 
     public void killpkg(TransmissionEntity entity){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.KILL_PROCESS);
             putOptionOnServer(adben2);
         }
     }
 
     public void setAppopsMode(TransmissionEntity entity){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.SET_APPOPS);
             putOptionOnServer(adben2);
         }
     }
 
     public void setAppopsModeCore(TransmissionEntity entity){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.SET_APPOPS_CORE);
             putOptionOnServer(adben2);
         }
     }
 
     public void installAPK(TransmissionEntity entity){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.INSTALL_APK);
             putOptionOnServer(adben2);
         }
     }
     public void installExistingPKG(Context context , String pkgname,int uid){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity entity = new TransmissionEntity(pkgname, null, context.getPackageName(), 0, uid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.INSTALL_EXISTING_APK);
             putOptionOnServer(adben2);
@@ -210,7 +210,7 @@ public class easyManagerUtils {
     }
 
     public void uninstallAPK(Context context , String pkgname,int uid){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity entity = new TransmissionEntity(pkgname, null, context.getPackageName(), 0, uid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.UNINSTALL_APK);
             putOptionOnServer(adben2);
@@ -218,7 +218,7 @@ public class easyManagerUtils {
     }
 
     public void setComponentOrPackageEnabledState(TransmissionEntity entity){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.SET_COMPONENT_OR_PACKAGE_ENABLE_STATE);
             putOptionOnServer(adben2);
         }
@@ -230,7 +230,7 @@ public class easyManagerUtils {
             String[] strings = getEasyMDPM(context).setPackagesSuspended(getEasyMDPMComName(context), new String[]{pkgname}, status);
             boolean b = getEasyMDPM(context).setApplicationHidden(getEasyMDPMComName(context), pkgname, status);
         }else {
-            if(!isDead && skipError){
+            if(!isDead || skipError){
                 TransmissionEntity entity = new TransmissionEntity(pkgname,null,context.getPackageName(),mode,uid);
                 easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.SET_PACKAGE_SUSPEND);
                 putOptionOnServer(adben2);
@@ -274,7 +274,7 @@ public class easyManagerUtils {
     }
 
     public void clearPackageData(Context context , String pkgname,int uid){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity entity = new TransmissionEntity(pkgname,null,context.getPackageName(),0,uid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.CLEAR_PACKAGE_DATA);
             putOptionOnServer(adben2);
@@ -282,14 +282,14 @@ public class easyManagerUtils {
     }
 
     public void addRunningAPPS(TransmissionEntity entity){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.ADD_RUNNING_PACKAGE);
             putOptionOnServer(adben2);
         }
     }
 
     public void startStopRunningAPP(TransmissionEntity entity){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.START_STOP_RUNNING_PACKAGE);
             putOptionOnServer(adben2);
         }
@@ -297,7 +297,7 @@ public class easyManagerUtils {
 
     public void setPackageHideState(Context context ,boolean status, String pkgname,int uid){
         int mode=  status ? 0 : -1;
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity entity = new TransmissionEntity(pkgname,null,context.getPackageName(),mode,uid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.SET_PACKAGE_HIDE_STATE);
             putOptionOnServer(adben2);
@@ -305,7 +305,7 @@ public class easyManagerUtils {
     }
 
     public void revokeRuntimePermission(TransmissionEntity entity){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.SET_PACKAGE_REVOKE_RUNTIME_PERMISSION);
             putOptionOnServer(adben2);
         }
@@ -313,7 +313,7 @@ public class easyManagerUtils {
     }
 
     public void grantRuntimePermission(TransmissionEntity entity){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.SET_PACKAGE_GRANT_RUNTIME_PERMISSION);
             putOptionOnServer(adben2);
         }
@@ -321,7 +321,7 @@ public class easyManagerUtils {
     }
 
     public void setFirewallState(TransmissionEntity entity){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.APP_FIREWALL);
             putOptionOnServer(adben2);
         }
@@ -334,21 +334,21 @@ public class easyManagerUtils {
     }
 
     public void backupApk(TransmissionEntity entity){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.BACKUP_APK);
             putOptionOnServer(adben2);
         }
     }
 
     public void restoryApp(TransmissionEntity entity){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.RESTORY_APK);
             putOptionOnServer(adben2);
         }
     }
 
     public void deleteCleanAPPConfig(){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,null,easyManagerEnums.DELETE_CLEAN_APP_CONFIG);
             putOptionOnServer(adben2);
         }
@@ -380,7 +380,7 @@ public class easyManagerUtils {
     }
 
     public String[] getDisallowedPackages(Context context) {
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity entity = new TransmissionEntity(null,null,context.getPackageName(),0,getCurrentUserID());
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.GET_DISALLOWED_PACKAGES);
             putOptionOnServer(adben2);
@@ -390,7 +390,7 @@ public class easyManagerUtils {
     }
 
     public int getMaxSupportedUsers(Context context) {
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity entity = new TransmissionEntity(null,null,context.getPackageName(),0,getCurrentUserID());
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.GET_MAX_USERS);
             putOptionOnServer(adben2);
@@ -400,7 +400,7 @@ public class easyManagerUtils {
     }
 
     public void createAppClone(Context context) {
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity entity = new TransmissionEntity(null,null,context.getPackageName(),0,getCurrentUserID());
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.APP_CLONE);
             putOptionOnServer(adben2);
@@ -408,7 +408,7 @@ public class easyManagerUtils {
     }
 
     public void removeAppClone(Context context , int removeuid) {
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity entity = new TransmissionEntity(null,null,context.getPackageName(),0,removeuid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.APP_CLONE_REMOVE);
             putOptionOnServer(adben2);
@@ -416,7 +416,7 @@ public class easyManagerUtils {
     }
 
     public void startAppClone(Context context , int startuid) {
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity entity = new TransmissionEntity(null,null,context.getPackageName(),0,startuid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.START_USER_ID);
             putOptionOnServer(adben2);
@@ -425,7 +425,7 @@ public class easyManagerUtils {
 
     public String[] getAppCloneUsers() {
         try {
-            if(!isDead && skipError){
+            if(!isDead || skipError){
                 easyManagerClientEntity adben2 = new easyManagerClientEntity(null,null,easyManagerEnums.APP_CLONE_GETUSERS);
                 putOptionOnServer(adben2);
                 return (String[]) getEasyManagerServiceEntity().getObject();
@@ -437,7 +437,7 @@ public class easyManagerUtils {
     }
 
     public List<MyPackageInfo> getInstalledPackages(TransmissionEntity entity){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.QUERY_PACKAGES_UID);
             putOptionOnServer(adben2);
             return (List<MyPackageInfo>) getEasyManagerServiceEntity().getObject();
@@ -446,7 +446,7 @@ public class easyManagerUtils {
     }
 
     public MyPackageInfo getMyPackageInfo(TransmissionEntity entity){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.GET_PACKAGEINFO_UID);
             putOptionOnServer(adben2);
             return (MyPackageInfo) getEasyManagerServiceEntity().getObject();
@@ -465,7 +465,7 @@ public class easyManagerUtils {
     }
 
     public int getComponentEnabledSetting(Context context , String pkgname,String componentName,int uid){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             if(componentName == null){
                 componentName = "";
             }
@@ -478,7 +478,7 @@ public class easyManagerUtils {
     }
 
     public int getComponentOrPackageEnabledState(Context context , String pkgname,String componentName,int uid){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             if(componentName != null){
                 pkgname = pkgname +"/"+componentName;
             }
@@ -492,7 +492,7 @@ public class easyManagerUtils {
     }
 
     public int getPackageSuspend(Context context , String pkgname,int uid){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity transmissionEntity = new TransmissionEntity(pkgname, null, context.getPackageName(), 0, uid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.GET_PACKAGE_SUSPEND);
             putOptionOnServer(adben2);
@@ -502,7 +502,7 @@ public class easyManagerUtils {
     }
 
     public int checkOp(Context context , String pkgname,String opstr,int uid){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity transmissionEntity = new TransmissionEntity(pkgname, opstr, context.getPackageName(), 0, uid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.CHECK_OP);
             putOptionOnServer(adben2);
@@ -512,7 +512,7 @@ public class easyManagerUtils {
     }
 
     public int checkPermission(Context context , String pkgname,String opstr,int uid){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity transmissionEntity = new TransmissionEntity(pkgname, opstr, context.getPackageName(), 0, uid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.CHECK_PM_PERMISSION_CODE);
             putOptionOnServer(adben2);
@@ -522,7 +522,7 @@ public class easyManagerUtils {
     }
 
     public List<MyAppopsInfo> getAppopsPKGPermissions(TransmissionEntity entity){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.GET_APPOPS_PERMISSIONS);
             putOptionOnServer(adben2);
             return (List<MyAppopsInfo>) getEasyManagerServiceEntity().getObject();
@@ -531,7 +531,7 @@ public class easyManagerUtils {
     }
 
     public String permissionToOp(Context context, String permission, Integer uid) {
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity transmissionEntity = new TransmissionEntity(null, permission, context.getPackageName(), 0, uid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.GET_APPOPS_PERMISSION_TO_OP);
             putOptionOnServer(adben2);
@@ -541,7 +541,7 @@ public class easyManagerUtils {
     }
 
     public int strOpToOp(Context context , String pkgname,String opstr,int uid){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity transmissionEntity = new TransmissionEntity(pkgname, opstr, context.getPackageName(), 0, uid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.GET_APPOPS_PERMISSION_TO_OP_CODE);
             putOptionOnServer(adben2);
@@ -551,7 +551,7 @@ public class easyManagerUtils {
     }
 
     public List<String> getPathALLFiles(Context context,String path,int uid){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity transmissionEntity = new TransmissionEntity(null, path, context.getPackageName(), 0, uid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.GET_PATH_ALL_FILES);
             putOptionOnServer(adben2);
@@ -562,7 +562,7 @@ public class easyManagerUtils {
     }
 
     public void unlockMaxLimit(Context context, int maxNum) {
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity entity = new TransmissionEntity(null,null,context.getPackageName(),maxNum,0);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.UNLOCK_MAX_LIMIT);
             putOptionOnServer(adben2);
@@ -570,7 +570,7 @@ public class easyManagerUtils {
     }
 
     public void setDeviceOwner(Context context , String componentstr,int uid){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity transmissionEntity = new TransmissionEntity(componentstr, null, context.getPackageName(), 0, uid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.SET_DEVICE_OWNER);
             putOptionOnServer(adben2);
@@ -578,7 +578,7 @@ public class easyManagerUtils {
     }
 
     public void removeDeviceOwner(Context context , String componentstr,int uid){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity transmissionEntity = new TransmissionEntity(componentstr, null, context.getPackageName(), 0, uid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.REMOVE_DEVICE_OWNER);
             putOptionOnServer(adben2);
@@ -586,7 +586,7 @@ public class easyManagerUtils {
     }
 
     public List<String> getActiveAdmins(Context context , int uid){
-        if(!isDead && skipError){
+        if(!isDead || skipError){
             TransmissionEntity transmissionEntity = new TransmissionEntity(null, null, context.getPackageName(), 0, uid);
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.GET_ACTIVE_ADMINS);
             putOptionOnServer(adben2);
