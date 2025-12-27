@@ -37,7 +37,9 @@ import android.os.IUserManager;
 import android.os.PersistableBundle;
 import android.os.Process;
 import android.os.RemoteException;
+import android.os.UserHandle;
 import android.permission.IPermissionManager;
+import android.permission.PermissionManager;
 
 import com.easymanager.entitys.MyActivityInfo;
 import com.easymanager.entitys.MyApplicationInfo;
@@ -653,7 +655,10 @@ public class PackageAPI extends  baseAPI implements Serializable {
     }
 
     public void revokeRuntimePermission(String pkgname , String permission_str, int uid){
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.Q){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM){
+            IPermissionManager iPermissionManager = getIPermissionManager();
+            iPermissionManager.revokeRuntimePermission(pkgname,permission_str,null,uid,null);
+        }else if(Build.VERSION.SDK_INT > Build.VERSION_CODES.Q && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE){
             IPermissionManager iPermissionManager = getIPermissionManager();
             iPermissionManager.revokeRuntimePermission(pkgname,permission_str,uid,null);
         }else{
@@ -668,7 +673,10 @@ public class PackageAPI extends  baseAPI implements Serializable {
     }
 
     public void grantRuntimePermission(String pkgname , String permission_str,int uid){
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.Q){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM){
+            IPermissionManager iPermissionManager = getIPermissionManager();
+            iPermissionManager.grantRuntimePermission(pkgname,permission_str,null,uid);
+        }else if(Build.VERSION.SDK_INT > Build.VERSION_CODES.Q && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE){
             IPermissionManager iPermissionManager = getIPermissionManager();
             iPermissionManager.grantRuntimePermission(pkgname,permission_str,uid);
         }else{
@@ -685,7 +693,7 @@ public class PackageAPI extends  baseAPI implements Serializable {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             IPackageManager iPackageManager = getIPackageManager();
             boolean isHide = iPackageManager.setApplicationHiddenSettingAsUser(pkgname, hide, uid);
-            System.out.println("setPackageHideState -- " + isHide);
+//            System.out.println("setPackageHideState -- " + isHide);
         }
     }
 

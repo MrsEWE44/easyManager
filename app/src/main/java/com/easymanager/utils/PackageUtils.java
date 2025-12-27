@@ -156,7 +156,7 @@ public class PackageUtils {
         }
 
         if(state.equals(QUERY_ALL_DISABLE_PKG)){
-            if(!applicationInfo.enabled || (applicationInfo.flags & ApplicationInfo.FLAG_SUSPENDED) != 0 || (applicationInfo.flags & ApplicationInfo.FLAG_STOPPED) != 0){
+            if(!applicationInfo.enabled ||( (applicationInfo.flags & ApplicationInfo.FLAG_SUSPENDED) != 0 )){
                 checkBoxs(pkginfos,checkboxs,packageInfo,packageManager);
             }
         }
@@ -207,11 +207,11 @@ public class PackageUtils {
         for (MyPackageInfo packageInfo : installedPackages) {
             MyApplicationInfo myapplicationInfo = packageInfo.myapplicationInfo;
             boolean isSystem = (myapplicationInfo.flags&ApplicationInfo.FLAG_SYSTEM) != 0;
-            boolean isSuspend = (myapplicationInfo.flags & ApplicationInfo.FLAG_SUSPENDED) != 0 || (myapplicationInfo.flags & ApplicationInfo.FLAG_STOPPED) != 0;
-            if ((!listDisabled || !myapplicationInfo.enabled || isSuspend) &&
-                    (!listEnabled || myapplicationInfo.enabled || !isSuspend) &&
-                    (!listSystem || isSystem) &&
-                    (!listThirdParty || !isSystem)) {
+            boolean isSuspend = (myapplicationInfo.flags & ApplicationInfo.FLAG_SUSPENDED) != 0;
+            if ((listDisabled || !myapplicationInfo.enabled || isSuspend) &&
+                    (listEnabled || myapplicationInfo.enabled || !isSuspend) &&
+                    (listSystem || isSystem) &&
+                    (listThirdParty || !isSystem)) {
                 appInfoAdd(activity.getPackageManager(),packageInfo,pkginfos,checkboxs);
             }
         }

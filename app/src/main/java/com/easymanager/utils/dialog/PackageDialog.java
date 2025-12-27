@@ -55,16 +55,20 @@ public class PackageDialog extends DialogUtils {
                     switch (appPermission){
                         case AppManagerEnum.APP_PERMISSION:
                             if(!pkginfo.getPkgname().equals(context.getPackageName())){
+                                easyMUtils.setSkipError(true);
                                 easyMUtils.setAppopsMode(new TransmissionEntity(pkginfo.getPkgname(), opt_str,reqpkg,APP_PERMIS_INDEX,uid));
                             }
                             break;
                         case AppManagerEnum.APP_DISABLE_COMPENT:
-                            easyMUtils.setSkipError(true);
-                            if(APP_PERMIS_INDEX==0){
-                                easyMUtils.setEnablePKG(context,pkginfo.getPkgname(),uid);
-                            }else{
-                                easyMUtils.setDisablePKG(context,pkginfo.getPkgname(),uid);
+                            if(!pkginfo.getPkgname().equals(context.getPackageName())){
+                                easyMUtils.setSkipError(true);
+                                if(APP_PERMIS_INDEX==0){
+                                    easyMUtils.setEnablePKG(context,pkginfo.getPkgname(),uid);
+                                }else{
+                                    easyMUtils.setDisablePKG(context,pkginfo.getPkgname(),uid);
+                                }
                             }
+
 
                             break;
                         case AppManagerEnum.APP_INFO_LAYOUT:

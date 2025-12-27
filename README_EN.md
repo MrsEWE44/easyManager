@@ -19,6 +19,14 @@ Unlike Shizuku, easyManager extends its support down to low versions of Android 
 ![image](images/6.png) ![image](images/8.png) ![image](images/7.png) ![image](images/9.png)
 ![image](images/10.png) ![image](images/11.png)
 
+- V1.2.8a
+
+1.Fixed the issue of being unable to disable programs on Android 16.
+
+2.Fixed permission management issues on Android 16.
+
+3.Changed the version number to 1.2.8a.
+
 
 - V1.2.8
 

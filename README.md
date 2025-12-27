@@ -22,6 +22,14 @@ easyManager的工作原理借鉴了Shizuku、AppOps、Hail等一众优秀开源�
 ![image](images/6.png) ![image](images/8.png) ![image](images/7.png) ![image](images/9.png)
 ![image](images/10.png) ![image](images/11.png)
 
+- V1.2.8a
+
+1.修复安卓16无法禁用程序的问题。
+
+2.修复安卓16权限管理问题。
+
+3.修改版本号为1.2.8a。
+
 
 - V1.2.8
 

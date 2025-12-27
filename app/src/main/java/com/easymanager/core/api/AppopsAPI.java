@@ -11,6 +11,8 @@ import com.easymanager.core.server.easyManagerBinderWrapper;
 import com.easymanager.core.server.easyManagerPortService;
 import com.easymanager.entitys.MyAppopsInfo;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,9 +22,6 @@ import java.util.Map;
 public class AppopsAPI extends baseAPI{
 
     private static final Map<String, IAppOpsService> I_APP_OPS_SERVICE_CACHE = new HashMap<>();
-    private HashMap<String, Integer> sPermToOp = new HashMap<>();
-    private HashMap<String, Integer> sOpStrToOp  = new HashMap<>();
-    private String[] sOpToString = null;
     private PackageAPI packageAPI = new PackageAPI();
     private AppopsPermissionStr aps = new AppopsPermissionStr();
     public IAppOpsService getIAppOpsService(){
@@ -41,17 +40,24 @@ public class AppopsAPI extends baseAPI{
     }
 
 
+
+
     public void setModeCore(String pkgname,String modestr,int mode2,int uid){
         int appmode = aps.getAppopsMode(mode2);
         for (String op : aps.getOPS2(appmode)) {
+            String op2 = op.substring(op.lastIndexOf(".")+1);
             try{
                 if(getModeInt(modestr) == 0){
                     packageAPI.grantRuntimePermission(pkgname,op,uid);
                 }else{
                     packageAPI.revokeRuntimePermission(pkgname,op,uid);
                 }
+                SetMode(pkgname,op2,modestr,uid);
             }catch (Throwable e){
-                SetMode(pkgname,op,modestr,uid);
+//                StringWriter sw = new StringWriter();
+//                e.printStackTrace(new PrintWriter(sw));
+//                System.out.println("setModeCore :::: " + sw.toString());
+                SetMode(pkgname,op2,modestr,uid);
             }
         }
         for (String op : aps.getOPS(appmode)) {
@@ -134,46 +140,11 @@ public class AppopsAPI extends baseAPI{
     }
 
     public int strOpToOp(String op) {
-        Integer val = sOpStrToOp.get(op);
-        if (val == null) {
-            return -1;
-        }
-        return val;
+        return AppOpsManager.strOpToOp(op);
     }
 
     public String permissionToOp(String permission_str){
-        try{
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                if(sPermToOp.size() < 1){
-                    String [] ss = getAppOpsManagerFiled("sOpPerms");
-                    for (int i = 0; i < ss.length; i++) {
-                        if(ss[i] != null){
-                            sPermToOp.put(ss[i],i);
-                        }
-                    }
-                }
-
-                if(sOpToString == null){
-                    sOpToString = getAppOpsManagerFiled("sOpToString");
-                    for (int i = 0; i < sOpToString.length; i++) {
-                        if(sOpToString[i] != null){
-                            sOpStrToOp.put(sOpToString[i],i);
-                        }
-                    }
-                }
-
-                Integer code = sPermToOp.get(permission_str);
-                if(code == null){
-                    return null;
-                }
-
-                return sOpToString[code];
-            }
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
+        return AppOpsManager.permissionToOp(permission_str);
     }
 
     public String modeToName(int mode){
@@ -199,21 +170,6 @@ public class AppopsAPI extends baseAPI{
 
         return "mode=" + mode;
 
-    }
-
-    public String[] getAppOpsManagerFiled(String filed){
-        try {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-                Class apops = AppOpsManager.class;
-                Field sOpPerms = apops.getDeclaredField(filed);
-                sOpPerms.setAccessible(true);
-                String [] ss = (String[]) sOpPerms.get(AppOpsManager.class);
-                return ss;
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
     }
 
 
