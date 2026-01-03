@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.ComponentName;
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,12 +21,9 @@ import com.easymanager.fragment.ManagerGrantUserFragmentLayout;
 import com.easymanager.utils.FileTools;
 import com.easymanager.utils.dialog.HelpDialogUtils;
 import com.easymanager.utils.MyActivityManager;
-import com.easymanager.utils.ShellUtils;
 import com.easymanager.utils.TextUtils;
 import com.easymanager.utils.easyManagerUtils;
 import com.easymanager.utils.permissionRequest;
-
-import java.util.List;
 
 public class MainActivity extends Activity {
     private ImageView amiv1,amiv2,amiv3;
@@ -76,7 +71,6 @@ public class MainActivity extends Activity {
             this.getCacheDir().mkdirs();
             this.getFilesDir().mkdirs();
         }catch (Exception e){}
-        ShellUtils shellUtils = new ShellUtils();
         FileTools fileUtils = new FileTools();
         permissionRequest.requestExternalStoragePermission(this);
         permissionRequest.getExternalStorageManager(this,this);
@@ -84,32 +78,7 @@ public class MainActivity extends Activity {
         isADB = false;
         isDevice = ee.isDeviceOwnerActive(this);
         if(!isDevice){
-            isRoot = shellUtils.testRoot();
-            if(isRoot){
-                isRoot = ee.isROOT();
-                if(!isRoot){
-                    ee.activeRoot(this);
-                    // 开始时间
-                    long stime = System.currentTimeMillis();
-                    while(true){
-                        if(ee.isROOT()){
-                            isRoot = true;
-                            dialogUtils.showInfoMsg(this,tu.getLanguageString(this,R.string.tips),tu.getLanguageString(this,R.string.isrootmodestr));
-                            break;
-                        }
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                        // 结束时间
-                        long etime = System.currentTimeMillis();
-                        if((etime - stime) > stop_time){
-                            break;
-                        }
-                    }
-                }
-            }
+            isRoot =  ee.isROOT();
 
             if(!isRoot){
                 if(isDevice && !ee.getServerStatus()){

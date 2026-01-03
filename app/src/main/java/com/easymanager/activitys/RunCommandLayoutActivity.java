@@ -105,37 +105,44 @@ public class RunCommandLayoutActivity extends Activity {
                             if(cmdstr.equals("clear") || cmdstr.equals("cls")){
                                 du.sendHandlerMSG(handler,1);
                             }else{
-                                String cmdhead = isRoot ?"su":"sh" ;
                                 System.out.println("RunCommandLayoutActivity cmdstr ::: " + cmdstr);
-                                try{
-                                    String cmds[] = {cmdhead,"-c",cmdstr};
-                                    ProcessBuilder processBuilder = new ProcessBuilder(cmds);
-                                    processBuilder.redirectErrorStream(true);
-                                    Process exec = processBuilder.start();
-                                    DataOutputStream dos  = new DataOutputStream(exec.getOutputStream());
-                                    dos.writeBytes(cmdstr + "\n");
-                                    dos.flush();
-                                    dos.writeBytes("exit\n");
-                                    dos.flush();
-                                    BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream(),"UTF-8"));
-                                    String line="";
-                                    while((line=reader.readLine()) != null){
-                                        if(!isStop){
-                                            System.out.println(line);
-                                            cmdresult = line;
-                                            du.sendHandlerMSG(handler,0);
+                                if(isADB || isRoot){
+                                    cmdresult = eu.runCMD(cmdstr).getResult();
+                                    du.sendHandlerMSG(handler,0);
+                                }else{
+                                    String cmdhead = "sh" ;
+                                    try{
+                                        String cmds[] = {cmdhead,"-c",cmdstr};
+                                        ProcessBuilder processBuilder = new ProcessBuilder(cmds);
+                                        processBuilder.redirectErrorStream(true);
+                                        Process exec = processBuilder.start();
+                                        DataOutputStream dos  = new DataOutputStream(exec.getOutputStream());
+                                        dos.writeBytes(cmdstr + "\n");
+                                        dos.flush();
+                                        dos.writeBytes("exit\n");
+                                        dos.flush();
+                                        BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream(),"UTF-8"));
+                                        String line="";
+                                        while((line=reader.readLine()) != null){
+                                            if(!isStop){
+                                                System.out.println(line);
+                                                cmdresult = line;
+                                                du.sendHandlerMSG(handler,0);
+                                            }
+                                            if(isStop){
+                                                break;
+                                            }
                                         }
-                                        if(isStop){
-                                            break;
-                                        }
-                                    }
-                                    int resultCode = exec.waitFor();
-                                    reader.close();
+                                        int resultCode = exec.waitFor();
+                                        reader.close();
 //                                    cmdresult = ""+resultCode;
 //                                    du.sendHandlerMSG(handler,0);
-                                }catch (Exception e){
-                                    e.printStackTrace();
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
                                 }
+
+
 
                             }
                         }
