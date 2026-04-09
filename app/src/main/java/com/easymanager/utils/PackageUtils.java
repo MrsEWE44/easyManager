@@ -206,15 +206,43 @@ public class PackageUtils {
         List<MyPackageInfo> installedPackages = ee.getInstalledPackages(new TransmissionEntity(null,null,activity.getPackageName(),0,uid));
         for (MyPackageInfo packageInfo : installedPackages) {
             MyApplicationInfo myapplicationInfo = packageInfo.myapplicationInfo;
-            boolean isSystem = (myapplicationInfo.flags&ApplicationInfo.FLAG_SYSTEM) != 0;
+
+            // 提前计算好状态，代码更清晰
+            boolean isSystem = (myapplicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
             boolean isSuspend = (myapplicationInfo.flags & ApplicationInfo.FLAG_SUSPENDED) != 0;
-            if ((listDisabled || !myapplicationInfo.enabled || isSuspend) &&
-                    (listEnabled || myapplicationInfo.enabled || !isSuspend) &&
-                    (listSystem || isSystem) &&
-                    (listThirdParty || !isSystem)) {
-                appInfoAdd(activity.getPackageManager(),packageInfo,pkginfos,checkboxs);
+            boolean isEnabled = myapplicationInfo.enabled;
+
+            // ====================== 核心筛选逻辑（多条件同时匹配） ======================
+            boolean match = true;
+
+            // 1. 启用/禁用 筛选
+            if (listEnabled) {
+                match = match && (isEnabled || !isSuspend);
+            }
+            if (listDisabled) {
+                match = match && (!isEnabled || isSuspend);
+            }
+
+            // 2. 系统/第三方 筛选
+            if (listSystem) {
+                match = match && isSystem;
+            }
+            if (listThirdParty) {
+                match = match && !isSystem;
+            }
+
+            // 3. 如果所有筛选都关闭 → 默认显示全部
+            boolean allFilterOff = !listDisabled && !listEnabled && !listSystem && !listThirdParty;
+            if (allFilterOff) {
+                match = true;
+            }
+
+            // ====================== 满足条件就添加（只执行一次！） ======================
+            if (match) {
+                appInfoAdd(activity.getPackageManager(), packageInfo, pkginfos, checkboxs);
             }
         }
+
         sortPKGINFOS(pkginfos);
     }
 

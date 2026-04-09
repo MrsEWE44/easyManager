@@ -167,6 +167,12 @@ public class startAdbService {
                                             }else {
                                                 return getActiveADB();
                                             }
+                                        case easyManagerEnums.GET_SYS_PROP:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                return managerAPI.getSYSProp(entity.getOpmodestr());
+                                            }else {
+                                                return getActiveADB();
+                                            }
                                         case easyManagerEnums.APP_CLONE:
                                             if(managerAPI.isRoot() || managerAPI.isADB()){
                                                 managerAPI.createAppClone();
@@ -183,7 +189,7 @@ public class startAdbService {
                                             break;
                                         case easyManagerEnums.UNLOCK_MAX_LIMIT:
                                             if(managerAPI.isRoot() || managerAPI.isADB()){
-                                                String cmdstr = String.format("resetprop ro.debuggable 1;setprop persist.sys.max_profiles %d ; setprop fw.max_users %d ; setprop fw.show_multiuserui 1;am restart;",entity.getOpsmode(),entity.getOpsmode());
+                                                String cmdstr = String.format("resetprop --delete fw.max_users; resetprop ro.debuggable 1;setprop persist.sys.max_profiles %d ;setprop fw.show_multiuserui 1;am restart;",entity.getOpsmode());
                                                 CMD cmd = new CMD(cmdstr,false);
                                                 System.exit(0);
                                             }else {

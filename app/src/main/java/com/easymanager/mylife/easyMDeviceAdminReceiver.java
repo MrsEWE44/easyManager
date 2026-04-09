@@ -7,6 +7,12 @@ import android.content.Intent;
 public class easyMDeviceAdminReceiver extends DeviceAdminReceiver {
 
     @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+
+    }
+
+    @Override
     public void onEnabled(Context context, Intent intent) {
         super.onEnabled(context, intent);
 //        System.out.println("easyMDeviceAdminReceiver is enabled ....");

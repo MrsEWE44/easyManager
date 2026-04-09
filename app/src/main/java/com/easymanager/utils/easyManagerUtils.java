@@ -19,7 +19,6 @@ import com.easymanager.mylife.adbClient;
 import com.easymanager.mylife.easyMDeviceAdminReceiver;
 import com.easymanager.mylife.startAdbService;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -209,10 +208,11 @@ public class easyManagerUtils {
         }
     }
 
+    //需要想办法实现在设备管理员权限下卸载软件
     public void uninstallAPK(Context context , String pkgname,int uid){
-        if(!isDead || skipError){
+        if (!isDead || skipError) {
             TransmissionEntity entity = new TransmissionEntity(pkgname, null, context.getPackageName(), 0, uid);
-            easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.UNINSTALL_APK);
+            easyManagerClientEntity adben2 = new easyManagerClientEntity(null, entity, easyManagerEnums.UNINSTALL_APK);
             putOptionOnServer(adben2);
         }
     }
@@ -397,6 +397,17 @@ public class easyManagerUtils {
             return (int) getEasyManagerServiceEntity().getObject();
         }
         return -1;
+    }
+
+    // 读取属性值，无默认值
+    public String getProp(Context context,String key) {
+        if(!isDead || skipError){
+            TransmissionEntity entity = new TransmissionEntity(null,key,context.getPackageName(),0,getCurrentUserID());
+            easyManagerClientEntity adben2 = new easyManagerClientEntity(null,entity,easyManagerEnums.GET_SYS_PROP);
+            putOptionOnServer(adben2);
+            return (String) getEasyManagerServiceEntity().getObject();
+        }
+        return "";
     }
 
     public void createAppClone(Context context) {

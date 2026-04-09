@@ -37,9 +37,8 @@ import android.os.IUserManager;
 import android.os.PersistableBundle;
 import android.os.Process;
 import android.os.RemoteException;
-import android.os.UserHandle;
+import android.os.ServiceManager;
 import android.permission.IPermissionManager;
-import android.permission.PermissionManager;
 
 import com.easymanager.entitys.MyActivityInfo;
 import com.easymanager.entitys.MyApplicationInfo;
@@ -61,8 +60,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -458,6 +460,32 @@ public class PackageAPI extends  baseAPI implements Serializable {
         }
     }
 
+    public void UninstallPKGByDevice(String pkgname ,int uid){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            try {
+                int flags = 0;
+
+                //加上这个flag,会删除所有用户下的应用。,非必要不需要加
+//                flags |= DELETE_ALL_USERS;
+                IPackageManager iPackageManager = IPackageManager.Stub.asInterface(new easyManagerBinderWrapper(ServiceManager.getService("package")));
+                IPackageInstaller iPackageInstaller = IPackageInstaller.Stub.asInterface(new easyManagerBinderWrapper(iPackageManager.getPackageInstaller().asBinder()));
+                LocalIntentReceiver r = new LocalIntentReceiver();
+                int flags2 = Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1 ? 0 : MATCH_STATIC_SHARED_AND_SDK_LIBRARIES;
+                PackageInfo packageInfo = getPackageInfo(pkgname,getTranslatedUserId(),flags2);
+                if((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0){
+                    flags |= DELETE_SYSTEM_APP;
+                }
+                String callerPackageName = "com.easymanager";
+                iPackageInstaller.uninstall(new VersionedPackage(pkgname,
+                                -1), callerPackageName, flags,
+                        r.getIntentSender(), uid);
+                resultLocalIntent(r);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void UninstallPKG(String pkgname ,int uid){
         UninstallPKG(pkgname,uid,-1);
     }
@@ -740,6 +768,7 @@ public class PackageAPI extends  baseAPI implements Serializable {
         return list;
     }
 
+
     public String[] getDisallowedPackages(){
         if(disallowedPackages == null){
             List<String> launcherApps = getLauncherApps(null);
@@ -900,7 +929,10 @@ public class PackageAPI extends  baseAPI implements Serializable {
         ParceledListSlice<PackageInfo> slice = Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU?iPackageManager.getInstalledPackages(flags2,userid):iPackageManager.getInstalledPackages(flags,userid);
         List<PackageInfo> list = slice.getList();
         for (PackageInfo packageInfo : list) {
-            myPackageInfos.add(getMyPackageInfo(packageInfo.packageName,userid));
+            MyPackageInfo myPackageInfo = getMyPackageInfo(packageInfo.packageName,userid);
+            if(myPackageInfo != null){
+                myPackageInfos.add(myPackageInfo);
+            }
         }
         return myPackageInfos;
     }
@@ -920,7 +952,11 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
     public MyPackageInfo getMyPackageInfo(String pkgname , int uid){
         int flags = PackageManager.GET_PERMISSIONS|PackageManager.GET_ACTIVITIES|PackageManager.GET_DISABLED_COMPONENTS|PackageManager.GET_SERVICES|PackageManager.GET_RECEIVERS;
-        return copyPkgInfoToMyPkginfo(getPackageInfo(pkgname,uid,flags));
+        PackageInfo packageInfo = getPackageInfo(pkgname,uid,flags);
+        if(packageInfo == null){
+            return null;
+        }
+        return copyPkgInfoToMyPkginfo(packageInfo);
 
     }
 

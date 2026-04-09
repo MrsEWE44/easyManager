@@ -327,6 +327,12 @@ public class AppManagerLayoutActivity extends Activity {
                         break;
                     case 1:
                         APP_PERMIS_OPT_INDEX = i;
+//                        if(mode == AppManagerEnum.APP_INSTALL_LOCAL_FILE){
+//                            amlsp1.setEnabled(false);
+//                        }else{
+//                            amlsp1.setEnabled((i == 0)?false:true);
+//                        }
+
                         if(mode == AppManagerEnum.APP_CLEAN_PROCESS && APP_PERMIS_OPT_INDEX == 1){
                             EditText input = new EditText(context);
                             Spinner sp = new Spinner(context);

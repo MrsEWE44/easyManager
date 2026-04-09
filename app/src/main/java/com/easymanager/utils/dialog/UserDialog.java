@@ -18,6 +18,7 @@ import com.easymanager.R;
 import com.easymanager.core.api.PackageAPI;
 import com.easymanager.core.entity.TransmissionEntity;
 import com.easymanager.entitys.PKGINFO;
+import com.easymanager.enums.easyManagerEnums;
 import com.easymanager.utils.base.DialogUtils;
 
 import java.util.ArrayList;
@@ -163,7 +164,7 @@ public class UserDialog extends DialogUtils {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        easyMUtils.unlockMaxLimit(context,1024);
+                        easyMUtils.unlockMaxLimit(context, easyManagerEnums.ulock_max_user_size);
                         sendHandlerMSG(handler,0);
                     }
                 }).start();

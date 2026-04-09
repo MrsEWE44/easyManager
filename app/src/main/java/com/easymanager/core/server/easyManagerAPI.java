@@ -18,6 +18,7 @@ import com.easymanager.core.utils.CMD;
 import com.easymanager.utils.FileTools;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -225,16 +226,18 @@ public class easyManagerAPI extends baseAPI {
     //恢复已经备份的应用
     public void restoryApp(String pkgname , int uid, String parm) {
         String[] s = parm.split("---");
-        pkgname=pkgname.replaceAll("-"+uid,"");
+        String oldFileName = pkgname;
+        pkgname=pkgname.replaceAll("-\\d+","");
+        String backupFileUID = oldFileName.replaceAll(pkgname+"-","");
         if(s != null){
             String mode = s[0].trim();
             String fileEnd = s[1].trim();
             String sdpath = s[2].trim();
             String backup_dir_path = sdpath+"/easyManager/backup";
             String pkg_out_dir_path = backup_dir_path+"/"+pkgname;
-            decompressFileOnBackup(fileEnd,backup_dir_path,backup_dir_path,pkgname,uid);
+            decompressFileOnBackup(fileEnd,backup_dir_path,backup_dir_path,pkgname,uid,backupFileUID);
             if(mode.equals("full")){
-                decompressFileOnBackup(fileEnd,pkg_out_dir_path,pkg_out_dir_path,"file",uid);
+                decompressFileOnBackup(fileEnd,pkg_out_dir_path,pkg_out_dir_path,"file",uid,backupFileUID);
                 String baseAPk = getBaseAPk(pkg_out_dir_path);
                 if(baseAPk != null){
                     if(uid > 1){
@@ -242,14 +245,14 @@ public class easyManagerAPI extends baseAPI {
                     }else{
                         installAPK(baseAPk);
                     }
-                    restoryData(uid,pkgname,fileEnd,sdpath,pkg_out_dir_path);
+                    restoryData(uid,backupFileUID,pkgname,fileEnd,sdpath,pkg_out_dir_path);
                 }else{
                     System.out.println("baseAPK is null!!!");
                 }
             }else if(mode.equals("data")){
-                restoryData(uid,pkgname,fileEnd,sdpath,pkg_out_dir_path);
+                restoryData(uid,backupFileUID,pkgname,fileEnd,sdpath,pkg_out_dir_path);
             }else if(mode.equals("apk")){
-                decompressFileOnBackup(fileEnd,pkg_out_dir_path,pkg_out_dir_path,"file",uid);
+                decompressFileOnBackup(fileEnd,pkg_out_dir_path,pkg_out_dir_path,"file",uid,backupFileUID);
                 String baseAPk =getBaseAPk(pkg_out_dir_path);
                 if(baseAPk != null){
                     if(uid > 0){
@@ -280,32 +283,36 @@ public class easyManagerAPI extends baseAPI {
         return ft.findFiles(file,".apk");
     }
 
-    public void restoryData(int uid , String pkgname , String fileEnd , String sdpath , String pkg_out_dir_path ){
+    public void restoryData(int uid,String backupFileUID , String pkgname , String fileEnd , String sdpath , String pkg_out_dir_path ){
         String data_path1="/data/data";
         String data_path2="/proc/1/cwd/data/data";
         String data_user_path = "/data/user/"+uid;
+        String sdpath2 = "/storage/emulated/"+uid;
         String sdandroidpath=sdpath+"/Android";
-        String sddatapath = sdandroidpath+"/data";
-        String sdobbpath = sdandroidpath+"/obb";
         String pkg_data_path1 = data_path1+"/"+pkgname;
         String pkg_data_path2 = data_path2+"/"+pkgname;
         String pkg_data_user_path = data_user_path+"/"+pkgname;
         int pkguid = packageAPI.getPKGUID(pkgname,uid);
         if(uid > 0){
-            decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_user_path,"data",uid);
+            sdandroidpath=sdpath2+"/Android";
+            File f = new File(sdandroidpath);
+            if(!f.exists()){
+                f.mkdirs();
+            }
+            decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_user_path,"data",uid,backupFileUID);
             setMode(data_user_path+"/"+pkgname,pkguid);
         }else {
             File file = new File(pkg_data_path1);
             File file2 = new File(pkg_data_path2);
             File file3 = new File(pkg_data_user_path);
             if(file.exists()){
-                decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_path1,"data",uid);
+                decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_path1,"data",uid,backupFileUID);
                 setMode(pkg_data_path1,pkguid);
             } else if(file2.exists()){
-                decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_path2,"data",uid);
+                decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_path2,"data",uid,backupFileUID);
                 setMode(pkg_data_path2,pkguid);
             } else if(file3.exists()){
-                decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_user_path,"data",uid);
+                decompressFileOnBackup(fileEnd,pkg_out_dir_path,data_user_path,"data",uid,backupFileUID);
                 setMode(pkg_data_user_path,pkguid);
             }else{
                 System.err.println("restoryData Error : " + uid + " -- " + pkguid + " -- " + pkgname + " -- " + fileEnd + " -- " + new File(data_path1).exists());
@@ -313,9 +320,11 @@ public class easyManagerAPI extends baseAPI {
         }
         File file = new File(sdandroidpath);
         if(file.exists()){
-            decompressFileOnBackup(fileEnd,pkg_out_dir_path,sddatapath,"sddata",uid);
+            String sddatapath = sdandroidpath+"/data";
+            String sdobbpath = sdandroidpath+"/obb";
+            decompressFileOnBackup(fileEnd,pkg_out_dir_path,sddatapath,"sddata",uid,backupFileUID);
             setMode(sddatapath+"/"+pkgname,pkguid);
-            decompressFileOnBackup(fileEnd,pkg_out_dir_path,sdobbpath,"sdobb",uid);
+            decompressFileOnBackup(fileEnd,pkg_out_dir_path,sdobbpath,"sdobb",uid,backupFileUID);
             setMode(sdobbpath+"/"+pkgname,pkguid);
         }
     }
@@ -324,10 +333,12 @@ public class easyManagerAPI extends baseAPI {
         String data_path1="/data/data/"+pkgname;
         String data_path2="/proc/1/cwd/data/data/"+pkgname;
         String data_user_path = "/data/user/"+uid+"/"+pkgname;
+        String sdpath2 = "/storage/emulated/"+uid;
         String sdandroidpath=sdpath+"/Android";
         String sddatapath = sdandroidpath+"/data/"+pkgname;
         String sdobbpath = sdandroidpath+"/obb/"+pkgname;
         if(uid > 1){
+            sdandroidpath = sdpath2 + "/Android";
             compressFileByBackup(fileEnd,data_user_path,outbackuppkgdir,"data",uid);
         }else{
             File file = new File(data_path1);
@@ -365,24 +376,24 @@ public class easyManagerAPI extends baseAPI {
         }
     }
 
-    public void decompressFileOnBackup(String fileEnd,String dirPath , String outPath ,String name , Integer uid){
+    public void decompressFileOnBackup(String fileEnd,String dirPath , String outPath ,String name , Integer uid ,String backupFileUID){
         String head_path = dirPath+"/"+name;
         if(fileEnd.equals("txz")){
-            String path = head_path+"-"+uid + ".tar.xz";
+            String path = head_path+"-"+backupFileUID + ".tar.xz";
             File file = new File(path);
             if(!file.exists()){
                 path = head_path+".tar.xz";
             }
             CompressOrDecompressFile(path,outPath,fileCompressApi.TAR_XZ_DECOMPRESS_TYPE);
         }else if(fileEnd.equals("tbz")){
-            String path = head_path+"-"+uid + ".tar.bz";
+            String path = head_path+"-"+backupFileUID + ".tar.bz";
             File file = new File(path);
             if(!file.exists()){
                 path = head_path+".tar.bz";
             }
             CompressOrDecompressFile(path,outPath,fileCompressApi.TAR_BZIP_DECOMPRESS_TYPE);
         }else if(fileEnd.equals("tgz")){
-            String path = head_path+"-"+uid + ".tar.gz";
+            String path = head_path+"-"+backupFileUID + ".tar.gz";
             File file = new File(path);
             if(!file.exists()){
                 path = head_path+".tar.gz";
@@ -428,6 +439,19 @@ public class easyManagerAPI extends baseAPI {
 
     public int getMaxSupportedUsers(){
         return packageAPI.getMaxSupportedUsers();
+    }
+
+    public String getSYSProp(String key) {
+        try {
+            Class<?> clazz = Class.forName("android.os.SystemProperties");
+            Method getMethod = clazz.getMethod("get", String.class);
+            String value =  (String) getMethod.invoke(null, key);
+//            System.out.println("getSYSProp ::: " + key + " -- " + value);
+            return value;
+        } catch (Exception e) {
+            System.err.println("getProp error: " + e.getMessage());
+        }
+        return "";
     }
 
     public void createAppClone(){

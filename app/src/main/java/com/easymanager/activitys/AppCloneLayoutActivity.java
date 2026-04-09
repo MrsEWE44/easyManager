@@ -17,8 +17,10 @@ import android.widget.Spinner;
 
 import com.easymanager.MainActivity;
 import com.easymanager.R;
+import com.easymanager.core.utils.CMD;
 import com.easymanager.entitys.PKGINFO;
 import com.easymanager.enums.AppManagerEnum;
+import com.easymanager.enums.easyManagerEnums;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
 import com.easymanager.utils.base.AppCloneUtils;
@@ -91,6 +93,12 @@ public class AppCloneLayoutActivity extends Activity {
             clmbt1.setText(getLanStr(R.string.app_clone_button_delete_clone_str));
         }
         btClicked();
+        String maxuser = acu.getEasyManagerUtils().getProp(context,"persist.sys.max_profiles");
+        if(maxuser.equals(String.valueOf(easyManagerEnums.ulock_max_user_size))){
+            String cmdstr = String.format("setprop fw.max_users %d ;",easyManagerEnums.ulock_max_user_size);
+            CMD cmd = acu.getEasyManagerUtils().runCMD(cmdstr);
+            cmd.getResult();
+        }
         acmet1.setHint(String.format(getLanStr(R.string.app_clone_input_size_hint_str),acu.getPd().easyMUtils.getMaxSupportedUsers(context)));
         new HelpDialogUtils().showHelp(context,HelpDialogUtils.APP_MANAGE_HELP,mode);
     }

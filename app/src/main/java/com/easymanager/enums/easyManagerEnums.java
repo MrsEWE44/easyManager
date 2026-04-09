@@ -26,6 +26,8 @@ public class easyManagerEnums {
     public final static  int APP_CLONE_REMOVE=15;
     public static final int APP_CLONE_GETUSERS = 16;
 
+
+    public final static int ulock_max_user_size = 1024;
     public final static  int KILL_PROCESS_UID=20;
     public final static  int INSTALL_APK_UID=21;
     public final static  int UNINSTALL_APK_UID=22;
@@ -63,4 +65,5 @@ public class easyManagerEnums {
     public static final int REMOVE_DEVICE_OWNER = 52;
     public static final int GET_ACTIVE_ADMINS = 53;
     public static final int GET_DISALLOWED_PACKAGES = 54;
+    public final static  int GET_SYS_PROP=55;
 }

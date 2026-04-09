@@ -11,9 +11,6 @@ import com.easymanager.core.server.easyManagerBinderWrapper;
 import com.easymanager.core.server.easyManagerPortService;
 import com.easymanager.entitys.MyAppopsInfo;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,26 +40,38 @@ public class AppopsAPI extends baseAPI{
 
 
     public void setModeCore(String pkgname,String modestr,int mode2,int uid){
-        int appmode = aps.getAppopsMode(mode2);
-        for (String op : aps.getOPS2(appmode)) {
-            String op2 = op.substring(op.lastIndexOf(".")+1);
-            try{
-                if(getModeInt(modestr) == 0){
-                    packageAPI.grantRuntimePermission(pkgname,op,uid);
-                }else{
-                    packageAPI.revokeRuntimePermission(pkgname,op,uid);
-                }
-                SetMode(pkgname,op2,modestr,uid);
-            }catch (Throwable e){
+        int modeInt = getModeInt(modestr);
+        if(modeInt == AppOpsManager.MODE_DEFAULT){
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                IAppOpsService iAppOpsService = getIAppOpsService();
+                iAppOpsService.resetAllModes(uid,pkgname);
+            }
+        }else{
+            int appmode = aps.getAppopsMode(mode2);
+            for (String op : aps.getOPS2(appmode)) {
+                try{
+                    if(modeInt == AppOpsManager.MODE_ALLOWED){
+                        packageAPI.grantRuntimePermission(pkgname,op,uid);
+                    }
+
+                    if(modeInt == AppOpsManager.MODE_IGNORED || modeInt == AppOpsManager.MODE_ERRORED){
+                        packageAPI.revokeRuntimePermission(pkgname,op,uid);
+                    }
+
+//                    SetMode(pkgname,op2,modestr,uid);
+                }catch (Throwable e){
 //                StringWriter sw = new StringWriter();
 //                e.printStackTrace(new PrintWriter(sw));
 //                System.out.println("setModeCore :::: " + sw.toString());
-                SetMode(pkgname,op2,modestr,uid);
+                    String op2 = op.substring(op.lastIndexOf(".")+1);
+                    SetMode(pkgname,op2,modestr,uid);
+                }
+            }
+            for (String op : aps.getOPS(appmode)) {
+                SetMode(pkgname,op,modestr,uid);
             }
         }
-        for (String op : aps.getOPS(appmode)) {
-            SetMode(pkgname,op,modestr,uid);
-        }
+
     }
 
 
