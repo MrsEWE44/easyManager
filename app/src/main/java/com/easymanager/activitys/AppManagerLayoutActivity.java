@@ -17,6 +17,7 @@ import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -62,9 +63,6 @@ public class AppManagerLayoutActivity extends Activity {
     private String APP_PERMIS_OPT1_VALUES[] = {"default", "ignore","deny","allow","foreground"};
     private String APP_PERMIS_OPT2_VALUES[] = {"active", "working_set","frequent","rare","restricted"};
     private String APP_PERMIS_OPT3_VALUES[] = {"true","false"};
-    private String APP_BACKUP_AND_RESTORY_OPT2[] = {"tar.xz","tar.gz","tar.bz"};
-    private String APP_BACKUP_AND_RESTORY_OPT_VALUES[] = {"full","data","apk"};
-    private String APP_BACKUP_AND_RESTORY_OPT2_VALUES[] = {"txz","tgz","tbz"};
     private String APP_ALL_UERS[] = null;
     private int nowItemIndex=-1;
     private int APP_UID_INDEX=0,APP_CHOICES_INDEX = 0, APP_PERMIS_INDEX = 0 , APP_PERMIS_OPT_INDEX = 0, APP_PERMIS_MODE= 0 ;
@@ -103,7 +101,7 @@ public class AppManagerLayoutActivity extends Activity {
         apllv1 = findViewById(R.id.apllv1);
         amlsp1.setAdapter(getSpinnerAdapter(getAppPermis()));
         amlsp3.setAdapter(getSpinnerAdapter(getAppChoicesOPT()));
-        amlsp5.setAdapter(getSpinnerAdapter(getAppManagerOPT()));
+        amlsp5.setAdapter(getSpinnerAdapterDhizuku(getAppManagerOPT()));
         String[] appCloneUsers = ee.getAppCloneUsers();
         APP_ALL_UERS = new String[appCloneUsers.length];
         APP_ALL_UERS[0]=String.valueOf(uid);
@@ -125,20 +123,10 @@ public class AppManagerLayoutActivity extends Activity {
             install_mode=true;
         }
 
-
-        if(mode == AppManagerEnum.APP_BACKUP){
-            amlsp5.setEnabled(false);
-            amlsp1.setAdapter(getSpinnerAdapter(getAppBackupAndRestoryOPT()));
-            amlsp2.setAdapter(getSpinnerAdapter(APP_BACKUP_AND_RESTORY_OPT2));
-            amlapplybt.setText(getLanStr(R.string.button_backup));
+        if(isDevice){
+            amlsp5.setSelection(1);
         }
 
-        if(mode == AppManagerEnum.APP_RESTORY){
-            amlsp5.setEnabled(false);
-            amlsp1.setAdapter(getSpinnerAdapter(getAppBackupAndRestoryOPT()));
-            amlsp2.setAdapter(getSpinnerAdapter(APP_BACKUP_AND_RESTORY_OPT2));
-            amlapplybt.setText(getLanStr(R.string.button_restory));
-        }
         btClicked();
 
     }
@@ -150,9 +138,7 @@ public class AppManagerLayoutActivity extends Activity {
         spinnerChange(amlsp3,2);
         spinnerChange(amlsp4,3);
         spinnerChange(amlsp5,4);
-        if(isDevice){
-            amlsp5.setSelection(1,true);
-        }
+
         amlapplybt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -191,10 +177,6 @@ public class AppManagerLayoutActivity extends Activity {
                         acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_DISABLE_COMPENT,APP_PERMIS_OPT_INDEX,null,uid);
                     }
 
-                    if(mode == AppManagerEnum.APP_FIREWALL){
-                        acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_FIREWALL,APP_PERMIS_OPT_INDEX,null,uid);
-                    }
-
                     if(mode == AppManagerEnum.APP_INSTALL_LOCAL_FILE){
                         acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_INSTALL_LOCAL_FILE,APP_PERMIS_OPT_INDEX,null,uid);
                     }
@@ -205,29 +187,18 @@ public class AppManagerLayoutActivity extends Activity {
 
                     if(mode == AppManagerEnum.APP_UNINSTALL){
                         acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_UNINSTALL,APP_PERMIS_OPT_INDEX,null,uid);
-                        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.M){
-                            easyManagerUtils ee = new easyManagerUtils();
-                            if(ee.isROOT()){
-                                ee.activeRoot(context);
-                            }else {
-                                acu.getPd().showInfoMsg(context,getLanStr(R.string.error_tips),getLanStr(R.string.del_app_tips_6));
-                            }
-                        }
+//                        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.M){
+//                            easyManagerUtils ee = new easyManagerUtils();
+//                            if(ee.isROOT()){
+//                                ee.activeRoot(context);
+//                            }else {
+//                                acu.getPd().showInfoMsg(context,getLanStr(R.string.error_tips),getLanStr(R.string.del_app_tips_6));
+//                            }
+//                        }
                     }
 
                     if(mode == AppManagerEnum.APP_CLEAN_PROCESS){
-                        acu.getPd().easyMUtils.deleteCleanAPPConfig();
                         acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_CLEAN_PROCESS,APP_PERMIS_OPT_INDEX,getADDCleanRunningAPPOPTSTR(),uid);
-                    }
-
-                    if(mode == AppManagerEnum.APP_BACKUP){
-                        String opt_str = APP_BACKUP_AND_RESTORY_OPT_VALUES[APP_PERMIS_INDEX]+"---"+APP_BACKUP_AND_RESTORY_OPT2_VALUES[APP_PERMIS_OPT_INDEX];
-                        acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_BACKUP,(uid == null  ? 0 : uid),opt_str,uid);
-                    }
-
-                    if(mode == AppManagerEnum.APP_RESTORY){
-                        String opt_str = APP_BACKUP_AND_RESTORY_OPT_VALUES[APP_PERMIS_INDEX]+"---"+APP_BACKUP_AND_RESTORY_OPT2_VALUES[APP_PERMIS_OPT_INDEX];
-                        acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_RESTORY,(uid == null ? 0 : uid),opt_str,uid);
                     }
 
                 }
@@ -289,17 +260,6 @@ public class AppManagerLayoutActivity extends Activity {
                 intent2.setData(Uri.parse("package:" + pkginfos.get(nowItemIndex).getPkgname()));
                 startActivity(intent2);
                 break;
-            case 2:
-                ArrayList<PKGINFO> pkgList = getAddedPKGList();
-                String opt_str =getADDCleanRunningAPPOPTSTR();
-                String reqpkg = context.getPackageName();
-                if(pkgList.size() > 0){
-                    acu.getPd().showProcessBarDialogByCMD(context,pkgList,AppManagerEnum.APP_CLEAN_PROCESS,1,getADDCleanRunningAPPOPTSTR(),uid);
-                }else{
-                    acu.getPd().easyMUtils.addRunningAPPS(new TransmissionEntity(pkginfos.get(nowItemIndex).getPkgname(),opt_str,reqpkg, easyManagerEnums.ADD_RUNNING_PACKAGE,uid));
-                    Toast.makeText(context,pkginfos.get(nowItemIndex).getAppname()+getLanStr(R.string.added_clean_list_msg),Toast.LENGTH_SHORT).show();
-                }
-                break;
         }
 
         return super.onContextItemSelected(item);
@@ -333,58 +293,6 @@ public class AppManagerLayoutActivity extends Activity {
 //                            amlsp1.setEnabled((i == 0)?false:true);
 //                        }
 
-                        if(mode == AppManagerEnum.APP_CLEAN_PROCESS && APP_PERMIS_OPT_INDEX == 1){
-                            EditText input = new EditText(context);
-                            Spinner sp = new Spinner(context);
-                            input.setInputType(InputType.TYPE_CLASS_NUMBER);
-                            input.setHint(R.string.clean_input_hint_tips);
-                            sp.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, new String[]{getLanStr(R.string.clean_input_time_second),getLanStr(R.string.clean_input_time_minute),getLanStr(R.string.clean_input_time_hour),getLanStr(R.string.clean_input_time_day)}));
-
-                            sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                @Override
-                                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                                    APP_CLEAN_TIME_TYPE = i;
-                                }
-
-                                @Override
-                                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                                }
-                            });
-                            LinearLayout ll = new LinearLayout(context);
-                            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                            lp.weight = 1;
-                            input.setLayoutParams(lp);
-                            sp.setLayoutParams(lp);
-                            ll.addView(input);
-                            ll.addView(sp);
-                            ll.setOrientation(LinearLayout.HORIZONTAL);
-                            AlertDialog.Builder ab = new AlertDialog.Builder(context);
-                            ab.setTitle(getLanStr(R.string.tips));
-                            ab.setMessage(R.string.clean_input_value_tips);
-                            ab.setView(ll);
-                            ab.setNegativeButton(getLanStr( R.string.dialog_sure_text), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    String valueInput = input.getText().toString();
-                                    APP_CLEAN_TIME = Integer.parseInt(valueInput.trim());
-                                    dialogInterface.cancel();
-                                }
-                            });
-                            ab.setPositiveButton(getLanStr( R.string.dialog_cancel_text), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    input.getText().clear();
-                                    dialogInterface.cancel();
-                                }
-                            });
-
-                            AlertDialog alertDialog = ab.create();
-                            alertDialog.show();
-                            TextView tv = alertDialog.getWindow().getDecorView().findViewById(android.R.id.message);
-                            tv.setTextIsSelectable(true);
-
-                        }
                         break;
                     case 2:
                         APP_CHOICES_INDEX = i;
@@ -407,30 +315,22 @@ public class AppManagerLayoutActivity extends Activity {
                                     amlsp1.setEnabled(false);
                                     amlsp2.setEnabled(true);
                                     amlsp2.setAdapter(getSpinnerAdapter(getAppDisableOrEnableOPT()));
-                                    if(isDevice){
-                                        amlsp5.setEnabled(false);
-                                    }
+
                                     break;
                                 case 2:
-                                    mode = AppManagerEnum.APP_FIREWALL;
-                                    amlsp1.setEnabled(false);
-                                    amlsp2.setEnabled(true);
-                                    amlsp2.setAdapter(getSpinnerAdapter(getAppFirewallOPT()));
-                                    break;
-                                case 3:
                                     mode = AppManagerEnum.APP_DUMP;
                                     amlsp1.setEnabled(false);
                                     amlsp2.setEnabled(true);
                                     amlsp2.setAdapter(getSpinnerAdapter(getAppDumpOPT()));
                                     amlapplybt.setText(getLanStr(R.string.button_dump_app));
                                     break;
-                                case 4:
+                                case 3:
                                     mode = AppManagerEnum.APP_UNINSTALL;
                                     amlsp1.setEnabled(false);
                                     amlsp2.setEnabled(false);
                                     amlapplybt.setText(getLanStr(R.string.button_del_app));
                                     break;
-                                case 5:
+                                case 4:
                                     mode = AppManagerEnum.APP_CLEAN_PROCESS;
                                     amlsp1.setEnabled(false);
                                     amlsp2.setEnabled(true);
@@ -468,8 +368,6 @@ public class AppManagerLayoutActivity extends Activity {
         if(itemId == R.id.actionbarsearch){
             if(mode == AppManagerEnum.APP_CLEAN_PROCESS){
                 acu.getSd().showProcessSearchViewDialog(context,activity,apllv1,pkginfos,null,checkboxs,uid);
-            }else if(mode == AppManagerEnum.APP_RESTORY){
-                acu.getSd().showRestorySearchViewDialog(context,activity,apllv1,pkginfos,checkboxs,uid);
             }else {
                 acu.getSd().showSearchViewDialog(context,activity,apllv1,pkginfos,null,checkboxs,uid);
             }
@@ -522,6 +420,30 @@ public class AppManagerLayoutActivity extends Activity {
 
     public ArrayAdapter getSpinnerAdapter(String s[]){
         return new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, s);
+    }
+
+    public ArrayAdapter getSpinnerAdapterDhizuku(String s[]){
+        return new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, s){
+            @Override
+            public boolean isEnabled(int position) {
+                if(isDevice){
+                    return position == 1 || position == 2 || position == 3;
+                }else{
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                if (!isEnabled(position)) {
+                    view.setAlpha(0.5f); // 半透明
+                } else {
+                    view.setAlpha(1f);
+                }
+                return view;
+            }
+        };
     }
 
     private void selectLocalFile(){
@@ -708,22 +630,11 @@ public class AppManagerLayoutActivity extends Activity {
     }
 
     private String[] getAppManagerOPT(){
-        return new String[]{getLanStr(R.string.button_home_permission),getLanStr(R.string.button_home_disable),getLanStr(R.string.button_home_network),getLanStr(R.string.button_home_dump_app),getLanStr(R.string.button_home_uninstall),getLanStr(R.string.button_home_process_clean)};
+        return new String[]{getLanStr(R.string.button_home_permission),getLanStr(R.string.button_home_disable),getLanStr(R.string.button_home_dump_app),getLanStr(R.string.button_home_uninstall),getLanStr(R.string.button_home_process_clean)};
     }
 
     private void addPKGS(PKGINFO pkginfo,ArrayList<PKGINFO> list){
-        if(mode == AppManagerEnum.APP_RESTORY){
-            String appname = pkginfo.getAppname();
-            String trim = pkginfo.getPkgname().trim();
-            String end = APP_BACKUP_AND_RESTORY_OPT2[APP_PERMIS_OPT_INDEX];
-            String old_backup_file = trim+"."+end;
-            String user_backup_file = trim+"-"+uid+"."+end;
-            if(appname.equals(old_backup_file) || appname.equals(user_backup_file)){
-                list.add(pkginfo);
-            }
-        }else {
-            list.add(pkginfo);
-        }
+        list.add(pkginfo);
     }
 
     private String getADDCleanRunningAPPOPTSTR(){

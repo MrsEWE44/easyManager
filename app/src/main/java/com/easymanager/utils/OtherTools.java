@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.Menu;
-import android.view.View;
 import android.widget.Button;
 
 import com.easymanager.R;
@@ -13,60 +12,31 @@ import com.easymanager.enums.AppManagerEnum;
 public class OtherTools {
     private TextUtils tv = new TextUtils();
 
-    public void jump(Context context , Class clazz,int mode , Boolean isRoot , Boolean isADB ,Boolean isDevice, int uid){
+    public void jump(Context context , Class clazz,int mode , Boolean isShizuku , Boolean isDhizuku, int uid){
         Intent intent = new Intent(context, clazz);
         intent.putExtra("mode",mode);
-        intent.putExtra("isRoot",isRoot);
-        intent.putExtra("isADB",isADB);
-        intent.putExtra("isDevice",isDevice);
+        intent.putExtra("isRoot",false);
+        intent.putExtra("isADB",isShizuku);
+        intent.putExtra("isDevice",isDhizuku);
         intent.putExtra("uid",uid);
         context.startActivity(intent);
     }
 
     //页面布局跳转
-    public void jump(Context srcA , Class<?> cls,Boolean isRoot,Boolean isADB){
+    public void jump(Context srcA , Class<?> cls,Boolean isShizuku , Boolean isDhizuku){
         Intent intent = new Intent(srcA, cls);
-        intent.putExtra("isRoot", isRoot);
-        intent.putExtra("isADB",isADB);
+        intent.putExtra("isRoot", false);
+        intent.putExtra("isADB",isShizuku);
         srcA.startActivity(intent);
     }
 
-    //页面布局跳转
-    public void jump(Button b , Context srcA , Class<?> cls, Boolean isRoot, Boolean isADB){
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                jump(srcA,cls,isRoot,isADB);
-            }
-        });
-    }
+    public void setBtColor(Button b , boolean needShizuku , boolean needDhizuku, Boolean isShizuku,Boolean isDhizuku){
 
-    public void setBtColor(Button b , boolean needRoot , boolean needADB, boolean needDevice , Boolean isRoot , Boolean isADB,Boolean isDevice){
+        if((isDhizuku != null && isDhizuku && needDhizuku) || (isShizuku != null && isShizuku && needShizuku) || (!needDhizuku && !needShizuku)){
 
-        if(isDevice != null && isDevice){
-            if(needRoot && needADB && needDevice){
-                b.setBackgroundColor(Color.parseColor("#FFF8E1"));
-            }else if(!needRoot && !isRoot && !needADB && !isADB && !needDevice){
-                b.setEnabled(true);
-            }else{
-                b.setBackgroundColor(Color.parseColor("#FFEBEE"));
-                b.setEnabled(false);
-            }
-        }else if(isADB != null && isADB){
-            if(needRoot && needADB){
-                b.setBackgroundColor(Color.parseColor("#FFF8E1"));
-            }
-
-            if(needRoot && !needADB){
-                b.setBackgroundColor(Color.parseColor("#FFEBEE"));
-                b.setEnabled(false);
-            }
-
-        }else if(isRoot != null && !isRoot && isADB != null && !isADB && isDevice !=null && !isDevice){
-            if(needADB || needRoot || needDevice){
-                b.setBackgroundColor(Color.parseColor("#FFEBEE"));
-                b.setEnabled(false);
-            }
+        }else {
+            b.setBackgroundColor(Color.parseColor("#FFEBEE"));
+            b.setEnabled(false);
         }
 
 
@@ -76,11 +46,7 @@ public class OtherTools {
         menu.clear();
         String help = tv.getLanguageString(context, R.string.menu_help);
         String exit = tv.getLanguageString(context, R.string.menu_exit);
-        if(menumode == AppManagerEnum.RUN_CMD ||menumode == AppManagerEnum.APP_INSTALL_LOCAL_FILE || menumode == AppManagerEnum.MOUNT_LOCAL_IMG || menumode == AppManagerEnum.CREATE_IMG || menumode == AppManagerEnum.SET_NTP || menumode == AppManagerEnum.SET_RATE || menumode == AppManagerEnum.DEL_X || menumode == AppManagerEnum.FILE_SHARED){
-            menu.add(Menu.NONE,5,0,help);
-            menu.add(Menu.NONE,6,0,exit);
-        }else if(menumode == AppManagerEnum.APP_RESTORY){
-            menu.add(Menu.NONE,9,0,tv.getLanguageString(context, R.string.menu_scan_local_backup_file));
+        if(menumode == AppManagerEnum.RUN_CMD ||menumode == AppManagerEnum.APP_INSTALL_LOCAL_FILE ||  menumode == AppManagerEnum.SET_NTP || menumode == AppManagerEnum.SET_RATE || menumode == AppManagerEnum.DEL_X || menumode == AppManagerEnum.FILE_SHARED){
             menu.add(Menu.NONE,5,0,help);
             menu.add(Menu.NONE,6,0,exit);
         }else if(menumode == AppManagerEnum.APP_CLEAN_PROCESS){

@@ -28,13 +28,13 @@ public class ManagerGrantUserFragmentLayout extends Fragment {
     private ArrayList<PKGINFO> pkginfos  =new ArrayList<>();
     private ArrayList<Boolean> swibts = new ArrayList<>();
 
-    private Boolean isRoot, isADB;
+    private Boolean isShizuku,isDhizuku;
     private TextView mguflpeekservice;
     private ListView mgufllv;
 
-    public ManagerGrantUserFragmentLayout(Boolean isRoot, Boolean isADB) {
-        this.isRoot = isRoot;
-        this.isADB = isADB;
+    public ManagerGrantUserFragmentLayout(Boolean isShizuku, Boolean isDhizuku) {
+        this.isShizuku = isShizuku;
+        this.isDhizuku = isDhizuku;
     }
 
     public ManagerGrantUserFragmentLayout(){}
@@ -53,9 +53,17 @@ public class ManagerGrantUserFragmentLayout extends Fragment {
         mguflpeekservice = vie.findViewById(R.id.mguflpeekservice);
         mgufllv = vie.findViewById(R.id.mgufllv);
         easyManagerUtils ee = new easyManagerUtils();
-        String msg = String.format(du.tu.getLanguageString(context,R.string.now_server_check_msg),(ee.getServerStatus()?String.format(du.tu.getLanguageString(context,R.string.now_server_check_running_msg),(ee.isROOT()?" [ ROOT ] ":" [ ADB ] ")):du.tu.getLanguageString(context,R.string.now_server_check_dead_msg)));
+        String status = "[ DEAD ]";
+        if(isShizuku){
+            status = "[ SHIZUKU ]";
+        }
+        if(isDhizuku){
+            status = "[ DHIZUKU ]";
+        }
+
+        String msg = String.format(du.tu.getLanguageString(context,R.string.now_server_check_msg),((isShizuku || isDhizuku)?String.format(du.tu.getLanguageString(context,R.string.now_server_check_running_msg),status):du.tu.getLanguageString(context,R.string.now_server_check_dead_msg)));
         mguflpeekservice.setText(msg);
-        if(ee.getServerStatus()){
+        if(ee != null){
             ProgressDialog show = du.showMyDialog(getActivity(),du.tu.getLanguageString(context,R.string.now_server_read_auth_msg));
             Handler handler = new Handler(){
                 @Override
@@ -70,14 +78,11 @@ public class ManagerGrantUserFragmentLayout extends Fragment {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    HashMap<String,Integer> grantUsers = ee.getGrantUsers(context);
-                    for (Map.Entry<String, Integer> entry : grantUsers.entrySet()) {
-                        try {
-                            pkginfos.add(pkgutils.getPKGINFO(context,entry.getKey()));
-                            swibts.add(entry.getValue()==0);
-                        }catch (Exception e){
+                    try {
+                        pkginfos.add(pkgutils.getPKGINFO(context,context.getPackageName()));
+                        swibts.add(true);
+                    }catch (Exception e){
 
-                        }
                     }
                     du.sendHandlerMSG(handler,0);
                 }

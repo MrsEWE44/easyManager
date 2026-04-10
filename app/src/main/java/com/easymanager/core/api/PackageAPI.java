@@ -1,12 +1,10 @@
 package com.easymanager.core.api;
 
 import android.app.ActivityManager;
-import android.app.ActivityManagerNative;
 import android.app.IActivityManager;
 import android.app.usage.IUsageStatsManager;
 import android.app.usage.UsageStatsManager;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.IIntentReceiver;
 import android.content.IIntentSender;
 import android.content.Intent;
@@ -15,8 +13,8 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.IPackageDataObserver;
 import android.content.pm.IPackageDeleteObserver;
-import android.content.pm.IPackageInstallObserver;
 import android.content.pm.IPackageInstaller;
+import android.content.pm.IPackageInstallerSession;
 import android.content.pm.IPackageManager;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageInstaller;
@@ -26,10 +24,8 @@ import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.content.pm.SuspendDialogInfo;
 import android.content.pm.UserInfo;
-import android.content.pm.VerificationParams;
 import android.content.pm.VersionedPackage;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -37,36 +33,31 @@ import android.os.IUserManager;
 import android.os.PersistableBundle;
 import android.os.Process;
 import android.os.RemoteException;
-import android.os.ServiceManager;
 import android.permission.IPermissionManager;
 
+import com.easymanager.core.utils.IIntentSenderAdaptor;
+import com.easymanager.core.utils.IntentSenderUtils;
+import com.easymanager.core.utils.PackageInstallerUtils;
 import com.easymanager.entitys.MyActivityInfo;
 import com.easymanager.entitys.MyApplicationInfo;
 import com.easymanager.entitys.MyPackageInfo;
-import com.easymanager.core.server.Singleton;
-import com.easymanager.core.server.easyManagerBinderWrapper;
-import com.easymanager.core.server.easyManagerPortService;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
+
+import rikka.shizuku.Shizuku;
+import rikka.shizuku.ShizukuBinderWrapper;
 
 public class PackageAPI extends  baseAPI implements Serializable {
 
@@ -106,34 +97,31 @@ public class PackageAPI extends  baseAPI implements Serializable {
     public static final int FLAG_MANAGED_PROFILE = 0x00000020;
     public static final int FLAG_SUSPEND_QUARANTINED = 0x00000001;
 
-    private static final Map<String, IUsageStatsManager> I_USAGE_STATS_MANAGER_CACHE = new HashMap<>();
-    private static final Map<String, IActivityManager> I_ACTIVITY_MANAGER_CACHE = new HashMap<>();
-    private static final Map<String, IPackageManager> I_PACKAGE_MANAGER_CACHE = new HashMap<>();
-    private static final Map<String, IPermissionManager> I_PERMISSION_MANAGER_CACHE = new HashMap<>();
-    private static final Map<String, IUserManager> I_USER_MANAGER_CACHE = new HashMap<>();
-
-
     private String[] disallowedPackages = null;
 
+    public IUsageStatsManager getIUsageStatsManager(){
+        IUsageStatsManager manager = null;
+        if(ShizukuSystemServerApi.isShizuku()){
+            manager = ShizukuSystemServerApi.USAGESTATS_MANAGER.get();
+        }
+
+        if(DhizukuSystemServerApi.isDhizuku()){
+            manager = DhizukuSystemServerApi.USAGESTATS_MANAGER.get();
+        }
+
+        return manager;
+    }
+
     public IActivityManager getIActivityManager(){
-        IActivityManager iActivityManager = I_ACTIVITY_MANAGER_CACHE.get("iaservice");
-        if(iActivityManager != null && iActivityManager.asBinder().isBinderAlive()){
-            return iActivityManager;
+        IActivityManager iActivityManager = null;
+        if(ShizukuSystemServerApi.isShizuku()){
+            iActivityManager =  ShizukuSystemServerApi.ACTIVITY_MANAGER.get();
         }
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            Singleton<IActivityManager> iActivityManagerSingleton = new Singleton<IActivityManager>() {
-                @Override
-                protected IActivityManager create() {
-                    return IActivityManager.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService(Context.ACTIVITY_SERVICE)));
-                }
-            };
-            iActivityManager = iActivityManagerSingleton.get();
-        }else{
-            iActivityManager= ActivityManagerNative.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService(Context.ACTIVITY_SERVICE)));
+        if(DhizukuSystemServerApi.isDhizuku()){
+            iActivityManager = DhizukuSystemServerApi.ACTIVITY_MANAGER.get();
         }
 
-        I_ACTIVITY_MANAGER_CACHE.put("iaservice",iActivityManager);
         return iActivityManager;
     }
 
@@ -149,50 +137,41 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
 
     public IPackageManager getIPackageManager(){
-        IPackageManager iPackageManager = I_PACKAGE_MANAGER_CACHE.get("ipkgservice");
-        if(iPackageManager != null && iPackageManager.asBinder().isBinderAlive()){
-            return iPackageManager;
+        IPackageManager iPackageManager = null;
+        if(ShizukuSystemServerApi.isShizuku()){
+            iPackageManager =  ShizukuSystemServerApi.PACKAGE_MANAGER.get();
         }
-        Singleton<IPackageManager> iPackageManagerSingleton = new Singleton<IPackageManager>() {
-            @Override
-            protected IPackageManager create() {
-                return IPackageManager.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService("package")));
-            }
-        };
-        iPackageManager = iPackageManagerSingleton.get();
-        I_PACKAGE_MANAGER_CACHE.put("ipkgservice",iPackageManager);
+
+        if(DhizukuSystemServerApi.isDhizuku()){
+            iPackageManager = DhizukuSystemServerApi.PACKAGE_MANAGER.get();
+        }
+
         return iPackageManager;
     }
 
     public IUserManager getIUserManager(){
-        IUserManager iUserManager = I_USER_MANAGER_CACHE.get("iuserservice");
-        if(iUserManager != null && iUserManager.asBinder().isBinderAlive()){
-            return iUserManager;
+        IUserManager iUserManager = null;
+        if(ShizukuSystemServerApi.isShizuku()){
+            iUserManager =  ShizukuSystemServerApi.USER_MANAGER.get();
         }
-        Singleton<IUserManager> iUserManagerSingleton = new Singleton<IUserManager>() {
-            @Override
-            protected IUserManager create() {
-                return IUserManager.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService("user")));
-            }
-        };
-        iUserManager = iUserManagerSingleton.get();
-        I_USER_MANAGER_CACHE.put("iuserservice",iUserManager);
+
+        if(DhizukuSystemServerApi.isDhizuku()){
+            iUserManager = DhizukuSystemServerApi.USER_MANAGER.get();
+        }
+
         return iUserManager;
     }
 
     public IPermissionManager getIPermissionManager(){
-        IPermissionManager iPermissionManager = I_PERMISSION_MANAGER_CACHE.get("ipermservice");
-        if(iPermissionManager != null && iPermissionManager.asBinder().isBinderAlive()){
-            return iPermissionManager;
+        IPermissionManager iPermissionManager = null;
+        if(ShizukuSystemServerApi.isShizuku()){
+            iPermissionManager =  ShizukuSystemServerApi.PERMISSION_MANAGER.get();
         }
-        Singleton<IPermissionManager> iPermissionManagerSingleton = new Singleton<IPermissionManager>() {
-            @Override
-            protected IPermissionManager create() {
-                return IPermissionManager.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService("permissionmgr")));
-            }
-        };
-        iPermissionManager = iPermissionManagerSingleton.get();
-        I_PERMISSION_MANAGER_CACHE.put("ipermservice",iPermissionManager);
+
+        if(DhizukuSystemServerApi.isDhizuku()){
+            iPermissionManager = DhizukuSystemServerApi.PERMISSION_MANAGER.get();
+        }
+
         return iPermissionManager;
     }
 
@@ -210,7 +189,16 @@ public class PackageAPI extends  baseAPI implements Serializable {
     }
 
     public IPackageInstaller getIPackageInstaller() throws RemoteException {
-        return IPackageInstaller.Stub.asInterface(new easyManagerBinderWrapper(getIPackageManager().getPackageInstaller().asBinder()));
+        IPackageInstaller iPackageInstaller = null;
+        if(ShizukuSystemServerApi.isShizuku()){
+            iPackageInstaller = ShizukuSystemServerApi.getIPackageInstaller();
+        }
+
+        if(DhizukuSystemServerApi.isDhizuku()){
+            iPackageInstaller = DhizukuSystemServerApi.getIPackageInstaller();
+        }
+
+        return iPackageInstaller;
     }
 
 
@@ -237,23 +225,6 @@ public class PackageAPI extends  baseAPI implements Serializable {
         return INSTALL_ALLOW_TEST | INSTALL_REPLACE_EXISTING |INSTALL_ALLOW_DOWNGRADE;
     }
 
-    public void doCommintSession(IPackageInstaller iPackageInstaller , int sessionID , PackageInstaller.Session session) throws RemoteException {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            session = new PackageInstaller.Session(iPackageInstaller.openSession(sessionID));
-            LocalIntentReceiver r = new LocalIntentReceiver();
-            session.commit(r.getIntentSender());
-            resultLocalIntent(r);
-        }
-    }
-
-    public void closeSession(PackageInstaller.Session session){
-        if(session !=null){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                session.close();
-            }
-        }
-    }
-
 
     public void InstallExistingPKGQ(String pkgname,int userId){
         int installFlags = INSTALL_ALL_WHITELIST_RESTRICTED_PERMISSIONS;
@@ -275,110 +246,6 @@ public class PackageAPI extends  baseAPI implements Serializable {
     }
 
 
-    /**
-     *
-     * install apk on android 12+
-     * */
-
-    public void InstallAPKS(String apkPath,int userId){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-            try {
-                PackageInstaller.SessionParams sessionParams = new PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL);
-                sessionParams.installFlags |= INSTALL_ALL_WHITELIST_RESTRICTED_PERMISSIONS | INSTALL_ALLOW_TEST | INSTALL_REPLACE_EXISTING |INSTALL_ALLOW_DOWNGRADE;
-                IPackageInstaller iPackageInstaller = getIPackageInstaller();
-                int sessionID = iPackageInstaller.createSession(sessionParams, getInstallerPackageName(), null, userId);
-                PackageInstaller.Session session = new PackageInstaller.Session(iPackageInstaller.openSession(sessionID));
-                try (OutputStream packageInSession = session.openWrite("package", 0, -1);
-                     InputStream is = new FileInputStream(apkPath)) {
-                        byte[] buffer = new byte[16384];
-                        int n;
-                        while ((n = is.read(buffer)) >= 0) {
-                            packageInSession.write(buffer, 0, n);
-                    }
-                }
-                doCommintSession(iPackageInstaller,sessionID,session);
-                try {
-                    session = new PackageInstaller.Session(iPackageInstaller.openSession(sessionID));
-                    session.abandon();
-                }catch (Exception e){
-                    StringWriter sw = new StringWriter();
-                    e.printStackTrace(new PrintWriter(sw));
-                    System.err.println("InstallAPKS Error : " + sw);
-                }finally {
-                    closeSession(session);
-                }
-
-
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * install apk on android 7.x-11.x
-     *
-     * */
-    public void InstallAPKN(String apkPath, int userId) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-            IPackageInstaller iPackageInstaller = null;
-            try {
-                iPackageInstaller = getIPackageInstaller();
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
-            PackageInstaller.SessionParams params = new PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL);
-            params.installFlags |= getInstallFlags();
-            int sessionId=iPackageInstaller.createSession(params,getInstallerPackageName(),userId);
-            try {
-                PackageInstaller.SessionInfo sessionInfo = iPackageInstaller.getSessionInfo(sessionId);
-                PackageInstaller.Session session = null;
-                InputStream in = null;
-                OutputStream out = null;
-                try {
-                    session = new PackageInstaller.Session(iPackageInstaller.openSession(sessionId));
-                    in = new FileInputStream(apkPath);
-                    out = session.openWrite("package", 0, params.sizeBytes);
-                    byte[] buffer = new byte[65536];
-                    int c;
-                    while ((c = in.read(buffer)) != -1) {
-                        out.write(buffer, 0, c);
-                        if (sessionInfo.sizeBytes > 0) {
-                            final float fraction = ((float) c / (float) sessionInfo.sizeBytes);
-                            session.addProgress(fraction);
-                        }
-                    }
-                    session.fsync(out);
-                } catch (IOException e) {
-                    System.err.println("Error: failed to write; " + e.getMessage());
-                } finally {
-                    closeIO(out);
-                    closeIO(in);
-                    closeSession(session);
-                }
-                try{
-                    doCommintSession(iPackageInstaller,sessionId,session);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }finally {
-                    closeSession(session);
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }finally {
-                if(iPackageInstaller != null){
-                    try{
-                        iPackageInstaller.abandonSession(sessionId);
-                    }catch (Exception e){
-
-                    }
-                }
-            }
-
-        }
-
-    }
-
     public int getComponentEnabledSetting(ComponentName componentName, int userId){
         IPackageManager iPackageManager = getIPackageManager();
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
@@ -388,62 +255,109 @@ public class PackageAPI extends  baseAPI implements Serializable {
         }
     }
 
-    private void closeIO(Closeable out) throws IOException {
-        if(out != null){
-            out.close();
-        }
-    }
-
-    /**
-     * install apk on android 4.4-6.0
-     *
-     * */
-    public void InstallAPKKLM(String apkPath , int userId){
-        int installFlags = INSTALL_ALL_USERS;
-        installFlags |= getInstallFlags();
-        IPackageManager iPackageManager = getIPackageManager();
-        VerificationParams verificationParams = new VerificationParams(null,
-                null, null, VerificationParams.NO_UID, null);
-        Uri uri = Uri.fromFile(new File(apkPath));
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
-            PackageInstallObserver obs = new PackageInstallObserver();
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
-                iPackageManager.installPackage(uri,obs,installFlags,null);
-            } else if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1){
-                iPackageManager.installPackageWithVerification(uri,obs,installFlags,null,null,null,null);
-            } else {
-                iPackageManager.installPackageWithVerificationAndEncryption(uri,obs,installFlags,null,verificationParams,null);
-            }
-            synchronized (obs) {
-                while (!obs.finished) {
-                    try {
-                        obs.wait();
-                    } catch (InterruptedException e) {
-                    }
-                }
-            }
-        }else{
-            LocalPackageInstallObserver obs = new LocalPackageInstallObserver();
-            iPackageManager.installPackageAsUser(apkPath,obs.getBinder(),installFlags,null,verificationParams,null,userId);
-            synchronized (obs) {
-                while (!obs.finished) {
-                    try {
-                        obs.wait();
-                    } catch (InterruptedException e) {
-                    }
-                }
-            }
-        }
-    }
-
-
     public void InstallAPK(String apkPath, int userId){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-            InstallAPKS(apkPath,userId);
-        }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-            InstallAPKN(apkPath,userId);
-        }else{
-            InstallAPKKLM(apkPath,userId);
+        PackageInstaller packageInstaller;
+        PackageInstaller.Session session = null;
+        StringBuilder res = new StringBuilder();
+        String installerPackageName;
+        String installerAttributionTag = null;
+        boolean isRoot;
+
+        try {
+            IPackageInstaller _packageInstaller = getIPackageInstaller();
+            isRoot = Shizuku.getUid() == 0;
+
+            // the reason for use "com.android.shell" as installer package under adb is that getMySessions will check installer package's owner
+            installerPackageName = getInstallerPackageName();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                installerAttributionTag = null;
+            }
+            userId = isRoot ? Process.myUserHandle().hashCode() : 0;
+            packageInstaller = PackageInstallerUtils.createPackageInstaller(_packageInstaller, installerPackageName, installerAttributionTag, userId);
+            int sessionId;
+            res.append("createSession: ");
+
+            PackageInstaller.SessionParams params = new PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL);
+            int installFlags = getInstallFlags();
+            installFlags |= 0x00000004/*PackageManager.INSTALL_ALLOW_TEST*/ | 0x00000002/*PackageManager.INSTALL_REPLACE_EXISTING*/;
+            PackageInstallerUtils.setInstallFlags(params, installFlags);
+
+            sessionId = packageInstaller.createSession(params);
+            res.append(sessionId).append('\n');
+
+            res.append('\n').append("write: ");
+
+            IPackageInstallerSession _session = IPackageInstallerSession.Stub.asInterface(new ShizukuBinderWrapper(_packageInstaller.openSession(sessionId).asBinder()));
+            session = PackageInstallerUtils.createSession(_session);
+
+            InputStream is = new FileInputStream(new File(apkPath));
+            OutputStream os = session.openWrite("package", 0, -1);
+
+            byte[] buf = new byte[8192];
+            int len;
+            try {
+                while ((len = is.read(buf)) > 0) {
+                    os.write(buf, 0, len);
+                    os.flush();
+                    session.fsync(os);
+                }
+            } finally {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            Thread.sleep(100);
+            res.append('\n').append("commit: ");
+
+            Intent[] results = new Intent[]{null};
+            CountDownLatch countDownLatch = new CountDownLatch(1);
+            IntentSender intentSender = IntentSenderUtils.newInstance(new IIntentSenderAdaptor() {
+
+                @Override
+                public void send(int code, Intent intent, String resolvedType, IIntentReceiver finishedReceiver, String requiredPermission, Bundle options) {
+                    send(intent);
+                }
+
+                @Override
+                public void send(int code, Intent intent, String resolvedType, IBinder whitelistToken, IIntentReceiver finishedReceiver, String requiredPermission, Bundle options) {
+                    send(intent);
+                }
+
+                @Override
+                public void send(Intent intent) {
+                    results[0] = intent;
+                    countDownLatch.countDown();
+                }
+            });
+            session.commit(intentSender);
+
+            countDownLatch.await();
+            Intent result = results[0];
+            int status = result.getIntExtra(PackageInstaller.EXTRA_STATUS, PackageInstaller.STATUS_FAILURE);
+            String message = result.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE);
+            res.append('\n').append("status: ").append(status).append(" (").append(message).append(")");
+
+        } catch (Throwable tr) {
+            tr.printStackTrace();
+            res.append(tr);
+        } finally {
+            if (session != null) {
+                try {
+                    session.close();
+
+                } catch (Throwable tr) {
+                    res.append(tr);
+                }
+            }
         }
     }
 
@@ -460,33 +374,7 @@ public class PackageAPI extends  baseAPI implements Serializable {
         }
     }
 
-    public void UninstallPKGByDevice(String pkgname ,int uid){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-            try {
-                int flags = 0;
-
-                //加上这个flag,会删除所有用户下的应用。,非必要不需要加
-//                flags |= DELETE_ALL_USERS;
-                IPackageManager iPackageManager = IPackageManager.Stub.asInterface(new easyManagerBinderWrapper(ServiceManager.getService("package")));
-                IPackageInstaller iPackageInstaller = IPackageInstaller.Stub.asInterface(new easyManagerBinderWrapper(iPackageManager.getPackageInstaller().asBinder()));
-                LocalIntentReceiver r = new LocalIntentReceiver();
-                int flags2 = Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1 ? 0 : MATCH_STATIC_SHARED_AND_SDK_LIBRARIES;
-                PackageInfo packageInfo = getPackageInfo(pkgname,getTranslatedUserId(),flags2);
-                if((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0){
-                    flags |= DELETE_SYSTEM_APP;
-                }
-                String callerPackageName = "com.easymanager";
-                iPackageInstaller.uninstall(new VersionedPackage(pkgname,
-                                -1), callerPackageName, flags,
-                        r.getIntentSender(), uid);
-                resultLocalIntent(r);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void UninstallPKG(String pkgname ,int uid){
+     public void UninstallPKG(String pkgname ,int uid){
         UninstallPKG(pkgname,uid,-1);
     }
 
@@ -525,9 +413,15 @@ public class PackageAPI extends  baseAPI implements Serializable {
                     flags |= DELETE_SYSTEM_APP;
                 }
 
+                String callerPackageName = null;
+
+                if(DhizukuSystemServerApi.isDhizuku()){
+                    callerPackageName = DhizukuSystemServerApi.getDhizukuComponentName();
+                }
+
                 if (sdkInt >= Build.VERSION_CODES.O) {
                     iPackageInstaller.uninstall(new VersionedPackage(pkgname,
-                                    versionCode), null /*callerPackageName*/, flags,
+                                    versionCode), callerPackageName, flags,
                             r.getIntentSender(), userId);
 //                    resultLocalIntent(r);
                 }else if(sdkInt >= Build.VERSION_CODES.M){
@@ -536,7 +430,7 @@ public class PackageAPI extends  baseAPI implements Serializable {
                      * 是可以正常处理提交得操作请求，故而，需要修改一下这部分得处理逻辑，不应该提交完操作后，就
                      * 被迫强制终止服务，如果是root模式，应该要自动重启服务
                      * */
-                    iPackageInstaller.uninstall(pkgname,null,flags,r.getIntentSender(),userId);
+                    iPackageInstaller.uninstall(pkgname,callerPackageName,flags,r.getIntentSender(),userId);
                     if(sdkInt >= Build.VERSION_CODES.N){
                         resultLocalIntent(r);//安卓6.0以及以下版本不能调用这个，不然会跟以上高版本安卓产生冲突
                     }
@@ -550,24 +444,6 @@ public class PackageAPI extends  baseAPI implements Serializable {
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public IUsageStatsManager getIUsageStatsManager(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            IUsageStatsManager manager = I_USAGE_STATS_MANAGER_CACHE.get("iusmservice");
-            if(manager == null){
-                Singleton<IUsageStatsManager> iUsageStatsManagerSingleton = new Singleton<IUsageStatsManager>() {
-                    @Override
-                    protected IUsageStatsManager create() {
-                        return IUsageStatsManager.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService(Context.USAGE_STATS_SERVICE)));
-                    }
-                };
-                manager = iUsageStatsManagerSingleton.get();
-                I_USAGE_STATS_MANAGER_CACHE.put("iusmservice",manager);
-            }
-            return manager;
-        }
-        return null;
     }
 
     public int checkPermission(String pkgname , String permission_str, int uid){
@@ -870,7 +746,7 @@ public class PackageAPI extends  baseAPI implements Serializable {
         List<UserInfo> ll = null;
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN){
             IUserManager iUserManager = getIUserManager();
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
                 ll = iUserManager.getUsers(false, false, false);
             }else{
                 ll = iUserManager.getUsers(false);
@@ -1015,43 +891,6 @@ public class PackageAPI extends  baseAPI implements Serializable {
         }
     }
 
-    class LocalPackageInstallObserver extends android.app.PackageInstallObserver {
-        boolean finished;
-        int result;
-        String extraPermission;
-        String extraPackage;
-
-        @Override
-        public void onPackageInstalled(String name, int status, String msg, Bundle extras) {
-            synchronized (this) {
-                finished = true;
-                result = status;
-                if (status == INSTALL_FAILED_DUPLICATE_PERMISSION) {
-//                    extraPermission = extras.getString(EXTRA_FAILURE_EXISTING_PERMISSION);
-//                    extraPackage = extras.getString(EXTRA_FAILURE_EXISTING_PACKAGE);
-                }
-                notifyAll();
-            }
-        }
-    }
-
-    class PackageInstallObserver extends IPackageInstallObserver.Stub {
-        boolean finished;
-        int result;
-
-        public void packageInstalled(String name, int status) {
-            synchronized( this) {
-                finished = true;
-                result = status;
-                notifyAll();
-            }
-        }
-
-        @Override
-        public IBinder asBinder() {
-            return this;
-        }
-    }
 
     class PackageDeleteObserver extends IPackageDeleteObserver.Stub {
         boolean finished;
@@ -1152,50 +991,5 @@ public class PackageAPI extends  baseAPI implements Serializable {
         return false;
     }
 
-    private boolean isAllowPKG(String pkgname){
-        for (String s : allowPkgs()) {
-            if(pkgname.equals(s)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private String[] allowPkgs() {
-        return new String[]{
-                "android",
-                "android.ext.services",
-                "android.ext.shared",
-                "com.android.bluetooth",
-                "com.android.htmlviewer",
-                "com.android.inputdevices",
-                "com.android.shell",
-                "com.android.certinstaller",
-                "com.android.externalstorage",
-                "com.android.providers.contacts",
-                "com.android.providers.downloads",
-                "com.android.providers.media",
-                "com.android.providers.settings",
-                "com.android.providers.userdictionary",
-                "com.android.server.telecom",
-                "com.android.packageinstaller",
-                "com.android.settings",
-                "com.android.providers.telephony",
-                "com.android.mms.service",
-                "com.android.webview",
-                "com.android.location.fused",
-                "com.android.cts.priv.ctsshim",
-                "com.android.statementservice",
-                "com.android.defcontainer",
-                "com.android.keychain",
-                "com.android.proxyhandler",
-                "com.android.dreams.basic",
-                "com.android.printspooler",
-                "com.android.pacprocessor",
-                "com.android.providers.downloads.ui",
-                "com.google.android.webview",
-                "com.lenovo.lsf"
-        };
-    }
 
 }

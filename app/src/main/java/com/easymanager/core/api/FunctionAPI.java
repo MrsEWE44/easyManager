@@ -5,8 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 
 import com.easymanager.core.server.Singleton;
-import com.easymanager.core.server.easyManagerBinderWrapper;
-import com.easymanager.core.server.easyManagerPortService;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -15,6 +13,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import rikka.shizuku.ShizukuBinderWrapper;
+import rikka.shizuku.SystemServiceHelper;
 
 public class FunctionAPI extends baseAPI implements Serializable {
 
@@ -28,13 +29,16 @@ public class FunctionAPI extends baseAPI implements Serializable {
         if(iDevicePolicyManager != null && iDevicePolicyManager.asBinder().isBinderAlive()){
             return iDevicePolicyManager;
         }
-        Singleton<IDevicePolicyManager> iUserManagerSingleton = new Singleton<IDevicePolicyManager>() {
+
+        Singleton<IDevicePolicyManager> iDevicePolicyManagerSingleton = new Singleton<IDevicePolicyManager>() {
             @Override
             protected IDevicePolicyManager create() {
-                return IDevicePolicyManager.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService(Context.DEVICE_POLICY_SERVICE)));
+                IDevicePolicyManager bin = IDevicePolicyManager.Stub.asInterface(SystemServiceHelper.getSystemService(Context.DEVICE_POLICY_SERVICE));
+                return IDevicePolicyManager.Stub.asInterface(new ShizukuBinderWrapper(bin.asBinder()));
             }
         };
-        iDevicePolicyManager = iUserManagerSingleton.get();
+
+        iDevicePolicyManager = iDevicePolicyManagerSingleton.get();
         I_DEVICE_POLICY_MANAGER_CACHE.put("idpmservice",iDevicePolicyManager);
         return iDevicePolicyManager;
     }

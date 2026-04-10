@@ -2,6 +2,8 @@ package android.os;
 
 import android.content.pm.UserInfo;
 
+import androidx.annotation.RequiresApi;
+
 import java.util.List;
 
 public interface IUserManager extends IInterface {

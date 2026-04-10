@@ -73,7 +73,7 @@ public class ManagerGrantUserAdapter extends BaseAdapter {
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     switbs.set(position,b);
                     mguilsb.setChecked(switbs.get(position));
-                    new easyManagerUtils().changeGrantUserState(pkginfo.getPkgname());
+//                    new easyManagerUtils().changeGrantUserState(pkginfo.getPkgname());
                 }
             });
         }

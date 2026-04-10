@@ -20,7 +20,7 @@ import com.easymanager.utils.dialog.NetUtilsDialog;
 
 public class HelpFragmentLayout extends Fragment {
 
-    private Boolean isRoot, isADB,isDevice;
+    private Boolean isShizuku,isDhizuku;
     private int uid;
 
     private Context context;
@@ -33,10 +33,9 @@ public class HelpFragmentLayout extends Fragment {
     public HelpFragmentLayout() {
     }
 
-    public HelpFragmentLayout(Boolean isRoot, Boolean isADB ,Boolean isDevice, int uid) {
-        this.isRoot = isRoot;
-        this.isADB = isADB;
-        this.isDevice = isDevice;
+    public HelpFragmentLayout(Boolean isShizuku, Boolean isDhizuku , int uid) {
+        this.isShizuku = isShizuku;
+        this.isDhizuku = isDhizuku;
         this.uid = uid;
     }
 
@@ -91,19 +90,19 @@ public class HelpFragmentLayout extends Fragment {
 
     private void initBtColor(){
 
-        ot.setBtColor(hflcheckupdate,false,false,false,isRoot,isADB,isDevice);
-        ot.setBtColor(hflcleanfile,true,true,false,isRoot,isADB,isDevice);
-        ot.setBtColor(hflopengithub,false,false,false,isRoot,isADB,isDevice);
-        ot.setBtColor(hflopengitee,false,false,false,isRoot,isADB,isDevice);
+        ot.setBtColor(hflcheckupdate,false,false,isShizuku,isDhizuku);
+        ot.setBtColor(hflcleanfile,true,true,isShizuku,isDhizuku);
+        ot.setBtColor(hflopengithub,false,false,isShizuku,isDhizuku);
+        ot.setBtColor(hflopengitee,false,false,isShizuku,isDhizuku);
     }
 
 
     private ExpandableListAdapter getadapter() {
 
         return  new BaseExpandableListAdapter() {
-            private String[] parn = new String[]{getLanStr(R.string.help_question_1), getLanStr(R.string.help_question_2), getLanStr(R.string.help_question_3), getLanStr(R.string.help_question_4)};
+            private String[] parn = new String[]{getLanStr(R.string.help_question_1), getLanStr(R.string.help_question_2),};
             // 每个列表下面的子列表字符数组
-            private String[] child = new String[]{getLanStr(R.string.help_question_1_reply), getLanStr(R.string.help_question_2_reply), getLanStr(R.string.help_question_3_reply), getLanStr(R.string.help_question_4_reply)};
+            private String[] child = new String[]{getLanStr(R.string.help_question_1_reply), getLanStr(R.string.help_question_2_reply)};
 
             @Override
             public boolean isChildSelectable(int groupPosition, int childPosition) {

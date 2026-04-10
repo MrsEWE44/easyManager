@@ -1,17 +1,21 @@
 plugins {
     id 'com.android.application'
 }
-
+configurations {
+    all {
+        exclude group: 'androidx.annotation', module: 'annotation'
+    }
+}
 android {
     namespace 'com.easymanager'
     compileSdk 36
 
     defaultConfig {
         applicationId "com.easymanager"
-        minSdk 24
+        minSdk 26
         targetSdk 36
         versionCode 17
-        versionName "2.0.0"
+        versionName "2.0.0beta"
 
     }
 
@@ -24,11 +28,16 @@ android {
 
     buildTypes {
         release {
-//            minifyEnabled true
-//            shrinkResources true
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    buildFeatures {
+        buildConfig = true
+        aidl true
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -37,9 +46,12 @@ android {
 }
 
 dependencies {
-    //引入apache开源压缩包依赖，如果需要使用xz、lzma,需要额外引入org.tukaani:xz依赖
-    implementation 'org.tukaani:xz:1.9'
-    // https://mvnrepository.com/artifact/org.apache.commons/commons-compress
-    implementation 'org.apache.commons:commons-compress:1.14'
+
+    implementation "dev.rikka.shizuku:api:13.1.5"
+
+// Add this line if you want to support Shizuku
+    implementation "dev.rikka.shizuku:provider:13.1.5"
+    implementation "io.github.iamr0s:Dhizuku-API:2.5.4"
+    implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:6.1'
 
 }

@@ -27,10 +27,7 @@ public class HelpDialogUtils extends DialogBaseUtils {
                 case AppManagerEnum.APP_DISABLE_COMPENT:
                     msg = tu.getLanguageString(context,R.string.show_help_getAppDsiableCompentHELP);
                     break;
-                case AppManagerEnum.APP_FIREWALL:
-                    msg = tu.getLanguageString(context,R.string.show_help_getAppFirewallHELP);
-                    break;
-                case AppManagerEnum.APP_INSTALL_LOCAL_FILE:
+                 case AppManagerEnum.APP_INSTALL_LOCAL_FILE:
                     msg = tu.getLanguageString(context,R.string.show_help_getAppInstallLocalFileHELP);
                     break;
                 case AppManagerEnum.APP_DUMP:
@@ -41,18 +38,6 @@ public class HelpDialogUtils extends DialogBaseUtils {
                     break;
                 case AppManagerEnum.APP_CLEAN_PROCESS:
                     msg = tu.getLanguageString(context,R.string.show_help_getAppClenProcessHELP);
-                    break;
-                case AppManagerEnum.APP_BACKUP:
-                    msg = tu.getLanguageString(context,R.string.show_help_getAppBackupHELP);
-                    break;
-                case AppManagerEnum.APP_RESTORY:
-                    msg = tu.getLanguageString(context,R.string.show_help_getAppRestoryHELP);
-                    break;
-                case AppManagerEnum.MOUNT_LOCAL_IMG:
-                    msg = tu.getLanguageString(context,R.string.show_help_getMountLocalImgHELP);
-                    break;
-                case AppManagerEnum.CREATE_IMG:
-                    msg = tu.getLanguageString(context,R.string.show_help_getCreateImgHELP);
                     break;
                 case AppManagerEnum.SET_NTP:
                     msg = tu.getLanguageString(context,R.string.show_help_getSetNTPHELP);

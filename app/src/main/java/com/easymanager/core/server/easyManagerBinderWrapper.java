@@ -1,63 +1,68 @@
 package com.easymanager.core.server;
 
-import android.os.IBinder;
-import android.os.IInterface;
-import android.os.Parcel;
+import android.content.pm.PackageManager;
 import android.os.RemoteException;
 
-import java.io.FileDescriptor;
-import java.util.Objects;
+import com.easymanager.BuildConfig;
+import com.rosan.dhizuku.api.Dhizuku;
+import com.rosan.dhizuku.api.DhizukuRequestPermissionListener;
 
-public class easyManagerBinderWrapper implements IBinder {
+import rikka.shizuku.Shizuku;
+import rikka.sui.Sui;
 
-    private final  IBinder ori;
+public class easyManagerBinderWrapper {
 
-    public easyManagerBinderWrapper(IBinder ori2) {
-        this.ori = Objects.requireNonNull(ori2);
+    public static boolean isShizuku(){
+        Sui.init(BuildConfig.APPLICATION_ID);
+        if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }else{
+            int requestCode1 = 6667;
+            Shizuku.OnRequestPermissionResultListener listener = new Shizuku.OnRequestPermissionResultListener() {
+                @Override
+                public void onRequestPermissionResult(int requestCode, int grantResult) {
+                    if(requestCode1 != requestCode){
+                        return;
+                    }else{
+                        if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED){
+                            System.out.println("sui/shizuku permission accept");
+                        } else {
+                            System.out.println("sui/shizuku permission denied");
+                        }
+                    }
+                }
+            };
+            Shizuku.addRequestPermissionResultListener(listener);
+            try {
+                Shizuku.requestPermission(requestCode1);
+            }catch (Exception e){
+                Shizuku.removeRequestPermissionResultListener(listener);
+            }
+
+
+        }
+
+
+        return false;
     }
 
-    @Override
-    public String getInterfaceDescriptor() throws RemoteException {
-        return ori.getInterfaceDescriptor();
+    public static boolean isDhizuku(){
+        Dhizuku.init();
+        if(Dhizuku.isPermissionGranted()){
+            return true;
+        }else{
+            Dhizuku.requestPermission(new DhizukuRequestPermissionListener() {
+                @Override
+                public void onRequestPermission(int grantResult) throws RemoteException {
+                    if (grantResult == PackageManager.PERMISSION_GRANTED){
+                        System.out.println("dhizuku is granted");
+                    }else{
+                        System.out.println("dhizuku is not granted");
+                    }
+                }
+            });
+        }
+        return false;
     }
 
-    @Override
-    public boolean pingBinder() {
-        return ori.pingBinder();
-    }
-
-    @Override
-    public boolean isBinderAlive() {
-        return ori.isBinderAlive();
-    }
-
-    @Override
-    public IInterface queryLocalInterface(String s) {
-        return ori.queryLocalInterface(s);
-    }
-
-    @Override
-    public void dump(FileDescriptor fileDescriptor, String[] strings) throws RemoteException {
-        ori.dump(fileDescriptor,strings);
-    }
-
-    @Override
-    public void dumpAsync(FileDescriptor fileDescriptor, String[] strings) throws RemoteException {
-        ori.dumpAsync(fileDescriptor, strings);
-    }
-
-    @Override
-    public boolean transact(int i, Parcel parcel, Parcel parcel1, int i1) throws RemoteException {
-        return ori.transact(i, parcel, parcel1, i1);
-    }
-
-    @Override
-    public void linkToDeath(DeathRecipient deathRecipient, int i) throws RemoteException {
-        ori.linkToDeath(deathRecipient, i);
-    }
-
-    @Override
-    public boolean unlinkToDeath(DeathRecipient deathRecipient, int i) {
-        return ori.unlinkToDeath(deathRecipient, i);
-    }
 }

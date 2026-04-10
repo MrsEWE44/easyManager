@@ -15,7 +15,6 @@ import com.easymanager.R;
 import com.easymanager.adapters.AppInfoAdapter;
 import com.easymanager.adapters.GeneralAdapter;
 import com.easymanager.adapters.PKGINFOAdapter;
-import com.easymanager.core.utils.CMD;
 import com.easymanager.entitys.PKGINFO;
 import com.easymanager.utils.FileTools;
 import com.easymanager.utils.PackageUtils;
@@ -62,20 +61,6 @@ public class DialogUtils extends DialogBaseUtils {
             }
         }).start();
     }
-
-
-    public void runCMDDialog(Context context, String cmdstr){
-        ProgressDialog show = showMyDialog(context,tu.getLanguageString(context,R.string.execute_cmd));
-        Handler handler = dismissDialogHandler(0,show);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                CMD cmd = easyMUtils.getServerStatus() ? easyMUtils.runCMD(cmdstr) : new CMD(cmdstr,false);
-                sendHandlerMSG(handler,0);
-            }
-        }).start();
-    }
-
 
     public void sendHandlerMSG(Handler handler , int value){
         Message msg = new Message();
@@ -153,12 +138,8 @@ public class DialogUtils extends DialogBaseUtils {
                     case 1:
                         // 隐藏当前下载对话框
                         permittedDismissDialog(alertDialog);
-                        if(easyMUtils.isDead() && !easyMUtils.getSkipError()){
-                            showInfoMsg(context,tu.getLanguageString(context,R.string.error_tips),easyMUtils.getERRORMSG());
-                            easyMUtils.dead();
-                        }else {
-                            showInfoMsg(context,tu.getLanguageString(context,R.string.tips),tu.getLanguageString(context,R.string.its_ok_msg));
-                        }
+                        showInfoMsg(context,tu.getLanguageString(context,R.string.tips),tu.getLanguageString(context,R.string.its_ok_msg));
+
                         break;
                     case 2:
                         PKGINFO pkginfo = (PKGINFO) msg.obj;

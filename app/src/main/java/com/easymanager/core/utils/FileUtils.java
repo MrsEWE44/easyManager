@@ -1,8 +1,7 @@
 package com.easymanager.core.utils;
 
-import android.content.Context;
 
-import com.easymanager.mylife.startAdbService;
+import android.content.Context;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -49,6 +48,18 @@ public class FileUtils {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public String getModeConfigFilePath(Context context){
+        return context.getFilesDir().getPath()+"/runmode";
+    }
+
+    public void writeMode(Context context, String mode){
+        writeDataToPath(mode,getModeConfigFilePath(context),false);
+    }
+
+    public String readMode(Context context){
+        return readFileToPath(getModeConfigFilePath(context)).trim();
     }
 
     //复制文件
@@ -99,27 +110,27 @@ public class FileUtils {
     }
 
     //需要解决kernel su环境下无法备份跟恢复软件
-    public String getActiveADBScript(Context context){
-        String str = "killall EAMADB\n" +
-                "exec app_process -Djava.class.path=\""+context.getApplicationInfo().sourceDir+"\" /system/bin --nice-name=EAMADB "+ startAdbService.class.getName()+" >>/dev/null 2>&1 &\n" +
-                "echo \"running ok [adb]\"";
+//    public String getActiveADBScript(Context context){
 //        String str = "killall EAMADB\n" +
-//                "exec app_process -Djava.class.path=\""+context.getApplicationInfo().sourceDir+"\" /system/bin --nice-name=EAMADB "+ startAdbService.class.getName()+"\n" +
+//                "exec app_process -Djava.class.path=\""+context.getApplicationInfo().sourceDir+"\" /system/bin --nice-name=EAMADB "+ startAdbService.class.getName()+" >>/dev/null 2>&1 &\n" +
 //                "echo \"running ok [adb]\"";
-        return str;
-    }
+////        String str = "killall EAMADB\n" +
+////                "exec app_process -Djava.class.path=\""+context.getApplicationInfo().sourceDir+"\" /system/bin --nice-name=EAMADB "+ startAdbService.class.getName()+"\n" +
+////                "echo \"running ok [adb]\"";
+//        return str;
+//    }
 
-    public Boolean writeActiveADBScript(Context context,String path,String name){
-        File file = new File(path);
-        if(!file.exists()){
-            file.mkdirs();
-        }
-        File file1 = new File(path + "/" + name);
-        if(file1.exists()){
-            file1.delete();
-        }
-        return writeDataToPath(getActiveADBScript(context),file1.getPath(),false);
-    }
+//    public Boolean writeActiveADBScript(Context context,String path,String name){
+//        File file = new File(path);
+//        if(!file.exists()){
+//            file.mkdirs();
+//        }
+//        File file1 = new File(path + "/" + name);
+//        if(file1.exists()){
+//            file1.delete();
+//        }
+//        return writeDataToPath(getActiveADBScript(context),file1.getPath(),false);
+//    }
 
 
     public String findFiles(File file, String fileName) {

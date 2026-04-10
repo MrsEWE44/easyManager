@@ -83,9 +83,6 @@ public class PackageDialog extends DialogUtils {
                                 easyMUtils.setComponentOrPackageEnabledState(new TransmissionEntity(pkginfo.getPkgname()+"/"+pkginfo.getAppname(),null,reqpkg,pkginfo.getApkpath().equals("true")?PackageAPI.COMPONENT_ENABLED_STATE_DISABLED:PackageAPI.COMPONENT_ENABLED_STATE_ENABLED,uid));
                             }
                             break;
-                        case AppManagerEnum.APP_FIREWALL:
-                            easyMUtils.setFirewallState(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,APP_PERMIS_INDEX,uid));
-                            break;
                         case AppManagerEnum.APP_INSTALL_LOCAL_FILE:
                             easyMUtils.installAPK(new TransmissionEntity(pkginfo.getApkpath(),null,reqpkg,0,uid));
                             break;
@@ -119,20 +116,7 @@ public class PackageDialog extends DialogUtils {
                                 if(APP_PERMIS_INDEX == 0){
                                     easyMUtils.killpkg(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg, easyManagerEnums.KILL_PROCESS,uid));
                                 }
-
-                                if(APP_PERMIS_INDEX == 1){
-                                    easyMUtils.addRunningAPPS(new TransmissionEntity(pkginfo.getPkgname(),opt_str,reqpkg,easyManagerEnums.ADD_RUNNING_PACKAGE,uid));
-                                }
-
                             }
-                            break;
-                        case AppManagerEnum.APP_BACKUP:
-                            String oop = opt_str+"---"+pkginfo.getApkpath()+"---"+sdpath;
-                            easyMUtils.backupApk(new TransmissionEntity(pkginfo.getPkgname(), oop,reqpkg,APP_PERMIS_INDEX,uid));
-                            break;
-                        case AppManagerEnum.APP_RESTORY:
-                            String oop2 = opt_str+"---"+sdpath;
-                            easyMUtils.restoryApp(new TransmissionEntity(pkginfo.getPkgname(), oop2,reqpkg,APP_PERMIS_INDEX,uid));
                             break;
                         case AppManagerEnum.APP_CLONE_REMOVE:
                             easyMUtils.removeAppClone(context,Integer.valueOf(pkginfo.getPkgname()));
@@ -166,11 +150,6 @@ public class PackageDialog extends DialogUtils {
             msg=tu.getLanguageString(context,R.string.apply_app_compat_msg);
         }
 
-        if(appPermission == AppManagerEnum.APP_FIREWALL){
-            title=tu.getLanguageString(context,R.string.apply_app_network_title);
-            msg=tu.getLanguageString(context,R.string.apply_app_network_msg);
-        }
-
         if(appPermission == AppManagerEnum.APP_INSTALL_LOCAL_FILE){
             title=tu.getLanguageString(context,R.string.apply_app_install_title);
             msg=tu.getLanguageString(context,R.string.apply_app_install_msg);
@@ -179,16 +158,6 @@ public class PackageDialog extends DialogUtils {
         if(appPermission == AppManagerEnum.APP_UNINSTALL){
             title=tu.getLanguageString(context,R.string.apply_app_uninstall_title);
             msg=tu.getLanguageString(context,R.string.apply_app_uninstall_msg);
-        }
-
-        if(appPermission == AppManagerEnum.APP_RESTORY){
-            title=tu.getLanguageString(context,R.string.apply_app_restory_title);
-            msg=tu.getLanguageString(context,R.string.apply_app_restory_msg);
-        }
-
-        if(appPermission == AppManagerEnum.APP_BACKUP){
-            title=tu.getLanguageString(context,R.string.apply_app_backup_title);
-            msg=tu.getLanguageString(context,R.string.apply_app_backup_msg);
         }
 
         if(appPermission == AppManagerEnum.APP_CLEAN_PROCESS){

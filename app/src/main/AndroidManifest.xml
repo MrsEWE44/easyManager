@@ -24,8 +24,6 @@
 
         <activity android:name=".activitys.AppManagerLayoutActivity"/>
         <activity android:name=".activitys.AppInfoLayoutActivity"/>
-        <activity android:name=".activitys.UsbModeLayoutActivity"/>
-        <activity android:name=".activitys.CreateImgLayoutActivity"/>
         <activity android:name=".activitys.FileSharedLayoutActivity"/>
         <activity android:name=".activitys.AppCloneLayoutActivity"/>
         <activity android:name=".activitys.RunCommandLayoutActivity"/>
@@ -50,7 +48,15 @@
             </intent-filter>
         </receiver>
 
+        <provider
+            android:name="rikka.shizuku.ShizukuProvider"
+            android:authorities="${applicationId}.shizuku"
+            android:multiprocess="false"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
 
+        <!-- android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" is to protect this provider from accessing by normal apps -->
 
     </application>
 
@@ -67,6 +73,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES"/>
+    <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES"/>
+    <uses-permission android:name="android.permission.MANAGE_USERS"/>
     <uses-permission android:name="android.permission.INSTALL_PACKAGES"
         tools:ignore="ProtectedPermissions" />
     <uses-permission

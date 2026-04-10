@@ -7,8 +7,6 @@ import android.os.Build;
 import com.android.internal.app.IAppOpsService;
 import com.easymanager.core.enums.AppopsPermissionStr;
 import com.easymanager.core.server.Singleton;
-import com.easymanager.core.server.easyManagerBinderWrapper;
-import com.easymanager.core.server.easyManagerPortService;
 import com.easymanager.entitys.MyAppopsInfo;
 
 import java.util.ArrayList;
@@ -16,28 +14,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import rikka.shizuku.ShizukuBinderWrapper;
+import rikka.shizuku.SystemServiceHelper;
+
 public class AppopsAPI extends baseAPI{
 
-    private static final Map<String, IAppOpsService> I_APP_OPS_SERVICE_CACHE = new HashMap<>();
     private PackageAPI packageAPI = new PackageAPI();
     private AppopsPermissionStr aps = new AppopsPermissionStr();
     public IAppOpsService getIAppOpsService(){
-        IAppOpsService iAppOpsService = I_APP_OPS_SERVICE_CACHE.get("iappservice");
-        if(iAppOpsService == null){
-            Singleton<IAppOpsService> iAppOpsServiceSingleton = new Singleton<IAppOpsService>() {
-                @Override
-                protected IAppOpsService create() {
-                    return IAppOpsService.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService(Context.APP_OPS_SERVICE)));
-                }
-            };
-            iAppOpsService = iAppOpsServiceSingleton.get();
-            I_APP_OPS_SERVICE_CACHE.put("iappservice",iAppOpsService);
+        IAppOpsService iAppOpsService = null;
+        if(ShizukuSystemServerApi.isShizuku()){
+            iAppOpsService = ShizukuSystemServerApi.APPOPS_SERVICE.get();
         }
+
+        if(DhizukuSystemServerApi.isDhizuku()){
+            iAppOpsService = DhizukuSystemServerApi.APPOPS_SERVICE.get();
+        }
+
         return iAppOpsService;
     }
-
-
-
 
     public void setModeCore(String pkgname,String modestr,int mode2,int uid){
         int modeInt = getModeInt(modestr);

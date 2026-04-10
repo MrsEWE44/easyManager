@@ -51,7 +51,7 @@ public class CMD implements Serializable {
 
     //默认以root身份运行命令
     public CMD(String cmd){
-        this(cmd,true);
+        this(cmd,false);
     }
 
     //获取执行完命令后的状态码
@@ -69,4 +69,3 @@ public class CMD implements Serializable {
     }
 
 }
-

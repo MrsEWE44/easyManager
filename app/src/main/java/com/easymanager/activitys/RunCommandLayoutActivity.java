@@ -1,7 +1,6 @@
 package com.easymanager.activitys;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.easymanager.R;
-import com.easymanager.adapters.RunCMDFilterAdapter;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
 import com.easymanager.utils.base.DialogUtils;
@@ -26,14 +24,11 @@ import com.easymanager.utils.easyManagerUtils;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 
 public class RunCommandLayoutActivity extends Activity {
 
     private Context context;
     private Activity activity;
-
-    private ArrayList<String> mycmd = new ArrayList<>();
 
     private String cmdresult;
     private boolean isRoot,isADB;
@@ -68,13 +63,10 @@ public class RunCommandLayoutActivity extends Activity {
         rclstopcmdbt = findViewById(R.id.rclstopcmdbt);
         rclet1 = findViewById(R.id.rclet1);
         rcltv1 = findViewById(R.id.rcltv1);
-        rcltv1.setText(eu.isROOT()?"# ":"$ ");
+        rcltv1.setText("$ ");
         rclet1.setKeyListener(null);
         isStop = false;
         btClicked();
-        if(isRoot || isADB){
-            scanLocalCMDFile();
-        }
         new HelpDialogUtils().showHelp(context,HelpDialogUtils.RUN_COMMAND_HELP,mode);
     }
 
@@ -164,43 +156,6 @@ public class RunCommandLayoutActivity extends Activity {
         });
 
     }
-
-    private void scanLocalCMDFile(){
-        try {
-            //需要实现自定义规则匹配,匹配自动列出来的内容
-            ProgressDialog myDialog = du.showMyDialog(context, getString(R.string.general_loading));
-            Handler handler = new Handler(){
-                @Override
-                public void handleMessage(Message msg) {
-                    if(msg.what==0){
-                        RunCMDFilterAdapter adapter = new RunCMDFilterAdapter(mycmd,context);
-                        rclactv1.setAdapter(adapter);
-                        myDialog.dismiss();
-                    }
-                }
-            };
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    String getenv = System.getenv("PATH");
-                    if(getenv != null){
-                        String[] split = getenv.split(":");
-                        if(split != null && split.length > 0){
-                            for (String s : split) {
-                                mycmd.addAll(eu.getPathALLFiles(context, s, uid));
-                            }
-                        }
-                    }
-                    du.sendHandlerMSG(handler,0);
-                }
-            });
-            t.start();
-            t.join();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

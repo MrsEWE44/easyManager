@@ -1,36 +1,43 @@
 package com.easymanager;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
-import com.easymanager.core.entity.TransmissionEntity;
-import com.easymanager.core.utils.CMD;
+import com.easymanager.core.api.DhizukuSystemServerApi;
+import com.easymanager.core.api.ShizukuSystemServerApi;
+import com.easymanager.core.utils.FileUtils;
 import com.easymanager.fragment.HelpFragmentLayout;
 import com.easymanager.fragment.HomeFragmentLayout;
 import com.easymanager.fragment.ManagerGrantUserFragmentLayout;
 import com.easymanager.utils.FileTools;
+import com.easymanager.utils.base.DialogBaseUtils;
 import com.easymanager.utils.dialog.HelpDialogUtils;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.TextUtils;
 import com.easymanager.utils.easyManagerUtils;
 import com.easymanager.utils.permissionRequest;
 
+import org.lsposed.hiddenapibypass.HiddenApiBypass;
+
 public class MainActivity extends Activity {
     private ImageView amiv1,amiv2,amiv3;
     private View amv1,amv2,amv3;
     private FragmentManager fragmentManager;
     private Fragment homeFragment , helpFragment , manageFragment , currentFragment;
-    private Boolean isRoot,isADB,isDevice;
+    private Boolean isShizuku,isDhizuku;
     private int stop_time = 5000;
     private int uid;
     private easyManagerUtils ee = new easyManagerUtils();
@@ -49,7 +56,7 @@ public class MainActivity extends Activity {
             showFragment(helpFragment);
         }
         initView();
-        dialogUtils.showHelp(this,HelpDialogUtils.MAIN_HELP,0);
+//        dialogUtils.showHelp(this,HelpDialogUtils.MAIN_HELP,0);
 //        new NetUtilsDialog().checkupdate(this);
     }
 
@@ -71,72 +78,38 @@ public class MainActivity extends Activity {
             this.getCacheDir().mkdirs();
             this.getFilesDir().mkdirs();
         }catch (Exception e){}
-        FileTools fileUtils = new FileTools();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            HiddenApiBypass.addHiddenApiExemptions("L");
+        }
+        isShizuku = false;
+        isDhizuku = false;
+        showModeDialog(this);
+
         permissionRequest.requestExternalStoragePermission(this);
         permissionRequest.getExternalStorageManager(this,this);
-        isRoot = false;
-        isADB = false;
-        isDevice = ee.isDeviceOwnerActive(this);
-        if(!isDevice){
-            isRoot =  ee.isROOT();
-
-            if(!isRoot){
-                if(isDevice && !ee.getServerStatus()){
-                    isDevice = ee.isDeviceOwnerActive(this);
-                }else if(isDevice && ee.getServerStatus()){
-                    isRoot = ee.isROOT();
-                    isADB = ee.isADB();
-                    isDevice = ee.isDeviceOwnerActive(this);
-                }else if(ee.getServerStatus()){
-                    isRoot = ee.isROOT();
-                    isADB = ee.isADB();
-//                    activeAdmins = ee.getActiveAdmins(this, ee.getCurrentUserID());
-                }else {
-                    String name = "start.sh";
-                    String path = null;
-                    try {
-                        path = this.getExternalCacheDir().toString();
-                        fileUtils.writeActiveADBScript(this,path,name);
-
-                    }catch (Exception e){
-                        try {
-                            path = Environment.getExternalStorageDirectory().toString();
-                            fileUtils.writeDataToPath(fileUtils.getActiveADBScript(this),path+"/start.sh",false);
-                        }catch (Exception e2){
-                            path=fileUtils.getActiveADBScript(this);
-                            name="";
-                        }
-                    }
-                    dialogUtils.showInfoMsg(this,tu.getLanguageString(this,R.string.general_tips),tu.getLanguageString(this,R.string.general_tips_str_head)+path+"/"+name+"\n\n"+tu.getLanguageString(this,R.string.general_tips_str_end));
-                }
-            }
-        }
 
 
+        String path = this.getExternalCacheDir().toString();
 
-        if(isRoot!=null && isRoot){
-            setTitle("easyManager [ ROOT ] [ "+uid+" ]");
-        }else if(isADB!=null && isADB){
-            setTitle("easyManager [ ADB ] [ "+uid+" ]");
-        }else if(isDevice!=null && isDevice){
-            setTitle("easyManager [ DEVICE ] [ "+uid+" ]");
+
+        if(isShizuku!=null && isShizuku){
+            setTitle("easyManager [ SHIZUKU ] [ "+uid+" ]");
+        }else if(isDhizuku!=null && isDhizuku){
+            setTitle("easyManager [ DHIZUKU ] [ "+uid+" ]");
         }else{
             setTitle("easyManager [ General ] [ "+uid+" ]");
         }
 
-        if(isRoot || isADB){
-            ee.requestGrantUser(this);
-            ee.startStopRunningAPP(new TransmissionEntity(null,null,this.getPackageName(),-1,uid));
-        }
         if (homeFragment == null) {
-            homeFragment = new HomeFragmentLayout(isRoot,isADB,isDevice,uid);
+            homeFragment = new HomeFragmentLayout(isShizuku,isDhizuku,uid);
         }
         if (helpFragment == null) {
-            helpFragment =  new HelpFragmentLayout(isRoot,isADB,isDevice,uid);
+            helpFragment =  new HelpFragmentLayout(isShizuku,isDhizuku,uid);
         }
 
         if(manageFragment == null){
-            manageFragment = new ManagerGrantUserFragmentLayout(isRoot,isADB);
+            manageFragment = new ManagerGrantUserFragmentLayout(isShizuku,isDhizuku);
         }
 
         showFragment(helpFragment);
@@ -188,7 +161,7 @@ public class MainActivity extends Activity {
                 im.setSelected(true);
                 int id = view.getId();
                 if(id == R.id.amiv1){
-                    currentFragment = new ManagerGrantUserFragmentLayout(isRoot,isADB);
+                    currentFragment = new ManagerGrantUserFragmentLayout(isShizuku,isDhizuku);
                     amiv2.setSelected(false);
                     amiv3.setSelected(false);
                     amv1.setBackgroundColor(Color.parseColor("#6200EE"));
@@ -196,7 +169,7 @@ public class MainActivity extends Activity {
                     amv3.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 }
                 if(id == R.id.amiv2){
-                    currentFragment = new HomeFragmentLayout(isRoot,isADB,isDevice,uid);
+                    currentFragment = new HomeFragmentLayout(isShizuku,isDhizuku,uid);
                     amiv1.setSelected(false);
                     amiv3.setSelected(false);
                     amv2.setBackgroundColor(Color.parseColor("#6200EE"));
@@ -204,7 +177,7 @@ public class MainActivity extends Activity {
                     amv3.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 }
                 if(id == R.id.amiv3){
-                    currentFragment = new HelpFragmentLayout(isRoot,isADB,isDevice,uid);
+                    currentFragment = new HelpFragmentLayout(isShizuku,isDhizuku,uid);
                     amiv1.setSelected(false);
                     amiv2.setSelected(false);
                     amv3.setBackgroundColor(Color.parseColor("#6200EE"));
@@ -217,6 +190,63 @@ public class MainActivity extends Activity {
         });
     }
 
+    public void showModeDialog(Context con){
+        FileUtils fu = new FileUtils();
+        String readStr = fu.readMode(con);
+        if(readStr.equals("1")){
+            ShizukuSystemServerApi.bindRequestPermission();
+            isShizuku = ShizukuSystemServerApi.check(0);
+            isDhizuku = false;
+            if(!isShizuku){
+                ShizukuSystemServerApi.dead();
+                isDhizuku = DhizukuSystemServerApi.check(0);
+            }
+        }else if(readStr.equals("2")){
+            isShizuku = false;
+            isDhizuku = DhizukuSystemServerApi.check(0);
+            if(!isDhizuku){
+                if(ShizukuSystemServerApi.isShizuku()){
+                    isShizuku = true;
+                }else{
+                    ShizukuSystemServerApi.bindRequestPermission();
+                    isShizuku = ShizukuSystemServerApi.check(0);
+                }
+            }
+        }else{
+            View customeDialog = new DialogBaseUtils().getCustomeDialog(con, tu.getLanguageString(con,R.string.tips), con.getString(R.string.select_mode_msg));
+            AlertDialog.Builder ab = new AlertDialog.Builder(con);
+            ab.setView(customeDialog);
+            ab.setNegativeButton("Shizuku", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    fu.writeMode(con,"1");
+
+                    ShizukuSystemServerApi.bindRequestPermission();
+                    isShizuku = ShizukuSystemServerApi.check(0);
+
+                    dialogInterface.cancel();
+                    dialogInterface.dismiss();
+                }
+            });
+
+            ab.setNeutralButton("Dhizuku", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    fu.writeMode(con,"2");
+
+                    isDhizuku = DhizukuSystemServerApi.check(0);
+                    dialogInterface.cancel();
+                    dialogInterface.dismiss();
+                }
+            });
+
+            AlertDialog alertDialog = ab.create();
+            alertDialog.show();
+        }
+
+
+    }
+
     @Override
     public void onBackPressed() {
         MyActivityManager.getIns().killall();
@@ -225,16 +255,6 @@ public class MainActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(Menu.NONE,0,0,tu.getLanguageString(this,R.string.options_menu_help_str));
-        if(ee.getServerStatus()){
-            if(isDevice){
-                menu.add(Menu.NONE,3,0,tu.getLanguageString(this,R.string.options_menu_remove_device_str));
-            }else{
-                menu.add(Menu.NONE,3,0,tu.getLanguageString(this,R.string.options_menu_active_device_str));
-            }
-        }else{
-            menu.add(Menu.NONE,3,0,tu.getLanguageString(this,isDevice ? R.string.options_menu_remove_device_str : R.string.options_menu_active_device_str));
-        }
-
         menu.add(Menu.NONE,1,0,tu.getLanguageString(this,R.string.options_menu_full_exit));
         menu.add(Menu.NONE,2,0,tu.getLanguageString(this,R.string.options_menu_exit));
         return super.onCreateOptionsMenu(menu);
@@ -251,57 +271,43 @@ public class MainActivity extends Activity {
                 if(ee.isDeviceOwnerActive(this)){
                     ee.forceRemoveDeviceOwner(this);
                 }
-                if(ee.getServerStatus()){
-                    ee.dead();
+
+                if(isShizuku){
+                    ShizukuSystemServerApi.dead();
                 }
+
+                if(isDhizuku){
+                    DhizukuSystemServerApi.dead();
+                }
+
                 MyActivityManager.getIns().killall();
                 break;
             case 2:
-                MyActivityManager.getIns().killall();
-                break;
-            case 3:
-                if(!isDevice && !ee.getServerStatus()){
-                    dialogUtils.showInfoMsg(this,tu.getLanguageString(this,R.string.tips),tu.getLanguageString(this,R.string.menu_active_device_help_str));
-                }else{
-                    if(ee.getServerStatus()){
-                        if(isDevice){
-//                            for (String activeAdmin : activeAdmins) {
-//                                ee.removeDeviceOwner(this,activeAdmin,ee.getCurrentUserID());
-//                            }
-                            if(ee.isDeviceOwnerActive(this)){
-                                ee.removeDeviceOwner(this);
-                                MyActivityManager.getIns().killall();
-                            }
-                        }else{
-                            //暂时存在问题,不能调用
-//                            ee.setDeviceOwner(this,ee.getEasyMDPMComName(this).flattenToShortString(),ee.getCurrentUserID());
-
-                            //暂替方案
-                            String activeDeviceScriptStr = "dpm set-device-owner " + ee.getEasyMDPMComName(this).flattenToShortString();
-                            System.out.println(activeDeviceScriptStr);
-                            CMD cmd = ee.runCMD(activeDeviceScriptStr);
-                            System.out.println(cmd.toString());
-                            if(cmd.getResultCode() == 0){
-                                ee.dead();
-                                MyActivityManager.getIns().killall();
-                            }else{
-                                dialogUtils.showInfoMsg(this,tu.getLanguageString(this,R.string.error_tips), activeDeviceScriptStr +"\n\n" +cmd.getResult());
-                            }
-
-                        }
-
-                    }else{
-                        if(ee.isDeviceOwnerActive(this)){
-                            ee.removeDeviceOwner(this);
-                            MyActivityManager.getIns().killall();
-                        }
-                    }
-
-
+                if(isShizuku){
+                    ShizukuSystemServerApi.dead();
                 }
+
+                if(isDhizuku){
+                    DhizukuSystemServerApi.dead();
+                }
+
+                MyActivityManager.getIns().killall();
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(isShizuku){
+            ShizukuSystemServerApi.dead();
+        }
+
+        if(isDhizuku){
+            DhizukuSystemServerApi.dead();
+        }
+
     }
 }

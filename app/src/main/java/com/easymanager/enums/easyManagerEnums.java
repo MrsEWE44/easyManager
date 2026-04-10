@@ -14,8 +14,7 @@ public class easyManagerEnums {
     public final static  int SET_PACKAGE_HIDE_STATE=7;
     public final static  int SET_PACKAGE_REVOKE_RUNTIME_PERMISSION=8;
     public final static  int SET_PACKAGE_GRANT_RUNTIME_PERMISSION=9;
-    public final static  int BACKUP_APK=10;
-    public final static  int RESTORY_APK=11;
+
     public final static  int GRANT_USER=44566;
     public final static  int CHANGE_USER=44567;
     public final static  int GET_GRANT_USERS=44568;
@@ -45,7 +44,6 @@ public class easyManagerEnums {
     public final static  int START_USER_ID=32;
     public final static  int GET_COMPONENT_ENABLED_SETTING=33;
     public final static  int CHECK_OP=34;
-    public final static  int APP_FIREWALL=35;
     public final static  int GET_APPOPS_PERMISSIONS=36;
     public final static  int GET_APPOPS_PERMISSION_TO_OP=37;
     public final static  int GET_APPOPS_PERMISSION_TO_OP_CODE=38;
@@ -54,15 +52,11 @@ public class easyManagerEnums {
     public final static  int SET_PACKAGE_SUSPEND=41;
     public final static  int GET_PACKAGE_SUSPEND=42;
     public final static  int CLEAR_PACKAGE_DATA=43;
-    public final static  int ADD_RUNNING_PACKAGE=44;
-    public final static  int START_STOP_RUNNING_PACKAGE=45;
     public final static  int DELETE_CLEAN_APP_CONFIG=46;
     public final static  int GET_COMPONENT_OR_PACKAGE_ENABLE_STATE=47;
     public final static  int INSTALL_EXISTING_APK=48;
     public final static  int GET_MAX_USERS=49;
     public static final int UNLOCK_MAX_LIMIT = 50;
-    public static final int SET_DEVICE_OWNER = 51;
-    public static final int REMOVE_DEVICE_OWNER = 52;
     public static final int GET_ACTIVE_ADMINS = 53;
     public static final int GET_DISALLOWED_PACKAGES = 54;
     public final static  int GET_SYS_PROP=55;

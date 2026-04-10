@@ -1,7 +1,9 @@
 package android.content.pm;
 
 
+import android.annotation.NonNull;
 import android.content.IntentSender;
+import android.os.RemoteException;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -33,6 +35,10 @@ public class PackageInstaller {
     public static final int STATUS_PENDING_USER_ACTION = -1;
     public static final int STATUS_SUCCESS = 0;
 
+
+    public int createSession(SessionParams params) throws IOException {
+        return 0;
+    }
 
     public static class SessionParams {
 
