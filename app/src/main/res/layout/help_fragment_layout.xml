@@ -1,76 +1,190 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
-    >
+    android:background="?attr/colorSurface">
 
-   <ScrollView
+   <com.google.android.material.appbar.AppBarLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
+
+      <com.google.android.material.appbar.MaterialToolbar
+          android:id="@+id/toolbar"
+          android:layout_width="match_parent"
+          android:layout_height="?attr/actionBarSize"
+          app:title="@string/help_title"
+          app:titleCentered="true"
+          android:background="?attr/colorPrimaryContainer"
+          app:titleTextColor="?attr/colorOnPrimaryContainer" />
+
+   </com.google.android.material.appbar.AppBarLayout>
+
+   <androidx.core.widget.NestedScrollView
        android:layout_width="match_parent"
        android:layout_height="match_parent"
        android:fillViewport="true"
-       android:background="#F5F5F5"
-       >
+       app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
       <LinearLayout
           android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:orientation="vertical">
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:padding="16dp">
 
-         <ExpandableListView
-             android:id="@+id/hflelv"
+         <com.google.android.material.card.MaterialCardView
              android:layout_width="match_parent"
-             android:layout_weight="1"
-             android:layout_height="fill_parent"
-             android:divider="#6200EE"
-             android:dividerHeight="1dp"
-             android:childDivider="#6200EE"
-             />
+             android:layout_height="wrap_content"
+             android:layout_marginBottom="16dp"
+             app:cardCornerRadius="16dp"
+             app:cardElevation="0dp"
+             app:strokeWidth="1dp"
+             app:strokeColor="?attr/colorOutlineVariant">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
-           <Button
-               android:id="@+id/hflcheckupdate"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:text="@string/help_check_update_button"></Button>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="24dp">
 
-           <Button
-               android:id="@+id/hflcleanfile"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:text="@string/help_clean_app_files_button"></Button>
+               <ImageView
+                   android:layout_width="80dp"
+                   android:layout_height="80dp"
+                   android:src="@mipmap/launcher_iconnn" />
 
-           <LinearLayout
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-              android:orientation="horizontal">
-              <Button
-                  android:id="@+id/hflopengithub"
-                  android:layout_weight="1"
-                  android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:text="@string/help_open_source_global_button"></Button>
+               <TextView
+                   android:id="@+id/hfl_app_name"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="16dp"
+                   android:text="@string/app_name"
+                   android:textAppearance="?attr/textAppearanceTitleLarge"
+                   android:textStyle="bold" />
 
-              <Button
-                  android:id="@+id/hflopengitee"
-                  android:layout_weight="1"
-                  android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:text="@string/help_open_source_china_button"></Button>
+               <TextView
+                   android:id="@+id/hfl_app_version"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="4dp"
+                   android:textAppearance="?attr/textAppearanceBodyMedium"
+                   android:textColor="?attr/colorOnSurfaceVariant" />
 
-           </LinearLayout>
-        </LinearLayout>
+            </LinearLayout>
+
+         </com.google.android.material.card.MaterialCardView>
+
+         <!-- FAQ Section replaced ExpandableListView for better scrolling -->
+         <com.google.android.material.card.MaterialCardView
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginBottom="16dp"
+             app:cardCornerRadius="16dp"
+             app:cardElevation="0dp"
+             app:strokeWidth="1dp"
+             app:strokeColor="?attr/colorOutlineVariant">
+
+            <LinearLayout
+                android:id="@+id/faq_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
+               <!-- FAQ items will be added here dynamically or can be hardcoded with visibility toggles -->
+            </LinearLayout>
+
+         </com.google.android.material.card.MaterialCardView>
+
+         <com.google.android.material.card.MaterialCardView
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             app:cardCornerRadius="16dp"
+             app:cardElevation="0dp"
+             app:strokeWidth="1dp"
+             app:strokeColor="?attr/colorOutlineVariant">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+               <com.google.android.material.button.MaterialButton
+                   android:id="@+id/hflcheckupdate"
+                   style="@style/Widget.Material3.Button"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_marginBottom="12dp"
+                   android:text="@string/help_check_update_button"
+                   android:padding="12dp"/>
+
+               <com.google.android.material.button.MaterialButton
+                   android:id="@+id/hfl_donate"
+                   style="@style/Widget.Material3.Button.TonalButton"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_marginBottom="12dp"
+                   android:text="@string/help_donate_button"
+                   android:padding="12dp"/>
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal">
+
+                  <com.google.android.material.button.MaterialButton
+                      android:id="@+id/hflopengithub"
+                      style="@style/Widget.Material3.Button.OutlinedButton"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_marginEnd="8dp"
+                      android:layout_weight="1"
+                      android:text="GitHub"
+                      android:padding="12dp"/>
+
+                  <com.google.android.material.button.MaterialButton
+                      android:id="@+id/hflopengitee"
+                      style="@style/Widget.Material3.Button.OutlinedButton"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:text="Gitee"
+                      android:padding="12dp"/>
+
+               </LinearLayout>
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal">
+
+                  <com.google.android.material.button.MaterialButton
+                      android:id="@+id/hflopenshizuku"
+                      style="@style/Widget.Material3.Button.OutlinedButton"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_marginEnd="8dp"
+                      android:layout_weight="1"
+                      android:text="Shizuku"
+                      android:padding="12dp"/>
+
+                  <com.google.android.material.button.MaterialButton
+                      android:id="@+id/hflopendhizuku"
+                      style="@style/Widget.Material3.Button.OutlinedButton"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:text="Dhizuku"
+                      android:padding="12dp"/>
+
+               </LinearLayout>
+
+            </LinearLayout>
+
+         </com.google.android.material.card.MaterialCardView>
 
       </LinearLayout>
 
-   </ScrollView>
+   </androidx.core.widget.NestedScrollView>
 
-</FrameLayout>
-
-
-
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

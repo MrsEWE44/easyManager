@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">easyManager</string>
+    <string name="app_name">輕風</string>
     <string name="tips">提示</string>
     <string name="isrootmodestr">當前是root環境，已經自動激活為root工作模式。</string>
     <string name="general_tips">提示 [普通模式]</string>
@@ -25,7 +25,7 @@
     <string name="show_help_getSetRateHELP">"\n        這個界面是用來配置設備刷新率數值的,基於系統shell服務實現.\n\n        1.左邊第二個編輯框需要輸入一個自己的刷新率數值.\n        2.右邊是程序自帶的刷新率數值.\n        3.點擊按鈕,會執行對應的規則和參數.\n        4.點擊最左上角的圖標,會回退到上一級菜單.\n\n    "</string>
     <string name="show_help_getDelXHELP">"\n        這個界面是用來去除WIFI或者蜂窩煤網路的x標記,基於系統shell服務實現.\n\n        1.點擊按鈕,會執行對應的規則和參數.\n        2.點擊最左上角的圖標,會回退到上一級菜單.\n\n    "</string>
     <string name="show_help_getFileSharedHELP">"\n        這個界面是用來分享設備文件的,基於系統API服務實現.\n\n        1.點擊添加文件按鈕,會列出本地内部存儲裏面的文件,勾選需要進行共享的文件或者文件夾,點擊確認,會將勾選的添加到共享列表裏面.\n        2.點擊添加共享程序按鈕,會列出主機管理員已安裝的程序,勾選需要共享的程序,點擊確認,會將勾選的添加到共享列表裏面.\n        3.右上角有個數值編輯框,如果程序提供的默認端口被占用,可以自己輸入一個數值,來代替程序默認的端口,需要重新共享.\n        4.點擊開始共享按鈕,會開始共享列表裏面的内容.\n        5.被共享者,只需要在瀏覽器裏面輸入程序顯示的網路地址與端口,即可訪問共享列表的内容.\n        6.點擊最左上角的圖標,會回退到上一級菜單.\n\n    "</string>
-    <string name="show_help_getMainHelp">"\n        easyManager是一个安卓系统管理工具，具备轻量化、功能核心化、简洁化的优点，同时也允许与第三方应用授权共享api接口.\n\n        easyManager只做该做的事情，不会一直驻留在后台服务当中，仅保留核心服务运行.\n\n        首页下面分布三个大按钮.\n            左边第一个按钮是用来管控已对接easyManagerSDK的应用列表,按钮关闭,即代表该应用已被撤销授权,将无法再使用easyManager的功能接口,按钮打开,表示该应用通过授权,可以调用easyManager的功能接口.\n            中间按钮是功能区域,可以用来操作本机的应用与其它功能.\n            第三个按钮比较详细的介绍了easyManager这个工具.\n\n        更多的帮助内容,请点击右上角的帮助字样获取.所有功能的帮助与部分功能实现都在右上角.\n\n        点击右上角的退出,仅结束本应用的进程,不会终止SDK服务进程,下次打开,不需要再次重新激活(未重启手机的情况下).\n        点击右上角完全退出,会同时终止SDK服务进程、本应用进程,下次再打开,需要重新激活.\n\n        \n\n    "</string>
+    <string name="show_help_getMainHelp">輕風是一款輕量化、核心化、簡潔易用的安卓工具應用，適合在中國OEM廠商定制系統使用，支援 Shizuku 與 Dhizuku 雙模式運行，穩定可靠，上手簡單。\n\n正如它的名字一樣，輕風輕拂而來，悄悄離去，不破壞、不越權，只專注做好本職工作，克制純粹。 \n\n首頁下面分佈三個大按鈕.\n\n 左邊第一個按鈕是用來管控Shizuku和Dhizuku授權的.\n\n 中間按鈕是功能區,可以用來操作本機的應用與其它功能.\n\n 第三個按鈕是幫助介面.\n\n 更多的幫助內容,請點擊右上角的幫助字樣獲取.所有功能的幫助與部分功能實現都在右上角.\n\n 點選右上角的退出,僅結束本應用程式的進程,不會終止SDK服務進程,下次開啟,不需要再次重新啟動(未重啟手機的情況下).\n\n 點選右上角完全退出,會同時終止SDK服務進程、本應用程式、裝置管理員權限,下次再開啟,需要重新啟動.</string>
     <string name="get_all_apps">正在獲取主機管理員安裝的所有應用(包括已經被組織禁用的,請稍等...)</string>
     <string name="get_all_apps2">正在獲取主機管理員安裝的所有應用(請稍等...)</string>
     <string name="get_user_apps">正在獲取主機管理員安裝的應用(包括已經被組織禁用的,請稍等...)</string>
@@ -195,12 +195,12 @@
     <string name="mount_local_img_item_mode2">模式2</string>
     <string name="mount_local_img_item_mode3">模式3</string>
     <string name="low_mem_device">現在這臺設備配置過低,運行此界面的功能會出現問題!</string>
-    <string name="help_question_1">easyManager是什麽?</string>
-    <string name="help_question_2">它的優勢是什麽?</string>
+    <string name="help_question_1">輕風是什麼?</string>
+    <string name="help_question_2">它能做什麼？</string>
     <string name="help_question_3">工作原理是什麽?</string>
     <string name="help_question_4">它與shizuku的區別是什麽?</string>
-    <string name="help_question_1_reply">easyManager是一個輕量化、核心化、簡單易用的安卓系統管理工具，它非常適合在原生系統上使用。</string>
-    <string name="help_question_2_reply">easyManager支持Shizuku、Dhizuku兩種模式運行.\n它現在提供應用的批量權限管理、凍結/禁用、後台進程清理、軟件靜默安裝/卸載、文件共享等功能。\n它提供大量一鍵功能，你只需要看完幫助文檔，然後選擇對應的規則，最後點擊那個大大的按鈕，它就可以完成你的預期。</string>
+    <string name="help_question_1_reply">輕風是一款輕量化、核心化、簡潔易用的安卓工具應用，適合在中國 OEM 廠商定制系統使用，支援 Shizuku 與 Dhizuku 雙模式運行，穩定可靠，上手簡單。正如它的名字一樣，輕風輕拂而來，悄然離去，不破壞、不越權，只專注做好本職工作，克制純粹。</string>
+    <string name="help_question_2_reply">輕風在對接 Shizuku 與 Dhizuku 後，現已支援應用權限管控、批次解除安裝、批次安裝、背景程序清理、應用禁用與凍結等系統管理功能，同時可修復類原生系統訊號顯示「×」圖示問題，支援修改 NTP 伺服器以同步中國地區時間、調整系統更新率，以及檔案與已安裝應用的分享，並可透過 Shizuku 或 Dhizuku 權限執行系統指令。其中 Shizuku 模式下可完整使用上述全部功能，Dhizuku 模式則支援批次安裝、批次解除安裝、應用凍結、檔案與已安裝應用分享，以及透過對應權限執行系統指令。</string>
     <string name="help_question_3_reply">easyManager的工作原理借鑑了Shizuku、AppOps、Hail等一眾優秀開源軟體，與它們兩個類似，easyManager也需要引導使用者執行一段指令，啟動一個單獨的後台進程到shell或者root shell裡面，才能正常工作。\n與它們不同的是，easyManager是透過Socket進行TCP通訊，發送對應的操作指令和參數來執行對應的操作，一切的操作都在單獨的一個shell裡面執行，你可以隨時停用它。</string>
     <string name="help_question_4_reply">跟Shizuku不同的是，easyManager向下拓展了安卓4.0低版本的支持，同時對外也提供對應的SDK開發包工具，任何接入SDK的第三方程式，都可以透過SDK來使用easyManager完整的、私有的功能函數接口，大部分常用的功能都不需要開發者再次實現，easyManager已經全部封裝好了，開發者只需要關注界面交互部分。而且，easyManager對外開放的接口是經過測試的，支持安卓4.0到最新版本，它們工作穩定而且正常。</string>
     <string name="app_clone_menu">軟件克隆</string>
@@ -246,7 +246,9 @@
     <string name="check_app_update_is_ok">檢測到有新的版本，是否更新？</string>
     <string name="check_app_update_is_no">未偵測到更新.</string>
     <string name="app_clean_toast_msg">清理結束...</string>
+    <string name="help_donate_button">捐赠</string>
     <string name="help_check_update_button">檢查更新</string>
+    <string name="help_title">幫助</string>
     <string name="help_clean_app_files_button">清理應用殘留</string>
     <string name="help_open_source_global_button">Github开源地址</string>
     <string name="help_open_source_china_button">Gitee开源地址</string>
@@ -272,4 +274,29 @@
     <string name="clean_opt_item_background_clean">後台定時清理</string>
     <string name="run_cmd_stop_bt">停止</string>
     <string name="select_mode_msg">選擇運行模式</string>
+    <string name="donate_to_support">捐赠/支持作者</string>
+    <string name="donate_to_support_msg">感謝您的支持！您的捐贈有助於這個項目繼續進行。</string>
+    <string name="donate_closebt">關閉</string>
+    <string name="wechat_pay">WeChat Pay</string>
+    <string name="alipay">Alipay</string>
+    <string name="grant_permission_msg">為了正常運行，需要儲存權限以及其他可能的權限。現在您是否要授予這些權限？</string>
+    <string name="grant_dead">授權已遺失。請重新授權以繼續使用全部功能。</string>
+    <string name="auth_title">授權模式</string>
+    <string name="shizuku_auth">Shizuku 授權</string>
+    <string name="dhizuku_auth">Dhizuku 授權</string>
+    <string name="service_status_title">服務狀態</string>
+    <string name="manager_title">授權管理</string>
+    <string name="home_title">首頁</string>
+    <string name="available_modes">可用模式</string>
+    <string name="authorize_via_shizuku">Shizuku授權</string>
+    <string name="authorize_via_dhizuku">Dhizuku授權</string>
+    <string name="checking_service_status">正在檢查服務狀態…</string>
+    <string name="switch_to_dhizuku">切換到Dhizuku</string>
+    <string name="switch_to_shizuku">切換到Shizuku</string>
+    <string name="server_is_running">正在運行：</string>
+    <string name="service_connecting">服務正在連接...</string>
+    <string name="server_is_not_running">服务未運行</string>
+    <string name="activate_dhizuku">啟動Dhizuku</string>
+    <string name="activate_shizuku">啟動Shizuku</string>
+    <string name="menu_search_str">搜索</string>
 </resources>

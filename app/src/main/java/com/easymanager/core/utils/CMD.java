@@ -2,6 +2,10 @@ package com.easymanager.core.utils;
 
 import android.util.Log;
 
+import com.easymanager.core.api.DhizukuSystemServerApi;
+import com.easymanager.core.api.ShizukuSystemServerApi;
+import com.rosan.dhizuku.api.Dhizuku;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
@@ -25,18 +29,34 @@ public class CMD implements Serializable {
      * @param root 是否以root權限運行命令
      * */
     public CMD(String cmd , Boolean root){
-        String cmdhead = root ?"su":"/system/bin/sh" ;
         Log.i("cmdstr ::: ",cmd);
         try{
-            String cmds[] = {cmdhead,"-c",cmd};
-            ProcessBuilder processBuilder = new ProcessBuilder(cmds);
-            processBuilder.redirectErrorStream(true);
-            Process exec = processBuilder.start();
-            DataOutputStream dos  = new DataOutputStream(exec.getOutputStream());
-            dos.writeBytes(cmd + "\n");
-            dos.flush();
-            dos.writeBytes("exit\n");
-            dos.flush();
+            Process exec;
+            boolean isShizuku = ShizukuSystemServerApi.isShizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_SHIZUKU;
+            boolean isDhizuku = DhizukuSystemServerApi.isDhizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_DHIZUKU;
+            if (isDhizuku) {
+                exec = Dhizuku.newProcess(new String[]{"sh", "-c", cmd}, null, null);
+            } else if (isShizuku) {
+                exec = ShizukuSystemServerApi.newProcess(new String[]{"sh", "-c", cmd}, null, null);
+            } else {
+                // Fallback logic if no runtime mode is set or selected service is not running
+                if (isDhizuku) {
+                    exec = Dhizuku.newProcess(new String[]{"sh", "-c", cmd}, null, null);
+                } else if (isShizuku) {
+                    exec = ShizukuSystemServerApi.newProcess(new String[]{"sh", "-c", cmd}, null, null);
+                } else {
+                    String cmdhead = root ? "su" : "/system/bin/sh";
+                    String cmds[] = {cmdhead, "-c", cmd};
+                    ProcessBuilder processBuilder = new ProcessBuilder(cmds);
+                    processBuilder.redirectErrorStream(true);
+                    exec = processBuilder.start();
+                    DataOutputStream dos = new DataOutputStream(exec.getOutputStream());
+                    dos.writeBytes(cmd + "\n");
+                    dos.flush();
+                    dos.writeBytes("exit\n");
+                    dos.flush();
+                }
+            }
             BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream(),"UTF-8"));
             String line="";
             while((line=reader.readLine()) != null){

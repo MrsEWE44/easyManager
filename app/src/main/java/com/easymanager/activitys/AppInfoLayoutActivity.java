@@ -16,7 +16,10 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import com.easymanager.R;
+import com.easymanager.core.api.ShizukuSystemServerApi;
 import com.easymanager.entitys.PKGINFO;
 import com.easymanager.enums.AppInfoEnums;
 import com.easymanager.enums.AppManagerEnum;
@@ -27,7 +30,7 @@ import com.easymanager.utils.dialog.HelpDialogUtils;
 
 import java.util.ArrayList;
 
-public class AppInfoLayoutActivity extends Activity {
+public class AppInfoLayoutActivity extends AppCompatActivity {
 
     private ArrayList<String> list = new ArrayList<>();
     private ArrayList<Boolean> checkboxs = new ArrayList<>();
@@ -63,7 +66,22 @@ public class AppInfoLayoutActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.app_info_layout);
         MyActivityManager.getIns().add(this);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+            Intent intent = getIntent();
+            boolean isShizuku = intent.getBooleanExtra("isShizuku", false);
+            boolean isDhizuku = intent.getBooleanExtra("isDhizuku", false);
+            String modeName = "[ General ]";
+            if (isShizuku && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_SHIZUKU) modeName = "[ SHIZUKU ]";
+            else if (isDhizuku && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_DHIZUKU) modeName = "[ DHIZUKU ]";
+
+            getSupportActionBar().setTitle(getTitle() + " " + modeName);
+        }
+
         initBt();
     }
 
@@ -156,6 +174,10 @@ public class AppInfoLayoutActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
         int itemId = item.getItemId();
 
         if(itemId == R.id.actionbarsearch){

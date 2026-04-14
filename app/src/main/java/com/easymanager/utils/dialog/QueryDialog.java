@@ -1,7 +1,7 @@
 package com.easymanager.utils.dialog;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
@@ -62,7 +62,7 @@ public class QueryDialog extends DialogUtils {
     }
 
     public void queryAppClonePKGProcessDialog(Context context, Activity activity, String msg, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, Integer mode){
-        ProgressDialog show = showMyDialog(context,msg);
+        AlertDialog show = showMyDialog(context,msg);
         Handler handler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
@@ -177,7 +177,7 @@ public class QueryDialog extends DialogUtils {
     }
 
     public void queryPKGProcessDialog(Context context, Activity activity, String msg, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, Integer mode, Integer uid){
-        ProgressDialog show = showMyDialog(context,msg);
+        AlertDialog show = showMyDialog(context,msg);
         Handler handler = new Handler(){
             @Override
             public void handleMessage(Message msg) {

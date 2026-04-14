@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import com.easymanager.R;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
@@ -25,7 +27,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 
-public class RunCommandLayoutActivity extends Activity {
+public class RunCommandLayoutActivity extends AppCompatActivity {
 
     private Context context;
     private Activity activity;
@@ -46,7 +48,22 @@ public class RunCommandLayoutActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.run_command_layout);
         MyActivityManager.getIns().add(this);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+            Intent intent = getIntent();
+            boolean isShizuku = intent.getBooleanExtra("isShizuku", false);
+            boolean isDhizuku = intent.getBooleanExtra("isDhizuku", false);
+            String modeName = "[ General ]";
+            if (isShizuku) modeName = "[ SHIZUKU ]";
+            else if (isDhizuku) modeName = "[ DHIZUKU ]";
+
+            getSupportActionBar().setTitle(getTitle() + " " + modeName);
+        }
+
         initBt();
     }
 
@@ -166,6 +183,10 @@ public class RunCommandLayoutActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
 
         int itemId = item.getItemId();
 

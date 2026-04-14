@@ -1,13 +1,24 @@
 
-easyManager是一个轻量化、核心化、简单易用的安卓系统管理工具,它非常适合在原生系统上使用.
+轻风是一款轻量化、核心化、简洁易用的安卓工具应用，适合在中国OEM厂商定制系统使用，支持 Shizuku 与 Dhizuku 双模式运行，稳定可靠，上手简单。
+正如它的名字一样，轻风轻拂而来，悄然离去，不破坏、不越权，只专注做好本职工作，克制纯粹。
+
+![image](images/1.png) ![image](images/2.png) ![image](images/2.png) ![image](images/3.png)
+![image](images/4.png) ![image](images/5.png) 
 
 
-[easyMangerSDK开发工具包](https://github.com/MrsEWE44/easyManagerSDK)
+- V2.0.0
 
-![image](images/1.png) ![image](images/01.png) ![image](images/02.png) ![image](images/001.png)
-![image](images/3.jpg) ![image](images/2.jpg) ![image](images/4.jpg) ![image](images/5.jpg)
-![image](images/6.png) ![image](images/8.png) ![image](images/7.png) ![image](images/9.png)
-![image](images/10.png) ![image](images/11.png)
+1.重构软件界面，提升用户操作体验和观感
+
+2.界面加入黑暗模式支持
+
+3.修改版本号为2.0.0
+
+4.全面对接Shizuku和Dhizuku
+
+5.删减分身和其它多余功能，优化体验
+
+6.修改软件名字为轻风，英文名字为Light Breeze，软件安装包名字修改为lightBreeze_版本号_发行版类型.apk
 
 - V2.0.0beta
 

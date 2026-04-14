@@ -1,8 +1,7 @@
 package com.easymanager.activitys;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,7 +20,10 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import com.easymanager.R;
+import com.easymanager.core.api.ShizukuSystemServerApi;
 import com.easymanager.entitys.PKGINFO;
 import com.easymanager.utils.base.DialogUtils;
 import com.easymanager.utils.dialog.HelpDialogUtils;
@@ -55,7 +57,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class FileSharedLayoutActivity extends Activity {
+public class FileSharedLayoutActivity extends AppCompatActivity {
 
     private ArrayList<String> list = new ArrayList<>();
 
@@ -75,7 +77,22 @@ public class FileSharedLayoutActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.file_shared_layout);
         MyActivityManager.getIns().add(this);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+            Intent intent = getIntent();
+            boolean isShizuku = intent.getBooleanExtra("isShizuku", false);
+            boolean isDhizuku = intent.getBooleanExtra("isDhizuku", false);
+            String modeName = "[ General ]";
+            if (isShizuku && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_SHIZUKU) modeName = "[ SHIZUKU ]";
+            else if (isDhizuku && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_DHIZUKU) modeName = "[ DHIZUKU ]";
+
+            getSupportActionBar().setTitle(getTitle() + " " + modeName);
+        }
+
         initBt();
     }
 
@@ -99,7 +116,7 @@ public class FileSharedLayoutActivity extends Activity {
         String ip = getIpAddress();
         fsisharedip.setFocusableInTouchMode(false);
         fsisharedip.setText(ip);
-        fsisharedport.setHint(getLanStr(R.string.default_port) + default_port);
+        fsisharedport.setHint(default_port+"");
         fslstopshared.setEnabled(false);
 
         fslstartshared.setOnClickListener(new View.OnClickListener() {
@@ -161,7 +178,7 @@ public class FileSharedLayoutActivity extends Activity {
         View view2 = getLayoutInflater().inflate(R.layout.file_shared_select_dialog_layout, null);
         ListView fssdllv = view2.findViewById(R.id.fssdllv);
         String str = isFile?getLanStr(R.string.is_share_file_msg):getLanStr(R.string.is_share_app_msg);
-        ProgressDialog show = du.showMyDialog(context,  getLanStr(R.string.now_get_ing_head)+str+getLanStr(R.string.now_get_ing_end));
+        AlertDialog show = du.showMyDialog(context,  getLanStr(R.string.now_get_ing_head)+str+getLanStr(R.string.now_get_ing_end));
         Handler handler = new Handler() {
             @Override
             public void handleMessage( Message msg) {
@@ -307,7 +324,7 @@ public class FileSharedLayoutActivity extends Activity {
         });
         du.showUsers(context,fssdllv,flist,checkboxs);
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         OtherTools otherTools = new OtherTools();
@@ -317,6 +334,10 @@ public class FileSharedLayoutActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
 
         int itemId = item.getItemId();
 

@@ -141,7 +141,6 @@ public class easyManagerUtils {
         }
     }
 
-    //需要想办法实现在设备管理员权限下卸载软件
     public void uninstallAPK(Context context , String pkgname,int uid){
         if (skipError) {
             TransmissionEntity entity = new TransmissionEntity(pkgname, null, context.getPackageName(), 0, uid);
@@ -167,7 +166,7 @@ public class easyManagerUtils {
         if(isDeviceOwnerActive(context)){
             setPackagesSuspend(context,false,pkgname,uid);
         }else{
-            if(ShizukuSystemServerApi.isShizuku()){
+            if(ShizukuSystemServerApi.isShizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_SHIZUKU){
                 int state = getComponentOrPackageEnabledState(context,pkgname,null,uid);
                 if(state == PackageAPI.COMPONENT_ENABLED_STATE_DISABLED || state == PackageAPI.COMPONENT_ENABLED_STATE_DISABLED_USER || state == PackageAPI.COMPONENT_ENABLED_STATE_DISABLED_UNTIL_USED){
                     setComponentOrPackageEnabledState(new TransmissionEntity(pkgname,null, context.getPackageName(), PackageAPI.COMPONENT_ENABLED_STATE_ENABLED,uid));
@@ -179,7 +178,7 @@ public class easyManagerUtils {
                 }
             }
 
-            if(DhizukuSystemServerApi.isDhizuku()){
+            if(DhizukuSystemServerApi.isDhizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_DHIZUKU){
                 setPackagesSuspend(context,false,pkgname,uid);
             }
 
@@ -193,7 +192,7 @@ public class easyManagerUtils {
         if(isDeviceOwnerActive(context)){
             setPackagesSuspend(context,true,pkgname,uid);
         }else{
-            if(ShizukuSystemServerApi.isShizuku()){
+            if(ShizukuSystemServerApi.isShizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_SHIZUKU){
                 clearPackageData(context,pkgname,uid);
                 setComponentOrPackageEnabledState(new TransmissionEntity(pkgname,null, context.getPackageName(), PackageAPI.COMPONENT_ENABLED_STATE_DISABLED_USER,uid));
                 int state = getComponentOrPackageEnabledState(context,pkgname,null,uid);
@@ -203,7 +202,7 @@ public class easyManagerUtils {
                 }
             }
 
-            if(DhizukuSystemServerApi.isDhizuku()){
+            if(DhizukuSystemServerApi.isDhizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_DHIZUKU){
                 setPackagesSuspend(context,true,pkgname,uid);
             }
 

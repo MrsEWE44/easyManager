@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,8 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.easymanager.MainActivity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import com.easymanager.R;
 import com.easymanager.core.utils.CMD;
 import com.easymanager.entitys.PKGINFO;
@@ -29,7 +32,7 @@ import com.easymanager.utils.dialog.HelpDialogUtils;
 
 import java.util.ArrayList;
 
-public class AppCloneLayoutActivity extends Activity {
+public class AppCloneLayoutActivity extends AppCompatActivity {
 
     private ArrayList<String> strlist = new ArrayList<>();
     private ArrayList<Boolean> strcheckboxs = new ArrayList<>();
@@ -51,7 +54,22 @@ public class AppCloneLayoutActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.app_clone_manager);
         MyActivityManager.getIns().add(this);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+            Intent intent = getIntent();
+            boolean isShizuku = intent.getBooleanExtra("isShizuku", false);
+            boolean isDhizuku = intent.getBooleanExtra("isDhizuku", false);
+            String modeName = "[ General ]";
+            if (isShizuku) modeName = "[ SHIZUKU ]";
+            else if (isDhizuku) modeName = "[ DHIZUKU ]";
+
+            getSupportActionBar().setTitle(getTitle() + " " + modeName);
+        }
+
         context = this;
         activity = this;
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
@@ -100,6 +118,17 @@ public class AppCloneLayoutActivity extends Activity {
             cmd.getResult();
         }
         acmet1.setHint(String.format(getLanStr(R.string.app_clone_input_size_hint_str),acu.getPd().easyMUtils.getMaxSupportedUsers(context)));
+
+        // 自动触发初始加载，解决进入页面空白的问题
+        int defaultUid = acu.getCurrentUserID();
+        if (mode == AppManagerEnum.APP_CLONE) {
+            // 克隆模式：显示当前主用户的应用作为克隆模板
+            acu.getSd().queryUserAllPKGSProcessDialog(context, activity, acmlv1, pkginfos, pkgcheckboxs, defaultUid);
+        } else if (mode == AppManagerEnum.APP_CLONE_REMOVE || mode == AppManagerEnum.APP_CLONE_MANAGE) {
+            // 管理/删除模式：显示已存在的所有分身用户中的应用
+            acu.getSd().queryAllPKGSByAppCloneProcessDialog(context, activity, acmlv1, pkginfos, pkgcheckboxs);
+        }
+
         new HelpDialogUtils().showHelp(context,HelpDialogUtils.APP_MANAGE_HELP,mode);
     }
 
@@ -162,7 +191,7 @@ public class AppCloneLayoutActivity extends Activity {
                         ArrayList<String> strings = new ArrayList<>();
                         for (int i = 0; i < strcheckboxs.size(); i++) {
                             if(strcheckboxs.get(i)){
-                               strings.add(strlist.get(i));
+                                strings.add(strlist.get(i));
                             }
                         }
                         acu.getUd().showAppCloneManagerProcessBarDialog(context,list,strings,MANAGER_INDEX);
@@ -171,6 +200,28 @@ public class AppCloneLayoutActivity extends Activity {
 
             }
         });
+
+        acmlv1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                PKGINFO pkginfo = pkginfos.get(i);
+                Intent intent = new Intent(activity, AppInfoLayoutActivity.class);
+                intent.putExtra("pkgname", pkginfo.getPkgname());
+                intent.putExtra("uid", acu.getCurrentUserID());
+                intent.putExtra("isRoot", isRoot);
+                intent.putExtra("isADB", isADB);
+                startActivity(intent);
+            }
+        });
+
+        acmlv1.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                nowItemIndex = i;
+                return false;
+            }
+        });
+        registerForContextMenu(acmlv1);
 
         acmlv2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -184,6 +235,38 @@ public class AppCloneLayoutActivity extends Activity {
             }
         });
 
+    }
+
+    private int nowItemIndex = -1;
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        if (nowItemIndex != -1) {
+            PKGINFO pkg = pkginfos.get(nowItemIndex);
+            menu.setHeaderTitle(pkg.getAppname());
+            menu.add(0, 0, 0, R.string.copy_app_detail);
+            menu.add(0, 1, 0, R.string.jump_app_detail);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (nowItemIndex == -1) return super.onContextItemSelected(item);
+        PKGINFO pkg = pkginfos.get(nowItemIndex);
+        int itemId = item.getItemId();
+        if (itemId == 0) {
+            String detail = String.format("App Name: %s\nPackage Name: %s\nVersion: %s\nPath: %s",
+                    pkg.getAppname(), pkg.getPkgname(), pkg.getAppversionname(), pkg.getApkpath());
+            acu.getUd().tu.copyText(context, detail);
+            return true;
+        } else if (itemId == 1) {
+            Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            intent.setData(android.net.Uri.parse("package:" + pkg.getPkgname()));
+            startActivity(intent);
+            return true;
+        }
+        return super.onContextItemSelected(item);
     }
 
     private String[] getManagerMode() {
@@ -234,6 +317,10 @@ public class AppCloneLayoutActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
         int itemId = item.getItemId();
         int defaultuid=acu.getCurrentUserID();
         if(itemId == R.id.actionbarsearch){

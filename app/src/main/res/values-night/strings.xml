@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="donate_to_support">Donate to Support</string>
+    <string name="donate_to_support_msg">Thank you for your support! Your donation helps keep this project alive.</string>
+    <string name="donate_closebt">Close</string>
+    <string name="wechat_pay">WeChat Pay</string>
+    <string name="alipay">Alipay</string>
+    <string name="grant_permission_msg">To function correctly, needs Storage and potentially other permissions. Would you like to grant them now?</string>
+    <string name="grant_dead">Authorization lost. Please re-authorize to continue using full features.</string>
+    <string name="available_modes">Available Modes</string>
+    <string name="authorize_via_shizuku">Authorize via Shizuku</string>
+    <string name="authorize_via_dhizuku">Authorize via Dhizuku</string>
+    <string name="checking_service_status">Checking service status...</string>
+    <string name="switch_to_dhizuku">Switch to Dhizuku</string>
+    <string name="switch_to_shizuku">Switch to Shizuku</string>
+    <string name="server_is_running">"Server is running: "</string>
+    <string name="service_connecting">"Service connecting... "</string>
+    <string name="activate_dhizuku">Activate Dhizuku</string>
+    <string name="activate_shizuku">Activate Shizuku</string>
+    <string name="menu_search_str">search</string>
+</resources>

@@ -1,8 +1,7 @@
 package com.easymanager.utils.dialog;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -24,7 +23,7 @@ public class SearchDialog extends QueryDialog {
 
     public void showIndexOfPKGSDialog(Context context , Activity activity,ListView lv1,String msg , String searchStr , ArrayList<PKGINFO> pkginfos,ArrayList<String> strList,ArrayList<Boolean> checkboxs){
         try {
-            ProgressDialog show = showMyDialog(context,msg);
+            AlertDialog show = showMyDialog(context, msg);
             Handler handler = new Handler(){
                 @Override
                 public void handleMessage(Message msg) {

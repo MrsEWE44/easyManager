@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">easyManager</string>
+    <string name="app_name">light breeze</string>
     <string name="tips">tips</string>
     <string name="isrootmodestr">Now is root user  , and auto active app to  root mode .</string>
     <string name="general_tips">Tips [ General Mode ]</string>
@@ -25,7 +25,7 @@
     <string name="show_help_getSetRateHELP">\nThis interface is used to configure the device refresh rate value, which is implemented based on the system shell service.\n\n1. In the second edit box on the left, you need to enter a refresh rate value of your own.\n        2. On the right is the refresh rate value that comes with the program.\n        3. Click the button to execute the corresponding rules and parameters.\n        4. Click on the icon in the top left corner to go back to the previous menu.\n\n</string>
     <string name="show_help_getDelXHELP">\nThis interface is used to remove the x mark of the WIFI or cellular coal network, and is implemented based on the system shell service.\n\n        1. Click the button to execute the corresponding rules and parameters.\n        2. Click on the icon in the top left corner to go back to the previous menu.\n\n</string>
     <string name="show_help_getFileSharedHELP">\nThis interface is used to share device files and is implemented based on the system API service.\n\n1. Click the Add File button, the files in the local internal storage will be listed, check the files or folders that need to be shared, click OK, and the checked ones will be added to the sharing list.\n        2. Click the Add Shared Program button, the programs installed by the host administrator will be listed, check the programs that need to be shared, click Confirm, and the checked ones will be added to the shared list.\n        3. There is a numerical edit box in the upper right corner, if the default port provided by the program is occupied, you can enter a numerical value by yourself, to replace the default port of the program, you need to re-share.\n        4. Click the Start Share button to start sharing the content in the list.\n        5. The person being shared only needs to enter the network address and port displayed by the program in the browser to access the content of the shared list.\n        6. Click on the icon in the top left corner to go back to the previous menu.\n\n</string>
-    <string name="show_help_getMainHelp">\neasyManager is an Android system management tool, which has the advantages of lightweight, functional core, and simplicity, and also allows the sharing of API interfaces with third-party application authorization.\n\neasyManager only does what it needs to do, it doesn\'t always reside in the background services, only the core services are running.\n\nThere are three large buttons distributed below the home page.\n            The first button on the left is used to control the list of applications that have been connected to easyManager SDK, the button is closed, that is, the application has been revoked, and the easyManager function interface can no longer be used, the button is opened, which means that the application has passed the authorization and can call the easyManager function interface.\n            The middle button is the functional area that can be used to operate the machine\'s applications and other functions.\n            The third button gives a more detailed introduction to the easyManager tool.\n\nFor more help, please click on the help word in the upper right corner to get it.\n\nClick Exit in the upper right corner, only end the process of this application, will not terminate the SDK service process, next time you open it, you do not need to reactivate it again (if you do not restart the phone).\n        Click on the upper right corner to exit completely, the SDK service process and this application process will be terminated at the same time, and you need to reactivate it next time you open it.\n\n</string>
+    <string name="show_help_getMainHelp">Light Breeze is a lightweight, core-based, and easy-to-use Android utility application, suitable for use with customized systems by Chinese OEMs. It supports both Shizuku and Dhizuku modes, is stable and reliable, and easy to learn.\n\nJust like its name suggests, Light Breeze arrives gently and departs quietly, without disruption or overstepping boundaries, focusing solely on its core function with restraint and purity.\n\nThe homepage features three large buttons at the bottom.\n\nThe first button on the left is used to manage Shizuku and Dhizuku authorizations.\n\nThe middle button is the function area, used to operate local applications and other functions.\n\nThe third button is the help interface.\n\nFor more help information, please click the \"Help\" button in the upper right corner. Help for all functions and some function implementations are located in the upper right corner.\n\nClicking \"Exit\" in the upper right corner only terminates the application\'s process, not the SDK service process. Reactivation is not required the next time you open it (without restarting the phone).\n\nClicking \"Complete Exit\" in the upper right corner will terminate the SDK service process, the application\'s process, and device administrator privileges simultaneously. Reactivation is required the next time you open it.</string>
     <string name="get_all_apps">Getting all apps installed by the host administrator (including those that have been disabled by the organization, please wait...)</string>
     <string name="get_all_apps2">Fetching all apps installed by Host Manager (please wait...)</string>
     <string name="get_user_apps">Getting apps installed by the host administrator (including those that have been disabled by the organization, please wait...)</string>
@@ -195,12 +195,12 @@
     <string name="mount_local_img_item_mode2">Mode 2</string>
     <string name="mount_local_img_item_mode3">Mode 3</string>
     <string name="low_mem_device">Now this device is too under-configured, and there will be problems with the functionality of this interface!</string>
-    <string name="help_question_1">What is easyManager</string>
-    <string name="help_question_2">What are its advantages?</string>
+    <string name="help_question_1">What is a light breeze?</string>
+    <string name="help_question_2">What can it do?</string>
     <string name="help_question_3">How does it work?</string>
     <string name="help_question_4">What is the difference between it and Shizuku?</string>
-    <string name="help_question_1_reply">easyManager is a lightweight, core, simple and easy-to-use Android system management tool. It is very suitable for use on stock systems.</string>
-    <string name="help_question_2_reply">easyManager supports running in two modes: Shizuku and Dhizuku.\nIt now provides functions such as batch permission management for applications, freezing/disabling, background process cleaning, silent installation/uninstallation of software, and file sharing.\nIt provides a large number of one-click functions. You just need to read the help documentation, then select the corresponding rule, and finally click that big button, and it can accomplish what you expect.</string>
+    <string name="help_question_1_reply">Light Breeze is a lightweight, focused and easy-to-use Android tool. It works well on customized systems from Chinese OEMs and supports dual-mode operation with Shizuku and Dhizuku, stable and simple to use.True to its name, Light Breeze comes gently and leaves quietly. It does no damage, oversteps no boundaries, and only focuses on its own duties with restraint and purity.</string>
+    <string name="help_question_2_reply">After integrating with Shizuku and Dhizuku, Light Breeze now supports system management functions such as app permission control, batch uninstall, batch install, background process cleanup, app disable and freeze. It also fixes the \"×\" icon issue in signal display on AOSP-like systems, supports modifying NTP servers to synchronize time in China, adjusting system refresh rate, sharing files and installed apps, and running system commands with Shizuku or Dhizuku permissions. All the above functions are fully available in Shizuku mode, while Dhizuku mode supports batch install, batch uninstall, app freeze, file and installed app sharing, and running system commands with corresponding permissions.</string>
     <string name="help_question_3_reply">The working principle of easyManager draws on a number of excellent open-source software like Shizuku, AppOps, and Hail. Similar to the first two, easyManager also requires guiding the user to execute a command to start a separate background process in the shell or root shell in order to function properly. \n\nThe difference is that easyManager communicates via TCP through a Socket, sending the corresponding operation commands and parameters to perform the desired actions. All operations are executed within a single shell, and you can disable it at any time.</string>
     <string name="help_question_4_reply">Unlike Shizuku, easyManager extends support down to older Android 4.0 versions and also provides a corresponding SDK development kit for external use. Any third-party program that integrates the SDK can use easyManager’s complete, private functional interfaces. Most commonly used functions do not need to be re-implemented by developers, as easyManager has already fully packaged them; developers only need to focus on the user interface interaction. Furthermore, the interfaces made available by easyManager have been tested and support Android 4.0 up to the latest versions, working reliably and properly.</string>
     <string name="app_clone_menu">Software Cloning</string>
@@ -246,7 +246,9 @@
     <string name="check_app_update_is_ok">A new version has been detected, is it updated?</string>
     <string name="check_app_update_is_no">No updates detected.</string>
     <string name="app_clean_toast_msg">clean ok...</string>
+    <string name="help_donate_button">Donate</string>
     <string name="help_check_update_button">Chcek APP Update</string>
+    <string name="help_title">Help</string>
     <string name="help_clean_app_files_button">Clean APP Cache Files</string>
     <string name="help_open_source_global_button">Github Project</string>
     <string name="help_open_source_china_button">Gitee Project</string>
@@ -272,4 +274,29 @@
     <string name="clean_opt_item_background_clean">Background cleanup</string>
     <string name="run_cmd_stop_bt">Stop</string>
     <string name="select_mode_msg">Select Running Mode</string>
+    <string name="donate_to_support">Donate to Support</string>
+    <string name="donate_to_support_msg">Thank you for your support! Your donation helps keep this project alive.</string>
+    <string name="donate_closebt">Close</string>
+    <string name="wechat_pay">WeChat Pay</string>
+    <string name="alipay">Alipay</string>
+    <string name="grant_permission_msg">To function correctly, needs Storage and potentially other permissions. Would you like to grant them now?</string>
+    <string name="grant_dead">Authorization lost. Please re-authorize to continue using full features.</string>
+    <string name="auth_title">Authorization Mode</string>
+    <string name="shizuku_auth">Shizuku Auth</string>
+    <string name="dhizuku_auth">Dhizuku Auth</string>
+    <string name="service_status_title">Service Status</string>
+    <string name="manager_title">Manager</string>
+    <string name="home_title">Home</string>
+    <string name="available_modes">Available Modes</string>
+    <string name="authorize_via_shizuku">Authorize via Shizuku</string>
+    <string name="authorize_via_dhizuku">Authorize via Dhizuku</string>
+    <string name="checking_service_status">Checking service status...</string>
+    <string name="switch_to_dhizuku">Switch to Dhizuku</string>
+    <string name="switch_to_shizuku">Switch to Shizuku</string>
+    <string name="server_is_running">"Server is running: "</string>
+    <string name="service_connecting">"Service connecting... "</string>
+    <string name="server_is_not_running">Server is not running</string>
+    <string name="activate_dhizuku">Activate Dhizuku</string>
+    <string name="activate_shizuku">Activate Shizuku</string>
+    <string name="menu_search_str">search</string>
 </resources>

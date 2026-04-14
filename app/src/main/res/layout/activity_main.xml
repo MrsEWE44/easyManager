@@ -1,121 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:background="#FFFFFF"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="false">
 
-    <!-- 主内容区域 -->
-    <FrameLayout
-        android:id="@+id/amfl1"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/amll1"
-        android:background="#F5F5F5" />
+        android:orientation="vertical">
 
-    <!-- 底部导航栏阴影边框 -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_above="@+id/amll1"
-        android:background="#E0E0E0" />
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:elevation="0dp"
+            android:background="@android:color/transparent">
 
-    <!-- 底部导航栏 - 简化版 Material Design -->
-    <LinearLayout
-        android:id="@+id/amll1"
-        android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true"
-        android:background="#FFFFFF"
-        android:paddingBottom="28dp">
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:title="@string/app_name"
+                app:menu="@menu/top_app_bar_menu" />
 
-        <!-- 第一个菜单项 -->
-        <LinearLayout
-            android:id="@+id/tab1_container"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:clickable="true"
-            android:background="#FFFFFF">
-            <View
-                android:layout_width="64dp"
-                android:layout_height="2dp"
-                android:id="@+id/amv1"
-                android:layout_marginBottom="8dp" />
-            <ImageView
-                android:id="@+id/amiv1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/manager"
-                android:scaleType="centerInside"
-                />
-        </LinearLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
-        <!-- 第二个菜单项（首页，突出显示） -->
-        <LinearLayout
-            android:id="@+id/tab2_container"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:clickable="true"
-            android:background="#FFFFFF">
+        <FrameLayout
+            android:id="@+id/amfl1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <!-- 选中指示器 -->
-                <View
-                    android:layout_width="64dp"
-                    android:layout_height="2dp"
-                    android:id="@+id/amv2"
-                    android:layout_marginBottom="8dp" />
-
-                <ImageView
-                    android:id="@+id/amiv2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/home"
-                    android:scaleType="centerInside"
-                     />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- 第三个菜单项 -->
-        <LinearLayout
-            android:id="@+id/tab3_container"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:clickable="true"
-            android:background="#FFFFFF">
-            <View
-                android:layout_width="64dp"
-                android:layout_height="2dp"
-                android:id="@+id/amv3"
-                android:layout_marginBottom="8dp" />
-            <ImageView
-                android:id="@+id/amiv3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/help"
-                android:scaleType="centerInside"
-                />
-
-        </LinearLayout>
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:menu="@menu/bottom_nav_menu"
+            app:labelVisibilityMode="labeled"
+            android:background="?attr/colorSurfaceContainer"
+            app:itemIconSize="40dp"
+            app:itemIconTint="@color/bnv_tab_item_foreground"
+            app:itemTextColor="@color/bnv_tab_item_foreground"
+            app:itemActiveIndicatorStyle="@style/Widget.Material3.BottomNavigationView.ActiveIndicator"
+            app:itemRippleColor="?attr/colorControlHighlight" />
 
     </LinearLayout>
 
-</RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,7 +1,8 @@
 package com.easymanager.utils.base;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Environment;
@@ -11,6 +12,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.easymanager.core.utils.CMD;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.easymanager.R;
 import com.easymanager.adapters.AppInfoAdapter;
 import com.easymanager.adapters.GeneralAdapter;
@@ -35,7 +38,7 @@ public class DialogUtils extends DialogBaseUtils {
     public DialogUtils(){}
 
     public void findLocalImgDialog(Context context, Activity activity, ListView lv1 , ArrayList<String> strings, ArrayList<Boolean> checkboxs){
-        ProgressDialog show = showMyDialog(context,tu.getLanguageString(context,R.string.scanner_local_img));
+        AlertDialog show = showMyDialog(context,tu.getLanguageString(context,R.string.scanner_local_img));
         Handler handler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
@@ -62,14 +65,33 @@ public class DialogUtils extends DialogBaseUtils {
         }).start();
     }
 
-    public void sendHandlerMSG(Handler handler , int value){
-        Message msg = new Message();
+    public void runCMDDialog(Context context, String cmdstr){
+        if (cmdstr == null || cmdstr.isEmpty()) return;
+        androidx.appcompat.app.AlertDialog show = showMyDialog(context, tu.getLanguageString(context, R.string.execute_cmd));
+        android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(android.os.Message msg) {
+                permittedDismissDialog(show);
+                showInfoMsg(context, tu.getLanguageString(context, R.string.tips), tu.getLanguageString(context, R.string.its_ok_msg));
+            }
+        };
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                CMD cmd = easyMUtils.runCMD(cmdstr);
+                sendHandlerMSG(handler, 0);
+            }
+        }).start();
+    }
+
+    public void sendHandlerMSG(android.os.Handler handler , int value){
+        android.os.Message msg = new android.os.Message();
         msg.what=value;
         handler.sendMessage(msg);
     }
 
-    public void sendHandlerMSG(Handler handler , int value,Object obj){
-        Message msg = new Message();
+    public void sendHandlerMSG(android.os.Handler handler , int value,Object obj){
+        android.os.Message msg = new android.os.Message();
         msg.what=value;
         msg.obj=obj;
         handler.sendMessage(msg);
@@ -77,13 +99,11 @@ public class DialogUtils extends DialogBaseUtils {
 
 
     //显示提示框
-    public ProgressDialog showMyDialog(Context context, String msg){
-        ProgressDialog pd = new ProgressDialog(context);//初始化等待条
-        pd.setMessage(msg);//等待显示条的信息
-        pd.setCanceledOnTouchOutside(false);
-        pd.setCancelable(false);
-        pd.show();//等待显示条
-        return pd;
+    public AlertDialog showMyDialog(Context context, String msg) {
+        return new MaterialAlertDialogBuilder(context)
+                .setMessage(msg)
+                .setCancelable(false)
+                .show();
     }
 
     //显示检索完毕后的字符串列表
@@ -179,11 +199,11 @@ public class DialogUtils extends DialogBaseUtils {
         sendHandlerMsg(handler,2,pkginfo);
     }
 
-    public Handler dismissDialogHandler(int value,ProgressDialog show){
-        return new Handler(){
+    public Handler dismissDialogHandler(int value, AlertDialog show) {
+        return new Handler() {
             @Override
             public void handleMessage(Message msg) {
-                if(msg.what==value){
+                if (msg.what == value) {
                     show.dismiss();
                 }
             }

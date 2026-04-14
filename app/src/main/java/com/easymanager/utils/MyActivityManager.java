@@ -22,6 +22,11 @@ public class MyActivityManager {
         list.add(activity);
     }
 
+    public Activity getCurrentActivity() {
+        if (list.isEmpty()) return null;
+        return list.get(list.size() - 1);
+    }
+
     //终止一个activity
     public void kill(Activity activity){
         for (Activity a : list) {

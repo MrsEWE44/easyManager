@@ -13,6 +13,9 @@ import android.os.Process;
 import android.provider.Settings;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.easymanager.R;
 
 
@@ -50,9 +53,18 @@ public class permissionRequest {
     }
 
     public static void requestExternalStoragePermission(Activity activity){
-        String p[] = {Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_IMAGES,Manifest.permission.READ_MEDIA_VIDEO, Manifest.permission_group.STORAGE,Manifest.permission.INSTALL_PACKAGES, Manifest.permission.CHANGE_COMPONENT_ENABLED_STATE,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.MANAGE_EXTERNAL_STORAGE,Manifest.permission.REQUEST_COMPANION_PROFILE_WATCH};
+        List<String> p = new ArrayList<>();
+        p.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        p.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            p.add(Manifest.permission.READ_MEDIA_IMAGES);
+            p.add(Manifest.permission.READ_MEDIA_VIDEO);
+            p.add(Manifest.permission.READ_MEDIA_AUDIO);
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            activity.requestPermissions(p,0);
+            activity.requestPermissions(p.toArray(new String[0]), 0);
         }
     }
 

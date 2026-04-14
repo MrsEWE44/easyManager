@@ -1,11 +1,23 @@
-EasyManager is a lightweight, hardcore, and easy-to-use Android system management tool that is perfect for use on native systems.
 
-[easyMangerSDK Development Kit](https://github.com/MrsEWE44/easyManagerSDK)
+Light Breeze is a lightweight, focused and easy-to-use Android tool. It works well on customized systems from Chinese OEMs and supports dual-mode operation with Shizuku and Dhizuku, stable and simple to use.True to its name, Light Breeze comes gently and leaves quietly. It does no damage, oversteps no boundaries, and only focuses on its own duties with restraint and purity.
 
-![image](images/1.png) ![image](images/01.png) ![image](images/02.png) ![image](images/001.png)
-![image](images/3.jpg) ![image](images/2.jpg) ![image](images/4.jpg) ![image](images/5.jpg)
-![image](images/6.png) ![image](images/8.png) ![image](images/7.png) ![image](images/9.png)
-![image](images/10.png) ![image](images/11.png)
+![image](images/1.png) ![image](images/2.png) ![image](images/2.png) ![image](images/3.png)
+![image](images/4.png) ![image](images/5.png)
+
+
+- V2.0.0
+
+1.Reconstructed the software interface to improve user experience and visual appeal.
+
+2.Added dark mode support to the interface.
+
+3.Changed the version number to 2.0.0.
+
+4.Fully integrated with Shizuku and Dhizuku.
+
+5.Removed clone and other unnecessary features, optimizing the user experience.
+
+6.Changed the software name to "轻风" (Qingfeng), the English name to "Light Breeze," and the software installation package name to "lightBreeze_version_release_type.apk."
 
 
 - V2.0.0beta

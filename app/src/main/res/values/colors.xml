@@ -1,5 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="gray_100">#F5F5F5</color>
+    <color name="gray_200">#EEEEEE</color>
+    <color name="gray_600">#757575</color>
+    <color name="status_green">#4CAF50</color>
+    <color name="status_red">#F44336</color>
+    <color name="outline_variant">#CAC4D0</color>
+
+    <!-- Shizuku Mode Colors -->
+    <color name="shizuku_primary">#3F51B5</color>
+    <color name="shizuku_background">#E8EAF6</color>
+
+    <!-- Dhizuku Mode Colors -->
+    <color name="dhizuku_primary">#009688</color>
+    <color name="dhizuku_background">#E0F2F1</color>
+
+    <!-- General Mode Colors -->
+    <color name="general_primary">#6200EE</color>
+    <color name="general_background">#F5F5F5</color>
 </resources>

@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.os.IBinder;
 
 import com.easymanager.core.api.AppopsAPI;
+import com.easymanager.core.api.DhizukuSystemServerApi;
 import com.easymanager.core.api.FunctionAPI;
 import com.easymanager.core.api.PackageAPI;
 import com.easymanager.core.api.ShizukuSystemServerApi;
@@ -33,7 +34,7 @@ public class easyManagerAPI extends baseAPI {
 
 
     public void killpkg(String pkgname,int uid){
-        if(ShizukuSystemServerApi.isShizuku()){
+        if(ShizukuSystemServerApi.isShizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_SHIZUKU){
             packageAPI.killApp(pkgname,uid);
         }
     }

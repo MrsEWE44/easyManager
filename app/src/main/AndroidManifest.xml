@@ -8,7 +8,7 @@
         android:icon="@mipmap/launcher_iconnn"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/launcher_iconnn_round"
-        android:theme="@android:style/Theme.Holo.Light"
+        android:theme="@style/Theme.EasyManager"
         android:requestLegacyExternalStorage="true"
         >
         <activity
@@ -27,6 +27,7 @@
         <activity android:name=".activitys.FileSharedLayoutActivity"/>
         <activity android:name=".activitys.AppCloneLayoutActivity"/>
         <activity android:name=".activitys.RunCommandLayoutActivity"/>
+        <activity android:name=".activitys.CreateImgLayoutActivity"/>
 
         <receiver android:name=".mylife.easyMDeviceAdminReceiver"
             android:description="@string/app_name"

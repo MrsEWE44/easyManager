@@ -19,6 +19,8 @@ public class OtherTools {
         intent.putExtra("isADB",isShizuku);
         intent.putExtra("isDevice",isDhizuku);
         intent.putExtra("uid",uid);
+        intent.putExtra("isShizuku", isShizuku);
+        intent.putExtra("isDhizuku", isDhizuku);
         context.startActivity(intent);
     }
 
@@ -31,15 +33,25 @@ public class OtherTools {
     }
 
     public void setBtColor(Button b , boolean needShizuku , boolean needDhizuku, Boolean isShizuku,Boolean isDhizuku){
+        boolean shizukuActive = isShizuku != null && isShizuku;
+        boolean dhizukuActive = isDhizuku != null && isDhizuku;
 
-        if((isDhizuku != null && isDhizuku && needDhizuku) || (isShizuku != null && isShizuku && needShizuku) || (!needDhizuku && !needShizuku)){
-
-        }else {
-            b.setBackgroundColor(Color.parseColor("#FFEBEE"));
-            b.setEnabled(false);
+        boolean canUse = false;
+        if (!needShizuku && !needDhizuku) {
+            canUse = true;
+        } else if (needShizuku && shizukuActive) {
+            canUse = true;
+        } else if (needDhizuku && dhizukuActive) {
+            canUse = true;
         }
 
-
+        if (canUse) {
+            b.setEnabled(true);
+            b.setAlpha(1.0f);
+        } else {
+            b.setEnabled(false);
+            b.setAlpha(0.38f);
+        }
     }
 
     public void addMenuBase(Context context , Menu menu,int menumode){

@@ -1,8 +1,7 @@
 package com.easymanager.utils.dialog;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -177,10 +176,10 @@ public class PackageDialog extends DialogUtils {
         showProcessBarDialogByCMD(context,list,appPermission,APP_PERMIS_INDEX,opt_str,title,msg,uid);
     }
 
-    public void showIndexOfAppInfoDialog(Context context, Activity activity, ListView svllv, String msg, String s1,String pkgname, int app_info_mode, Integer uid, ArrayList<String> list, ArrayList<Boolean> checkboxs, ArrayList<Boolean> switbs) {
+    public void showIndexOfAppInfoDialog(Context context, Activity activity, ListView svllv, String msg, String s1, String pkgname, int app_info_mode, Integer uid, ArrayList<String> list, ArrayList<Boolean> checkboxs, ArrayList<Boolean> switbs) {
 
-        ProgressDialog show = showMyDialog(context,msg);
-        Handler handler = new Handler(){
+        AlertDialog show = showMyDialog(context, msg);
+        Handler handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 if(msg.what==0){
@@ -265,9 +264,9 @@ public class PackageDialog extends DialogUtils {
         showAppInfoProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_app_receiver),aillv1,list,checkboxs,switbs,pkgname, AppInfoEnums.IS_COMPENT_OR_PACKAGE,uid,AppInfoEnums.GET_RECEIVERS);
     }
 
-    public void showAppInfoProcessDialog(Context context , Activity activity , String msg , ListView lv1,ArrayList<String> list ,ArrayList<Boolean> checkboxs , ArrayList<Boolean> switbs , String pkgname , int mode , Integer uid,int mode2){
-        ProgressDialog show = showMyDialog(context,msg);
-        Handler handler = new Handler(){
+    public void showAppInfoProcessDialog(Context context, Activity activity, String msg, ListView lv1, ArrayList<String> list, ArrayList<Boolean> checkboxs, ArrayList<Boolean> switbs, String pkgname, int mode, Integer uid, int mode2) {
+        AlertDialog show = showMyDialog(context, msg);
+        Handler handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 if(msg.what==0){

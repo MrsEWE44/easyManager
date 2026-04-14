@@ -12,6 +12,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 
+import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.easymanager.R;
 import com.easymanager.core.api.PackageAPI;
 import com.easymanager.core.entity.TransmissionEntity;
@@ -59,9 +61,9 @@ public class AppInfoAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         view = LayoutInflater.from(context).inflate(R.layout.app_info_item_layout,null);
-        CheckBox checkBox=view.findViewById(R.id.aiilcb1);
+        MaterialCheckBox checkBox = view.findViewById(R.id.aiilcb1);
         TextView text = view.findViewById(R.id.aiiltv1);
-        Switch switchbbb = view.findViewById(R.id.aiilsb1);
+        MaterialSwitch switchbbb = view.findViewById(R.id.aiilsb1);
         text.setText(list.get(i));
         switchbbb.setChecked(switbs.get(i));
         switchbbb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

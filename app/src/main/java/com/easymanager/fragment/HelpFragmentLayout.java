@@ -1,22 +1,26 @@
 package com.easymanager.fragment;
 
-import android.app.Fragment;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.easymanager.R;
+import com.easymanager.core.api.DhizukuSystemServerApi;
+import com.easymanager.core.api.ShizukuSystemServerApi;
 import com.easymanager.utils.OtherTools;
 import com.easymanager.utils.TextUtils;
 import com.easymanager.utils.dialog.NetUtilsDialog;
+
+import com.google.android.material.appbar.MaterialToolbar;
 
 public class HelpFragmentLayout extends Fragment {
 
@@ -24,19 +28,36 @@ public class HelpFragmentLayout extends Fragment {
     private int uid;
 
     private Context context;
-    private ExpandableListView hflelv;
-    private Button hflcheckupdate,hflcleanfile,hflopengithub,hflopengitee;
+    private Button hflcheckupdate,hfl_donate,hflopengithub,hflopengitee,hflopenshizuku,hflopendhizuku;
     private NetUtilsDialog nu = new NetUtilsDialog();
-    private OtherTools ot = new OtherTools();
     private TextUtils tvvv = nu.tu;
+    private TextView hflAppName, hflAppVersion;
+    private LinearLayout faqContainer;
 
     public HelpFragmentLayout() {
     }
 
-    public HelpFragmentLayout(Boolean isShizuku, Boolean isDhizuku , int uid) {
+    public HelpFragmentLayout(Boolean isShizuku, Boolean isDhizuku, int uid) {
         this.isShizuku = isShizuku;
         this.isDhizuku = isDhizuku;
         this.uid = uid;
+    }
+
+    public void updateAuthStatus(Boolean isShizuku, Boolean isDhizuku) {
+        this.isShizuku = isShizuku;
+        this.isDhizuku = isDhizuku;
+        if (getView() != null) {
+            MaterialToolbar toolbar = getView().findViewById(R.id.toolbar);
+            if (toolbar != null) {
+                String modeText = "[ General ]";
+                if (isShizuku && ShizukuSystemServerApi.isShizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_SHIZUKU) {
+                    modeText = "[ SHIZUKU ]";
+                } else if (isDhizuku && DhizukuSystemServerApi.isDhizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_DHIZUKU) {
+                    modeText = "[ DHIZUKU ]";
+                }
+                toolbar.setTitle(getString(R.string.help_title) + " " + modeText);
+            }
+        }
     }
 
 
@@ -44,139 +65,97 @@ public class HelpFragmentLayout extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         context = getActivity();
         View inflate = inflater.inflate(R.layout.help_fragment_layout, container, false);
-        hflelv = inflate.findViewById(R.id.hflelv);
+        MaterialToolbar toolbar = inflate.findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            updateAuthStatus(isShizuku, isDhizuku);
+        }
+
+        faqContainer = inflate.findViewById(R.id.faq_container);
         hflcheckupdate = inflate.findViewById(R.id.hflcheckupdate);
-        hflcleanfile = inflate.findViewById(R.id.hflcleanfile);
+        hfl_donate = inflate.findViewById(R.id.hfl_donate);
         hflopengithub = inflate.findViewById(R.id.hflopengithub);
         hflopengitee = inflate.findViewById(R.id.hflopengitee);
-        hflelv.setAdapter(getadapter());
+        hflopenshizuku = inflate.findViewById(R.id.hflopenshizuku);
+        hflopendhizuku = inflate.findViewById(R.id.hflopendhizuku);
+
+        hflAppName = inflate.findViewById(R.id.hfl_app_name);
+        hflAppVersion = inflate.findViewById(R.id.hfl_app_version);
+
+        try {
+            hflAppName.setText(R.string.app_name);
+            String version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+            hflAppVersion.setText("Version: " + version);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        setupFaq();
         btClicked();
-        initBtColor();
         return inflate;
     }
 
+    private void setupFaq() {
+        addFaqItem(getLanStr(R.string.help_question_1), getLanStr(R.string.help_question_1_reply));
+        addFaqItem(getLanStr(R.string.help_question_2), getLanStr(R.string.help_question_2_reply));
+    }
+
+    private void addFaqItem(String question, String answer) {
+        View itemView = LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_1, faqContainer, false);
+        TextView tv = itemView.findViewById(android.R.id.text1);
+        tv.setText(question);
+        tv.setPadding(32, 32, 32, 32);
+
+        TextView answerView = new TextView(context);
+        answerView.setText(answer);
+        answerView.setPadding(48, 0, 48, 32);
+        answerView.setVisibility(View.GONE);
+        answerView.setTextColor(getContext().getColor(android.R.color.darker_gray));
+
+        itemView.setOnClickListener(v -> {
+            if (answerView.getVisibility() == View.GONE) {
+                answerView.setVisibility(View.VISIBLE);
+            } else {
+                answerView.setVisibility(View.GONE);
+            }
+        });
+
+        faqContainer.addView(itemView);
+        faqContainer.addView(answerView);
+    }
+
     private void btClicked() {
-        hflcheckupdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                nu.checkupdate(context);
-            }
-        });
-
-        hflcleanfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                nu.ft.clearAppFiles(context, uid);
-                Toast.makeText(context, R.string.app_clean_toast_msg,Toast.LENGTH_SHORT);
-            }
-        });
-
-        hflopengithub.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                nu.openUrlWithBrowser(context,"https://github.com/MrsEWE44/easyManager");
-            }
-        });
-
-        hflopengitee.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                nu.openUrlWithBrowser(context,"https://gitee.com/SorryMyLife/easyManager");
-            }
-        });
-
-
+        hflcheckupdate.setOnClickListener(v -> nu.checkupdate(context));
+        hfl_donate.setOnClickListener(v -> showDonateDialog());
+        hflopengithub.setOnClickListener(v -> nu.openUrlWithBrowser(context,"https://github.com/MrsEWE44/easyManager"));
+        hflopengitee.setOnClickListener(v -> nu.openUrlWithBrowser(context,"https://gitee.com/SorryMyLife/easyManager"));
+        hflopenshizuku.setOnClickListener(v -> nu.openUrlWithBrowser(context,"https://github.com/RikkaApps/Shizuku"));
+        hflopendhizuku.setOnClickListener(v -> nu.openUrlWithBrowser(context,"https://github.com/iamr0s/Dhizuku"));
     }
 
-    private void initBtColor(){
+    private void showDonateDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_donate, null);
+        builder.setView(dialogView);
+        builder.setCancelable(false);
 
-        ot.setBtColor(hflcheckupdate,false,false,isShizuku,isDhizuku);
-        ot.setBtColor(hflcleanfile,true,true,isShizuku,isDhizuku);
-        ot.setBtColor(hflopengithub,false,false,isShizuku,isDhizuku);
-        ot.setBtColor(hflopengitee,false,false,isShizuku,isDhizuku);
-    }
+        AlertDialog dialog = builder.create();
 
+        ImageView ivWechat = dialogView.findViewById(R.id.iv_wechat_qr);
+        ImageView ivAlipay = dialogView.findViewById(R.id.iv_alipay_qr);
+        Button btnClose = dialogView.findViewById(R.id.btn_close_donate);
 
-    private ExpandableListAdapter getadapter() {
+        // Using existing images as placeholder
 
-        return  new BaseExpandableListAdapter() {
-            private String[] parn = new String[]{getLanStr(R.string.help_question_1), getLanStr(R.string.help_question_2),};
-            // 每个列表下面的子列表字符数组
-            private String[] child = new String[]{getLanStr(R.string.help_question_1_reply), getLanStr(R.string.help_question_2_reply)};
-
-            @Override
-            public boolean isChildSelectable(int groupPosition, int childPosition) {
-                return true;
-            }
-
-            @Override
-            public boolean hasStableIds() {
-                return true;
-            }
-
-            // 构建每个父列表组件
-            @Override
-            public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-                View inflate = View.inflate(HelpFragmentLayout.this.getActivity(), R.layout.help_ex_item_parent_layout, null);
-                TextView exparent = inflate.findViewById(R.id.exparent);
-                exparent.setText(parn[groupPosition]);
-                return inflate;
-            }
-
-            @Override
-            public long getGroupId(int groupPosition) {
-                return groupPosition;
-            }
-
-            @Override
-            public int getGroupCount() {
-                return parn.length;
-            }
-
-            @Override
-            public Object getGroup(int groupPosition) {
-                return parn[groupPosition];
-            }
-
-            @Override
-            public int getChildrenCount(int groupPosition) {
-                return 1;
-            }
-
-            // 构建子列表的数据
-            @Override
-            public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-                View inflate = null;
-                if (convertView == null) {
-                    inflate = View.inflate(HelpFragmentLayout.this.getActivity(), R.layout.help_ex_item_child_layout, null);
-                } else {
-                    inflate = convertView;
-                }
-                TextView exparent = inflate.findViewById(R.id.exchild);
-                exparent.setText(child[groupPosition]);
-                return inflate;
-            }
-
-            @Override
-            public long getChildId(int groupPosition, int childPosition) {
-                return childPosition;
-            }
-
-            @Override
-            public Object getChild(int groupPosition, int childPosition) {
-                return child[childPosition];
-            }
-        };
+        nu.ft.setImageViewImg(context,"wechatqr.jpg",ivWechat);
+        nu.ft.setImageViewImg(context,"aliqr.jpg",ivAlipay);
 
 
+        btnClose.setOnClickListener(v -> dialog.dismiss());
 
+        dialog.show();
     }
 
     private String getLanStr(int id) {
         return tvvv.getLanguageString(context, id);
     }
-
-
 }
-
-

@@ -1,8 +1,7 @@
 package com.easymanager.utils.dialog;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
@@ -133,8 +132,8 @@ public class UserDialog extends DialogUtils {
         }).start();
     }
     public void startAppCloneUsers(Context context, Activity activity) {
-        ProgressDialog show = showMyDialog(context,tu.getLanguageString(context,R.string.app_clone_manager_clone_start_users_msg));
-        Handler handler = dismissDialogHandler(0,show);
+        AlertDialog show = showMyDialog(context, tu.getLanguageString(context, R.string.app_clone_manager_clone_start_users_msg));
+        Handler handler = dismissDialogHandler(0, show);
         int currentUserID = easyMUtils.getCurrentUserID();
         new Thread(new Runnable() {
             @Override
@@ -152,15 +151,16 @@ public class UserDialog extends DialogUtils {
     }
 
     public void unlockMaxLimit(Context context, Activity activity) {
-        View customeDialog = getCustomeDialog(context, tu.getLanguageString(context, R.string.tips), tu.getLanguageString(context, R.string.show_clone_unock_max_user_tips_msg));
+        // View customeDialog = getCustomeDialog(context, tu.getLanguageString(context, R.string.tips), tu.getLanguageString(context, R.string.show_clone_unock_max_user_tips_msg));
         AlertDialog.Builder ab = new AlertDialog.Builder(context);
-        ab.setView(customeDialog);
+        ab.setTitle(tu.getLanguageString(context, R.string.tips));
+        ab.setMessage(tu.getLanguageString(context, R.string.show_clone_unock_max_user_tips_msg));
         ab.setNegativeButton(tu.getLanguageString(context, R.string.dialog_sure_text), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();
-                ProgressDialog show = showMyDialog(context,tu.getLanguageString(context,R.string.execute_cmd));
-                Handler handler = dismissDialogHandler(0,show);
+                AlertDialog show = showMyDialog(context, tu.getLanguageString(context, R.string.execute_cmd));
+                Handler handler = dismissDialogHandler(0, show);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -176,7 +176,7 @@ public class UserDialog extends DialogUtils {
     }
 
     public void queryLocalAppCloneUserProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<String> strings, ArrayList<Boolean> checkboxs){
-        ProgressDialog show = showMyDialog(context,tu.getLanguageString(context,R.string.app_clone_manager_clone_query_users_msg));
+        AlertDialog show = showMyDialog(context, tu.getLanguageString(context, R.string.app_clone_manager_clone_query_users_msg));
         Handler handler = new Handler(){
             @Override
             public void handleMessage(Message msg) {

@@ -41,6 +41,8 @@ import com.easymanager.core.utils.PackageInstallerUtils;
 import com.easymanager.entitys.MyActivityInfo;
 import com.easymanager.entitys.MyApplicationInfo;
 import com.easymanager.entitys.MyPackageInfo;
+import com.rosan.dhizuku.api.Dhizuku;
+import com.rosan.dhizuku.api.DhizukuBinderWrapper;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -101,11 +103,11 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
     public IUsageStatsManager getIUsageStatsManager(){
         IUsageStatsManager manager = null;
-        if(ShizukuSystemServerApi.isShizuku()){
+        if(ShizukuSystemServerApi.isShizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_SHIZUKU){
             manager = ShizukuSystemServerApi.USAGESTATS_MANAGER.get();
         }
 
-        if(DhizukuSystemServerApi.isDhizuku()){
+        if(DhizukuSystemServerApi.isDhizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_DHIZUKU){
             manager = DhizukuSystemServerApi.USAGESTATS_MANAGER.get();
         }
 
@@ -114,11 +116,11 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
     public IActivityManager getIActivityManager(){
         IActivityManager iActivityManager = null;
-        if(ShizukuSystemServerApi.isShizuku()){
+        if(ShizukuSystemServerApi.isShizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_SHIZUKU){
             iActivityManager =  ShizukuSystemServerApi.ACTIVITY_MANAGER.get();
         }
 
-        if(DhizukuSystemServerApi.isDhizuku()){
+        if(DhizukuSystemServerApi.isDhizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_DHIZUKU){
             iActivityManager = DhizukuSystemServerApi.ACTIVITY_MANAGER.get();
         }
 
@@ -138,11 +140,11 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
     public IPackageManager getIPackageManager(){
         IPackageManager iPackageManager = null;
-        if(ShizukuSystemServerApi.isShizuku()){
+        if(ShizukuSystemServerApi.isShizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_SHIZUKU){
             iPackageManager =  ShizukuSystemServerApi.PACKAGE_MANAGER.get();
         }
 
-        if(DhizukuSystemServerApi.isDhizuku()){
+        if(DhizukuSystemServerApi.isDhizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_DHIZUKU){
             iPackageManager = DhizukuSystemServerApi.PACKAGE_MANAGER.get();
         }
 
@@ -151,11 +153,11 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
     public IUserManager getIUserManager(){
         IUserManager iUserManager = null;
-        if(ShizukuSystemServerApi.isShizuku()){
+        if(ShizukuSystemServerApi.isShizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_SHIZUKU){
             iUserManager =  ShizukuSystemServerApi.USER_MANAGER.get();
         }
 
-        if(DhizukuSystemServerApi.isDhizuku()){
+        if(DhizukuSystemServerApi.isDhizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_DHIZUKU){
             iUserManager = DhizukuSystemServerApi.USER_MANAGER.get();
         }
 
@@ -164,11 +166,11 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
     public IPermissionManager getIPermissionManager(){
         IPermissionManager iPermissionManager = null;
-        if(ShizukuSystemServerApi.isShizuku()){
+        if(ShizukuSystemServerApi.isShizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_SHIZUKU){
             iPermissionManager =  ShizukuSystemServerApi.PERMISSION_MANAGER.get();
         }
 
-        if(DhizukuSystemServerApi.isDhizuku()){
+        if(DhizukuSystemServerApi.isDhizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_DHIZUKU){
             iPermissionManager = DhizukuSystemServerApi.PERMISSION_MANAGER.get();
         }
 
@@ -190,11 +192,11 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
     public IPackageInstaller getIPackageInstaller() throws RemoteException {
         IPackageInstaller iPackageInstaller = null;
-        if(ShizukuSystemServerApi.isShizuku()){
+        if(ShizukuSystemServerApi.isShizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_SHIZUKU){
             iPackageInstaller = ShizukuSystemServerApi.getIPackageInstaller();
         }
 
-        if(DhizukuSystemServerApi.isDhizuku()){
+        if(DhizukuSystemServerApi.isDhizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_DHIZUKU){
             iPackageInstaller = DhizukuSystemServerApi.getIPackageInstaller();
         }
 
@@ -214,7 +216,14 @@ public class PackageAPI extends  baseAPI implements Serializable {
     }
 
     public String getInstallerPackageName(){
-        return (isRoot()?"com.easymanager":"com.android.shell");
+        if(ShizukuSystemServerApi.isShizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_SHIZUKU){
+            return "com.android.shell";
+        }else if(DhizukuSystemServerApi.isDhizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_DHIZUKU){
+            return DhizukuSystemServerApi.getDhizukuComponentName();
+        }else{
+            return "com.easymanager";
+        }
+
     }
 
     public String getCallingPackage(){
@@ -288,6 +297,11 @@ public class PackageAPI extends  baseAPI implements Serializable {
             res.append('\n').append("write: ");
 
             IPackageInstallerSession _session = IPackageInstallerSession.Stub.asInterface(new ShizukuBinderWrapper(_packageInstaller.openSession(sessionId).asBinder()));
+
+            if(DhizukuSystemServerApi.isDhizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_DHIZUKU){
+                _session = IPackageInstallerSession.Stub.asInterface(Dhizuku.binderWrapper(_packageInstaller.openSession(sessionId).asBinder()));
+            }
+
             session = PackageInstallerUtils.createSession(_session);
 
             InputStream is = new FileInputStream(new File(apkPath));
@@ -359,6 +373,7 @@ public class PackageAPI extends  baseAPI implements Serializable {
                 }
             }
         }
+//        System.out.println(res.toString());
     }
 
     public void InstallExistingPKG(String pkgname, int userId){
@@ -374,7 +389,7 @@ public class PackageAPI extends  baseAPI implements Serializable {
         }
     }
 
-     public void UninstallPKG(String pkgname ,int uid){
+    public void UninstallPKG(String pkgname ,int uid){
         UninstallPKG(pkgname,uid,-1);
     }
 
@@ -415,7 +430,7 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
                 String callerPackageName = null;
 
-                if(DhizukuSystemServerApi.isDhizuku()){
+                if(DhizukuSystemServerApi.isDhizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_DHIZUKU){
                     callerPackageName = DhizukuSystemServerApi.getDhizukuComponentName();
                 }
 

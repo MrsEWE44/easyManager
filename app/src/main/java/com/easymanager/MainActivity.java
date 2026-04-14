@@ -1,19 +1,24 @@
 package com.easymanager;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.easymanager.core.api.DhizukuSystemServerApi;
@@ -32,47 +37,211 @@ import com.easymanager.utils.permissionRequest;
 
 import org.lsposed.hiddenapibypass.HiddenApiBypass;
 
-public class MainActivity extends Activity {
-    private ImageView amiv1,amiv2,amiv3;
-    private View amv1,amv2,amv3;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import androidx.annotation.NonNull;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+public class MainActivity extends AppCompatActivity {
+    private BottomNavigationView bottomNavigationView;
     private FragmentManager fragmentManager;
     private Fragment homeFragment , helpFragment , manageFragment , currentFragment;
-    private Boolean isShizuku,isDhizuku;
+    private volatile boolean isShizuku = false;
+    private volatile boolean isDhizuku = false;
+    private Thread statusThread;
     private int stop_time = 5000;
     private int uid;
     private easyManagerUtils ee = new easyManagerUtils();
     private HelpDialogUtils dialogUtils = new HelpDialogUtils();
     private TextUtils tu = dialogUtils.tu;
+    private Handler statusHandler = new Handler(Looper.getMainLooper());
+    private Runnable statusRunnable;
+    private boolean lastShizuku = false;
+    private boolean lastDhizuku = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // 恢复持久化的运行时模式
+        ShizukuSystemServerApi.initMode(this);
+
         //修复软件崩溃后，出现页面重叠的问题
-        fragmentManager = getFragmentManager();
+        fragmentManager = getSupportFragmentManager();
         if(savedInstanceState != null){
             helpFragment = fragmentManager.findFragmentByTag("help");
             manageFragment = fragmentManager.findFragmentByTag("manager");
             homeFragment = fragmentManager.findFragmentByTag("home");
-            showFragment(helpFragment);
         }
         initView();
-//        dialogUtils.showHelp(this,HelpDialogUtils.MAIN_HELP,0);
-//        new NetUtilsDialog().checkupdate(this);
+        checkPermissionsAndActivationFlow();
+        startStatusPolling();
+    }
+
+    private void checkPermissionsAndActivationFlow() {
+        if (!hasSystemPermissions()) {
+            showPermissionGuidanceDialog();
+        } else {
+            checkActivationFlow();
+        }
+    }
+
+    private boolean hasSystemPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return android.os.Environment.isExternalStorageManager();
+        } else {
+            return checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == android.content.pm.PackageManager.PERMISSION_GRANTED;
+        }
+    }
+
+    private void showPermissionGuidanceDialog() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.warning_tips)
+                .setMessage(tu.getLanguageString(this,R.string.grant_permission_msg))
+                .setPositiveButton(R.string.dialog_sure_text, (dialog, which) -> {
+                    requestPermissionsFlow();
+                })
+                .setNegativeButton(R.string.dialog_cancel_text, (dialog, which) -> {
+                    checkActivationFlow();
+                })
+                .setCancelable(false)
+                .show();
+    }
+
+    public void requestPermissionsFlow() {
+        permissionRequest.requestExternalStoragePermission(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            permissionRequest.getExternalStorageManager(this, this);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        checkActivationFlow();
+    }
+
+    private void checkActivationFlow() {
+        if (!ShizukuSystemServerApi.isShizuku() && !DhizukuSystemServerApi.isDhizuku()) {
+            showModeDialog(this);
+        }
+    }
+
+    private void startStatusPolling() {
+        if (statusThread != null) statusThread.interrupt();
+        statusThread = new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted() && !isFinishing()) {
+                // 获取当前设定的运行时模式
+                int mode = ShizukuSystemServerApi.runtimeMode;
+                boolean currentShizuku = false;
+                boolean currentDhizuku = false;
+
+                // 核心互锁逻辑：根据 runtimeMode 决定哪个状态有效
+                if (mode == ShizukuSystemServerApi.MODE_SHIZUKU) {
+                    currentShizuku = ShizukuSystemServerApi.isShizuku();
+                } else if (mode == ShizukuSystemServerApi.MODE_DHIZUKU) {
+                    currentDhizuku = DhizukuSystemServerApi.isDhizuku();
+                } else {
+                    // 默认模式下，优先显示已激活的
+                    currentShizuku = ShizukuSystemServerApi.isShizuku();
+                    currentDhizuku = !currentShizuku && DhizukuSystemServerApi.isDhizuku();
+                }
+
+                if (currentShizuku != isShizuku || currentDhizuku != isDhizuku) {
+                    isShizuku = currentShizuku;
+                    isDhizuku = currentDhizuku;
+                    runOnUiThread(() -> {
+                        updateTitle();
+                        updateAllFragments();
+                        if (!isShizuku && !isDhizuku && (lastShizuku || lastDhizuku)) {
+                            showAuthLostDialog();
+                        }
+                        lastShizuku = isShizuku;
+                        lastDhizuku = isDhizuku;
+                    });
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+        });
+        statusThread.start();
+    }
+
+    private void showAuthLostDialog() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.warning_tips)
+                .setMessage(tu.getLanguageString(this,R.string.grant_dead))
+                .setPositiveButton(R.string.dialog_sure_text, (dialog, which) -> {
+                    showFragment(manageFragment);
+                })
+                .setCancelable(false)
+                .show();
+    }
+
+    private void updateTitle() {
+        if (isShizuku) {
+            setTitle("easyManager [ SHIZUKU ] [ " + uid + " ]");
+        } else if (isDhizuku) {
+            setTitle("easyManager [ DHIZUKU ] [ " + uid + " ]");
+        } else {
+            setTitle("easyManager [ General ] [ " + uid + " ]");
+        }
+    }
+
+    private void updateAllFragments() {
+        if (homeFragment instanceof HomeFragmentLayout) {
+            ((HomeFragmentLayout) homeFragment).updateAuthStatus(isShizuku, isDhizuku);
+        }
+        if (helpFragment instanceof HelpFragmentLayout) {
+            ((HelpFragmentLayout) helpFragment).updateAuthStatus(isShizuku, isDhizuku);
+        }
+        if (manageFragment instanceof ManagerGrantUserFragmentLayout) {
+            ((ManagerGrantUserFragmentLayout) manageFragment).updateAuthStatus(isShizuku, isDhizuku);
+        }
     }
 
     public void initView(){
         setContentView(R.layout.activity_main);
         MyActivityManager.getIns().add(this);
         uid = getIntent().getIntExtra("uid",0);
-        amiv1 =findViewById(R.id.amiv1);
-        amiv2 =findViewById(R.id.amiv2);
-        amiv3 =findViewById(R.id.amiv3);
-        amv1 =findViewById(R.id.amv1);
-        amv2 =findViewById(R.id.amv2);
-        amv3 =findViewById(R.id.amv3);
-        imclick(amiv1);
-        imclick(amiv2);
-        imclick(amiv3);
+
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.topAppBar);
+        setSupportActionBar(toolbar);
+        int toolbarHeight = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 56, getResources().getDisplayMetrics());
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.topAppBar), (v, insets) -> {
+            int top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+
+            ViewGroup.LayoutParams lp = v.getLayoutParams();
+            lp.height = toolbarHeight + top;
+            v.setLayoutParams(lp);
+
+            v.setPadding(0, top, 0, 0);
+
+            return insets;
+        });
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.nav_manager) {
+                    showFragment(manageFragment, false);
+                    return true;
+                } else if (id == R.id.nav_home) {
+                    showFragment(homeFragment, false);
+                    return true;
+                } else if (id == R.id.nav_help) {
+                    showFragment(helpFragment, false);
+                    return true;
+                }
+                return false;
+            }
+        });
+
         try {
             this.getExternalCacheDir().mkdirs();
             this.getCacheDir().mkdirs();
@@ -84,22 +253,20 @@ public class MainActivity extends Activity {
         }
         isShizuku = false;
         isDhizuku = false;
-        showModeDialog(this);
-
-        permissionRequest.requestExternalStoragePermission(this);
-        permissionRequest.getExternalStorageManager(this,this);
-
+        // showModeDialog(this); // Moved to checkActivation()
 
         String path = this.getExternalCacheDir().toString();
 
 
-        if(isShizuku!=null && isShizuku){
+
+        if(isShizuku){
             setTitle("easyManager [ SHIZUKU ] [ "+uid+" ]");
-        }else if(isDhizuku!=null && isDhizuku){
+        }else if(isDhizuku){
             setTitle("easyManager [ DHIZUKU ] [ "+uid+" ]");
         }else{
             setTitle("easyManager [ General ] [ "+uid+" ]");
         }
+        updateTitle();
 
         if (homeFragment == null) {
             homeFragment = new HomeFragmentLayout(isShizuku,isDhizuku,uid);
@@ -117,27 +284,37 @@ public class MainActivity extends Activity {
     }
 
     public void showFragment(Fragment fragment) {
+        showFragment(fragment, true);
+    }
+
+    private void showFragment(Fragment fragment, boolean updateNav) {
+        if (fragment == null || fragment == currentFragment) return;
         String tag = null;
         if (fragment instanceof HelpFragmentLayout) {
             tag = "help";
-            amv3.setBackgroundColor(Color.parseColor("#6200EE"));
-            amv2.setBackgroundColor(Color.parseColor("#FFFFFF"));
-            amv1.setBackgroundColor(Color.parseColor("#FFFFFF"));
-        }
-
-        if(fragment instanceof  HomeFragmentLayout){
+            if (updateNav && bottomNavigationView.getSelectedItemId() != R.id.nav_help) {
+                bottomNavigationView.setSelectedItemId(R.id.nav_help);
+                return;
+            }
+        } else if (fragment instanceof HomeFragmentLayout) {
             tag = "home";
-        }
-
-        if(fragment instanceof  ManagerGrantUserFragmentLayout){
+            if (updateNav && bottomNavigationView.getSelectedItemId() != R.id.nav_home) {
+                bottomNavigationView.setSelectedItemId(R.id.nav_home);
+                return;
+            }
+        } else if (fragment instanceof ManagerGrantUserFragmentLayout) {
             tag = "manager";
+            if (updateNav && bottomNavigationView.getSelectedItemId() != R.id.nav_manager) {
+                bottomNavigationView.setSelectedItemId(R.id.nav_manager);
+                return;
+            }
         }
 
         //开启事务 创建事务对象
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         //如果之前没有添加过
         if (!fragment.isAdded()) {
-            fragmentTransaction.add(R.id.amfl1,fragment,tag);
+            fragmentTransaction.add(R.id.amfl1, fragment, tag);
             if (currentFragment != null) {
                 //隐藏fragment
                 fragmentTransaction.hide(currentFragment);
@@ -153,159 +330,77 @@ public class MainActivity extends Activity {
         fragmentTransaction.commit();
     }
 
-    private void imclick(ImageView im){
-        im.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                im.setSelected(true);
-                int id = view.getId();
-                if(id == R.id.amiv1){
-                    currentFragment = new ManagerGrantUserFragmentLayout(isShizuku,isDhizuku);
-                    amiv2.setSelected(false);
-                    amiv3.setSelected(false);
-                    amv1.setBackgroundColor(Color.parseColor("#6200EE"));
-                    amv2.setBackgroundColor(Color.parseColor("#FFFFFF"));
-                    amv3.setBackgroundColor(Color.parseColor("#FFFFFF"));
-                }
-                if(id == R.id.amiv2){
-                    currentFragment = new HomeFragmentLayout(isShizuku,isDhizuku,uid);
-                    amiv1.setSelected(false);
-                    amiv3.setSelected(false);
-                    amv2.setBackgroundColor(Color.parseColor("#6200EE"));
-                    amv1.setBackgroundColor(Color.parseColor("#FFFFFF"));
-                    amv3.setBackgroundColor(Color.parseColor("#FFFFFF"));
-                }
-                if(id == R.id.amiv3){
-                    currentFragment = new HelpFragmentLayout(isShizuku,isDhizuku,uid);
-                    amiv1.setSelected(false);
-                    amiv2.setSelected(false);
-                    amv3.setBackgroundColor(Color.parseColor("#6200EE"));
-                    amv2.setBackgroundColor(Color.parseColor("#FFFFFF"));
-                    amv1.setBackgroundColor(Color.parseColor("#FFFFFF"));
-                }
-                fragmentTransaction.replace(R.id.amfl1, currentFragment);
-                fragmentTransaction.commit();
-            }
-        });
-    }
 
-    public void showModeDialog(Context con){
-        FileUtils fu = new FileUtils();
-        String readStr = fu.readMode(con);
-        if(readStr.equals("1")){
-            ShizukuSystemServerApi.bindRequestPermission();
-            isShizuku = ShizukuSystemServerApi.check(0);
-            isDhizuku = false;
-            if(!isShizuku){
-                ShizukuSystemServerApi.dead();
-                isDhizuku = DhizukuSystemServerApi.check(0);
-            }
-        }else if(readStr.equals("2")){
-            isShizuku = false;
-            isDhizuku = DhizukuSystemServerApi.check(0);
-            if(!isDhizuku){
-                if(ShizukuSystemServerApi.isShizuku()){
-                    isShizuku = true;
-                }else{
+    public void showModeDialog(Context con) {
+        // Material Design 风格选择弹窗
+        View customView = new DialogBaseUtils().getCustomeDialog(con,
+                tu.getLanguageString(con, R.string.tips),
+                con.getString(R.string.select_mode_msg));
+
+        new MaterialAlertDialogBuilder(con)
+                .setView(customView)
+                .setPositiveButton("Shizuku", (dialogInterface, i) -> {
+                    ShizukuSystemServerApi.saveMode(con, ShizukuSystemServerApi.MODE_SHIZUKU);
                     ShizukuSystemServerApi.bindRequestPermission();
-                    isShizuku = ShizukuSystemServerApi.check(0);
-                }
-            }
-        }else{
-            View customeDialog = new DialogBaseUtils().getCustomeDialog(con, tu.getLanguageString(con,R.string.tips), con.getString(R.string.select_mode_msg));
-            AlertDialog.Builder ab = new AlertDialog.Builder(con);
-            ab.setView(customeDialog);
-            ab.setNegativeButton("Shizuku", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    fu.writeMode(con,"1");
-
-                    ShizukuSystemServerApi.bindRequestPermission();
-                    isShizuku = ShizukuSystemServerApi.check(0);
-
-                    dialogInterface.cancel();
-                    dialogInterface.dismiss();
-                }
-            });
-
-            ab.setNeutralButton("Dhizuku", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    fu.writeMode(con,"2");
-
-                    isDhizuku = DhizukuSystemServerApi.check(0);
-                    dialogInterface.cancel();
-                    dialogInterface.dismiss();
-                }
-            });
-
-            AlertDialog alertDialog = ab.create();
-            alertDialog.show();
-        }
-
-
+                    ShizukuSystemServerApi.check(0);
+                    runOnUiThread(this::updateTitle);
+                })
+                .setNegativeButton("Dhizuku", (dialogInterface, i) -> {
+                    ShizukuSystemServerApi.saveMode(con, ShizukuSystemServerApi.MODE_DHIZUKU);
+                    DhizukuSystemServerApi.check(0);
+                    runOnUiThread(this::updateTitle);
+                })
+                .setNeutralButton(R.string.dialog_cancel_text, null)
+                .setCancelable(false)
+                .show();
     }
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         MyActivityManager.getIns().killall();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.NONE,0,0,tu.getLanguageString(this,R.string.options_menu_help_str));
-        menu.add(Menu.NONE,1,0,tu.getLanguageString(this,R.string.options_menu_full_exit));
-        menu.add(Menu.NONE,2,0,tu.getLanguageString(this,R.string.options_menu_exit));
-        return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.top_app_bar_menu, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
-        switch (itemId){
-            case 0:
-                dialogUtils.showHelp(this,HelpDialogUtils.MAIN_HELP,0);
-                break;
-            case 1:
-                if(ee.isDeviceOwnerActive(this)){
-                    ee.forceRemoveDeviceOwner(this);
-                }
-
-                if(isShizuku){
-                    ShizukuSystemServerApi.dead();
-                }
-
-                if(isDhizuku){
-                    DhizukuSystemServerApi.dead();
-                }
-
-                MyActivityManager.getIns().killall();
-                break;
-            case 2:
-                if(isShizuku){
-                    ShizukuSystemServerApi.dead();
-                }
-
-                if(isDhizuku){
-                    DhizukuSystemServerApi.dead();
-                }
-
-                MyActivityManager.getIns().killall();
-                break;
+        if (itemId == R.id.menu_help) {
+            dialogUtils.showHelp(this, HelpDialogUtils.MAIN_HELP, 0);
+        } else if (itemId == R.id.menu_full_exit) {
+            if (ee.isDeviceOwnerActive(this)) {
+                ee.forceRemoveDeviceOwner(this);
+            }
+            if (isShizuku) ShizukuSystemServerApi.dead();
+            if (isDhizuku) DhizukuSystemServerApi.dead();
+            MyActivityManager.getIns().killall();
+        } else if (itemId == R.id.menu_exit) {
+            if (isShizuku) ShizukuSystemServerApi.dead();
+            if (isDhizuku) DhizukuSystemServerApi.dead();
+            MyActivityManager.getIns().killall();
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(isShizuku){
+        if (statusThread != null) {
+            statusThread.interrupt();
+        }
+        if (statusHandler != null && statusRunnable != null) {
+            statusHandler.removeCallbacks(statusRunnable);
+        }
+        if (isShizuku) {
             ShizukuSystemServerApi.dead();
         }
 
-        if(isDhizuku){
+        if (isDhizuku) {
             DhizukuSystemServerApi.dead();
         }
 

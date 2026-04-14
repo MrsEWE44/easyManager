@@ -28,6 +28,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.button.MaterialButton;
 import com.easymanager.R;
 import com.easymanager.core.entity.TransmissionEntity;
 import com.easymanager.entitys.PKGINFO;
@@ -46,12 +50,12 @@ import com.easymanager.utils.permissionRequest;
 import java.io.File;
 import java.util.ArrayList;
 
-public class AppManagerLayoutActivity extends Activity {
+public class AppManagerLayoutActivity extends AppCompatActivity {
 
     private ArrayList<PKGINFO> pkginfos = new ArrayList<>();
     private ArrayList<Boolean> checkboxs = new ArrayList<>();
     private Button amlapplybt;
-    private Spinner amlsp1,amlsp2,amlsp3,amlsp4,amlsp5;
+    private Spinner amlsp1,amlsp2,amlsp3,amlsp4;
     private ListView apllv1;
 
     private int mode;
@@ -78,7 +82,22 @@ public class AppManagerLayoutActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.app_manager_layout);
         MyActivityManager.getIns().add(this);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+            Intent intent = getIntent();
+            boolean isShizuku = intent.getBooleanExtra("isShizuku", false);
+            boolean isDhizuku = intent.getBooleanExtra("isDhizuku", false);
+            String modeName = "[ General ]";
+            if (isShizuku) modeName = "[ SHIZUKU ]";
+            else if (isDhizuku) modeName = "[ DHIZUKU ]";
+
+            getSupportActionBar().setTitle(getTitle() + " " + modeName);
+        }
+
         initBt();
     }
 
@@ -97,11 +116,9 @@ public class AppManagerLayoutActivity extends Activity {
         amlsp2 = findViewById(R.id.amlsp2);
         amlsp3 = findViewById(R.id.amlsp3);
         amlsp4 = findViewById(R.id.amlsp4);
-        amlsp5 = findViewById(R.id.amlsp5);
         apllv1 = findViewById(R.id.apllv1);
         amlsp1.setAdapter(getSpinnerAdapter(getAppPermis()));
         amlsp3.setAdapter(getSpinnerAdapter(getAppChoicesOPT()));
-        amlsp5.setAdapter(getSpinnerAdapterDhizuku(getAppManagerOPT()));
         String[] appCloneUsers = ee.getAppCloneUsers();
         APP_ALL_UERS = new String[appCloneUsers.length];
         APP_ALL_UERS[0]=String.valueOf(uid);
@@ -114,20 +131,57 @@ public class AppManagerLayoutActivity extends Activity {
         }
 
         amlsp4.setAdapter(getSpinnerAdapter(APP_ALL_UERS));
+        btClicked();
+
+        if(mode == AppManagerEnum.APP_PERMISSION){
+            amlsp1.setEnabled(true);
+            amlsp2.setEnabled(true);
+            amlsp2.setAdapter(getSpinnerAdapter(getAppPermisOPT1()));
+            amlapplybt.setText(getLanStr(R.string.button_apply));
+        }
+
+        if(mode == AppManagerEnum.APP_DISABLE_COMPENT){
+            amlsp1.setEnabled(false);
+            amlsp2.setEnabled(true);
+            amlsp2.setAdapter(getSpinnerAdapter(getAppDisableOrEnableOPT()));
+            amlapplybt.setText(getLanStr(R.string.button_apply));
+        }
+
+        if(mode == AppManagerEnum.APP_DUMP){
+            amlsp1.setEnabled(false);
+            amlsp2.setEnabled(true);
+            amlsp2.setAdapter(getSpinnerAdapter(getAppDumpOPT()));
+            amlapplybt.setText(getLanStr(R.string.button_dump_app));
+        }
+
+        if(mode == AppManagerEnum.APP_UNINSTALL){
+            amlsp1.setEnabled(false);
+            amlsp2.setEnabled(false);
+            amlapplybt.setText(getLanStr(R.string.button_del_app));
+        }
+
+        if(mode == AppManagerEnum.APP_CLEAN_PROCESS){
+            amlsp1.setEnabled(false);
+            amlsp2.setEnabled(false);
+            amlsp2.setAdapter(getSpinnerAdapter(getAppCleanOPT()));
+            amlapplybt.setText(getLanStr(R.string.button_clean));
+        }
 
         if(mode == AppManagerEnum.APP_INSTALL_LOCAL_FILE){
             amlsp1.setEnabled(false);
-            amlsp5.setEnabled(false);
             amlsp2.setAdapter(getSpinnerAdapter(getAppInstallLocalFileOPT()));
             amlapplybt.setText(getLanStr(R.string.button_select));
             install_mode=true;
         }
 
-        if(isDevice){
-            amlsp5.setSelection(1);
-        }
+        packageUtils.clearList(pkginfos,checkboxs);
+        acu.getUd().showPKGS(context,apllv1,pkginfos,checkboxs);
+        new HelpDialogUtils().showHelp(context,HelpDialogUtils.APP_MANAGE_HELP,mode);
 
-        btClicked();
+
+
+
+
 
     }
 
@@ -137,7 +191,6 @@ public class AppManagerLayoutActivity extends Activity {
         spinnerChange(amlsp2,1);
         spinnerChange(amlsp3,2);
         spinnerChange(amlsp4,3);
-        spinnerChange(amlsp5,4);
 
         amlapplybt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -228,41 +281,46 @@ public class AppManagerLayoutActivity extends Activity {
         apllv1.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                nowItemIndex=i;
-                createLVMenu();
+                nowItemIndex = i;
                 return false;
             }
         });
-
-
+        registerForContextMenu(apllv1);
     }
 
-    private void createLVMenu(){
-        apllv1.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-            @Override
-            public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
-                contextMenu.add(0,0,0, R.string.copy_app_detail);
-                contextMenu.add(0,1,0, R.string.jump_app_detail);
-                contextMenu.add(0,2,0, R.string.add_clean_list);
-            }
-        });
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        if (nowItemIndex != -1) {
+            PKGINFO pkg = pkginfos.get(nowItemIndex);
+            menu.setHeaderTitle(pkg.getAppname());
+            menu.add(0, 0, 0, R.string.copy_app_detail);
+            menu.add(0, 1, 0, R.string.jump_app_detail);
+        }
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
-        switch (itemId){
-            case 0:
-                acu.getUd().tu.copyText(context,pkginfos.get(nowItemIndex).toString());
-                break;
-            case 1:
-                Intent intent2 = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                intent2.setData(Uri.parse("package:" + pkginfos.get(nowItemIndex).getPkgname()));
-                startActivity(intent2);
-                break;
-        }
+        if (nowItemIndex == -1) return super.onContextItemSelected(item);
+        PKGINFO pkg = pkginfos.get(nowItemIndex);
 
+        int itemId = item.getItemId();
+        if (itemId == 0) {
+            String detail = String.format("App Name: %s\nPackage Name: %s\nVersion: %s\nPath: %s",
+                    pkg.getAppname(), pkg.getPkgname(), pkg.getAppversionname(), pkg.getApkpath());
+            acu.getUd().tu.copyText(context, detail);
+            return true;
+        } else if (itemId == 1) {
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            intent.setData(Uri.parse("package:" + pkg.getPkgname()));
+            startActivity(intent);
+            return true;
+        }
         return super.onContextItemSelected(item);
+    }
+
+    private void createLVMenu() {
+        // Method replaced by registerForContextMenu
     }
 
     private void spinnerChange(Spinner s, int app_opt_mode){
@@ -301,48 +359,6 @@ public class AppManagerLayoutActivity extends Activity {
                         APP_UID_INDEX = i;
                         uid = Integer.valueOf(APP_ALL_UERS[APP_UID_INDEX]);
                         break;
-                    case 4:
-                        if(amlsp5.isEnabled()){
-                            switch (i){
-                                case 0:
-                                    mode = AppManagerEnum.APP_PERMISSION;
-                                    amlsp1.setEnabled(true);
-                                    amlsp2.setEnabled(true);
-                                    amlsp2.setAdapter(getSpinnerAdapter(getAppPermisOPT1()));
-                                    break;
-                                case 1:
-                                    mode = AppManagerEnum.APP_DISABLE_COMPENT;
-                                    amlsp1.setEnabled(false);
-                                    amlsp2.setEnabled(true);
-                                    amlsp2.setAdapter(getSpinnerAdapter(getAppDisableOrEnableOPT()));
-
-                                    break;
-                                case 2:
-                                    mode = AppManagerEnum.APP_DUMP;
-                                    amlsp1.setEnabled(false);
-                                    amlsp2.setEnabled(true);
-                                    amlsp2.setAdapter(getSpinnerAdapter(getAppDumpOPT()));
-                                    amlapplybt.setText(getLanStr(R.string.button_dump_app));
-                                    break;
-                                case 3:
-                                    mode = AppManagerEnum.APP_UNINSTALL;
-                                    amlsp1.setEnabled(false);
-                                    amlsp2.setEnabled(false);
-                                    amlapplybt.setText(getLanStr(R.string.button_del_app));
-                                    break;
-                                case 4:
-                                    mode = AppManagerEnum.APP_CLEAN_PROCESS;
-                                    amlsp1.setEnabled(false);
-                                    amlsp2.setEnabled(true);
-                                    amlsp2.setAdapter(getSpinnerAdapter(getAppCleanOPT()));
-                                    amlapplybt.setText(getLanStr(R.string.button_clean));
-                                    break;
-                            }
-                            packageUtils.clearList(pkginfos,checkboxs);
-                            acu.getUd().showPKGS(context,apllv1,pkginfos,checkboxs);
-                            new HelpDialogUtils().showHelp(context,HelpDialogUtils.APP_MANAGE_HELP,mode);
-                        }
-                        break;
                 }
             }
 
@@ -364,6 +380,10 @@ public class AppManagerLayoutActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
         int itemId = item.getItemId();
         if(itemId == R.id.actionbarsearch){
             if(mode == AppManagerEnum.APP_CLEAN_PROCESS){

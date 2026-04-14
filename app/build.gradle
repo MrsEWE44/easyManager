@@ -1,11 +1,7 @@
 plugins {
     id 'com.android.application'
 }
-configurations {
-    all {
-        exclude group: 'androidx.annotation', module: 'annotation'
-    }
-}
+
 android {
     namespace 'com.easymanager'
     compileSdk 36
@@ -14,15 +10,15 @@ android {
         applicationId "com.easymanager"
         minSdk 26
         targetSdk 36
-        versionCode 17
-        versionName "2.0.0beta"
+        versionCode 18
+        versionName "2.0.0"
 
     }
 
     // 自定义打包名称
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "easyManager_${defaultConfig.versionName}_${buildType.name}.apk"
+            outputFileName = "lightBreeze_${defaultConfig.versionName}_${buildType.name}.apk"
         }
     }
 
@@ -40,8 +36,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
 
 }
@@ -54,5 +50,8 @@ dependencies {
     implementation "dev.rikka.shizuku:provider:13.1.5"
     implementation "io.github.iamr0s:Dhizuku-API:2.5.4"
     implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:6.1'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
 
 }

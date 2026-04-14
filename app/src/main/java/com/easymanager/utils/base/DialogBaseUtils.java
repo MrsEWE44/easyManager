@@ -1,6 +1,6 @@
 package com.easymanager.utils.base;
 
-import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
@@ -12,41 +12,28 @@ import com.easymanager.utils.TextUtils;
 
 import java.lang.reflect.Field;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 public class DialogBaseUtils {
 
     public TextUtils tu = new TextUtils();
 
-    public View getCustomeDialog(Context con,String title , String msg){
-        // 创建自定义布局的 AlertDialog
-        LayoutInflater inflater = LayoutInflater.from(con);
-        View dialogView = inflater.inflate(R.layout.custom_alert_dialog, null);
-
-// 设置标题
-        TextView titleView = dialogView.findViewById(R.id.dialog_title);
-        titleView.setText(title);
-
-// 设置消息
-        TextView messageView = dialogView.findViewById(R.id.dialog_message);
-        messageView.setText(msg);
-        messageView.setTextIsSelectable(true);
-        return dialogView;
+    public View getCustomeDialog(Context con, String title, String msg) {
+        View view = LayoutInflater.from(con).inflate(R.layout.custom_alert_dialog, null);
+        TextView titleView = view.findViewById(R.id.dialog_title);
+        TextView msgView = view.findViewById(R.id.dialog_message);
+        if (titleView != null) titleView.setText(title);
+        if (msgView != null) msgView.setText(msg);
+        return view;
     }
 
     //显示一个弹窗
-    public void showInfoMsg(Context con,String title , String msg){
-        View customeDialog = getCustomeDialog(con, title, msg);
-        AlertDialog.Builder ab = new AlertDialog.Builder(con);
-        ab.setView(customeDialog);
-        ab.setNegativeButton(tu.getLanguageString(con, R.string.dialog_sure_text), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
-
-        AlertDialog alertDialog = ab.create();
-        alertDialog.show();
-
+    public void showInfoMsg(Context con, String title, String msg) {
+        new MaterialAlertDialogBuilder(con)
+                .setTitle(title)
+                .setMessage(msg)
+                .setPositiveButton(R.string.dialog_sure_text, (dialog, which) -> dialog.dismiss())
+                .show();
     }
 
     /**

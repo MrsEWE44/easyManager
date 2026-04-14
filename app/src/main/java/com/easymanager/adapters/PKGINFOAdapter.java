@@ -10,6 +10,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.easymanager.R;
 import com.easymanager.entitys.PKGINFO;
 import com.easymanager.utils.FileTools;
@@ -54,7 +55,7 @@ public class PKGINFOAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         convertView = LayoutInflater.from(context).inflate(R.layout.app_list_view_item_layout,null);
         ImageView imageView = convertView.findViewById(R.id.alvilappicon);
-        CheckBox checkBox=convertView.findViewById(R.id.alvilcb1);
+        MaterialCheckBox checkBox = convertView.findViewById(R.id.alvilcb1);
         TextView text = convertView.findViewById(R.id.alvilappname);
         TextView text2 = convertView.findViewById(R.id.alvilapppkgname);
         TextView text3 = convertView.findViewById(R.id.alvilappversion);

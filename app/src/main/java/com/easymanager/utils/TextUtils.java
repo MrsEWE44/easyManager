@@ -19,9 +19,12 @@ public class TextUtils {
     public TextUtils(){}
 
     public void copyText(Context context, String str){
-        ClipboardManager cpm = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-        cpm.setText(str);
-        Toast.makeText(context, getLanguageString(context, R.string.is_copy_ok), Toast.LENGTH_SHORT).show();
+        android.content.ClipboardManager cpm = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        android.content.ClipData clip = android.content.ClipData.newPlainText("label", str);
+        cpm.setPrimaryClip(clip);
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU) {
+            Toast.makeText(context, getLanguageString(context, R.string.is_copy_ok), Toast.LENGTH_SHORT).show();
+        }
     }
 
     public String getLanguageString(Context context , int id){
