@@ -40,7 +40,16 @@ public class HomeFragmentLayout extends Fragment {
         this.uid = uid;
     }
 
-    private Boolean isRoot,isADB,isDevice;
+    public Boolean isRoot, isADB, isDevice;
+
+    public void updateStatus(Boolean isRoot, Boolean isADB, Boolean isDevice) {
+        this.isRoot = isRoot;
+        this.isADB = isADB;
+        this.isDevice = isDevice;
+        if (getView() != null) {
+            initBtColor();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

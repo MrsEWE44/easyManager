@@ -1,68 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:background="#F5F5F5"
+    android:background="@color/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     android:fitsSystemWindows="true">
 
-    <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/amlsp5"
-        />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:background="@drawable/card_background"
+        android:padding="12dp"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
 
         <Spinner
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/amlsp1"
-            android:layout_weight="1"
-            />
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:id="@+id/amlsp5"
+            android:layout_marginBottom="8dp"/>
 
-        <Spinner
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/amlsp2"
-            android:layout_weight="1"
-            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Spinner
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:id="@+id/amlsp1"
+                android:layout_weight="1" />
+            <Spinner
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:id="@+id/amlsp2"
+                android:layout_weight="1" />
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+            <Spinner
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:id="@+id/amlsp3"
+                android:layout_weight="1" />
+            <Spinner
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:id="@+id/amlsp4"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/amlapplybt"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/button_apply"
+            android:textColor="@color/onPrimary"
+            android:background="@drawable/btn_material" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-
-        <Spinner
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/amlsp3"
-            android:layout_weight="1"
-            />
-
-        <Spinner
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/amlsp4"
-            android:layout_weight="1"
-            />
-
-    </LinearLayout>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/button_apply"
-        android:id="@+id/amlapplybt"/>
     <ListView
+        android:id="@+id/apllv1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/apllv1"/>
+        android:divider="@color/divider"
+        android:dividerHeight="1dp"
+        android:background="@drawable/card_background"
+        android:padding="4dp"/>
 
 </LinearLayout>

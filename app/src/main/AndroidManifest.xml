@@ -8,12 +8,13 @@
         android:icon="@mipmap/launcher_iconnn"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/launcher_iconnn_round"
-        android:theme="@android:style/Theme.Holo.Light"
+        android:theme="@style/AppTheme"
         android:requestLegacyExternalStorage="true"
         >
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:configChanges="uiMode"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,13 +23,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activitys.AppManagerLayoutActivity"/>
-        <activity android:name=".activitys.AppInfoLayoutActivity"/>
-        <activity android:name=".activitys.UsbModeLayoutActivity"/>
-        <activity android:name=".activitys.CreateImgLayoutActivity"/>
-        <activity android:name=".activitys.FileSharedLayoutActivity"/>
-        <activity android:name=".activitys.AppCloneLayoutActivity"/>
-        <activity android:name=".activitys.RunCommandLayoutActivity"/>
+        <activity android:name=".activitys.AppManagerLayoutActivity" android:configChanges="uiMode"/>
+        <activity android:name=".activitys.AppInfoLayoutActivity" android:configChanges="uiMode"/>
+        <activity android:name=".activitys.UsbModeLayoutActivity" android:configChanges="uiMode"/>
+        <activity android:name=".activitys.CreateImgLayoutActivity" android:configChanges="uiMode"/>
+        <activity android:name=".activitys.FileSharedLayoutActivity" android:configChanges="uiMode"/>
+        <activity android:name=".activitys.AppCloneLayoutActivity" android:configChanges="uiMode"/>
+        <activity android:name=".activitys.RunCommandLayoutActivity" android:configChanges="uiMode"/>
 
         <receiver android:name=".mylife.easyMDeviceAdminReceiver"
             android:description="@string/app_name"

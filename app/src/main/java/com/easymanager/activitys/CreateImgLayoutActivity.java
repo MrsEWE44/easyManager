@@ -22,7 +22,7 @@ import com.easymanager.utils.dialog.HelpDialogUtils;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
 
-public class CreateImgLayoutActivity extends Activity {
+public class CreateImgLayoutActivity extends BaseActivity {
 
     private EditText cilfilename , cilsize;
     private Spinner cilnametype , cilsizetype;

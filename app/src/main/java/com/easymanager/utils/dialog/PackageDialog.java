@@ -208,14 +208,14 @@ public class PackageDialog extends DialogUtils {
         showProcessBarDialogByCMD(context,list,appPermission,APP_PERMIS_INDEX,opt_str,title,msg,uid);
     }
 
-    public void showIndexOfAppInfoDialog(Context context, Activity activity, ListView svllv, String msg, String s1,String pkgname, int app_info_mode, Integer uid, ArrayList<String> list, ArrayList<Boolean> checkboxs, ArrayList<Boolean> switbs) {
+    public void showIndexOfAppInfoDialog(Context context, Activity activity, ListView svllv, String msg, String s1,String pkgname, int app_info_mode, Integer uid, ArrayList<String> list, ArrayList<Boolean> checkboxs, ArrayList<Boolean> switbs, int type) {
 
         ProgressDialog show = showMyDialog(context,msg);
         Handler handler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 if(msg.what==0){
-                    showAppInfoListView(context,svllv,list,checkboxs,switbs,pkgname,app_info_mode,uid);
+                    showAppInfoListView(context,svllv,list,checkboxs,switbs,pkgname,app_info_mode,uid, type);
                     show.dismiss();
                 }
             }
@@ -245,7 +245,7 @@ public class PackageDialog extends DialogUtils {
         svlsv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                showAppInfoListView(context,aillv1,list,checkboxs,switbs,pkgname,app_info_mode,uid);
+                showAppInfoListView(context,aillv1,list,checkboxs,switbs,pkgname,app_info_mode,uid, app_info_mode2);
                 permittedDismissDialog(alertDialog);
                 return false;
             }
@@ -253,7 +253,7 @@ public class PackageDialog extends DialogUtils {
             @Override
             public boolean onQueryTextChange(String s) {
                 if(!s.isEmpty()){
-                    showIndexOfAppInfoDialog(context,activity,svllv,tu.getLanguageString(context,R.string.now_search_ing_msg),s,pkgname,app_info_mode,uid,list,checkboxs,switbs);
+                    showIndexOfAppInfoDialog(context,activity,svllv,tu.getLanguageString(context,R.string.now_search_ing_msg),s,pkgname,app_info_mode,uid,list,checkboxs,switbs, app_info_mode2);
                 }else{
                     if(app_info_mode2 == AppInfoEnums.GET_ACTIVITYS){
                         showAppInfoActivityProcessDialog(context,activity,aillv1,list,checkboxs,switbs,pkgname,uid);
@@ -302,7 +302,7 @@ public class PackageDialog extends DialogUtils {
             @Override
             public void handleMessage(Message msg) {
                 if(msg.what==0){
-                    showAppInfoListView(context,lv1,list,checkboxs,switbs,pkgname,mode,uid);
+                    showAppInfoListView(context,lv1,list,checkboxs,switbs,pkgname,mode,uid,mode2);
                     show.dismiss();
                 }else{
                     show.dismiss();

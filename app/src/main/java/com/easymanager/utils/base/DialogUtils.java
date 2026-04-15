@@ -129,9 +129,9 @@ public class DialogUtils extends DialogBaseUtils {
 
     }
 
-    public void showAppInfoListView(Context context , ListView listView ,ArrayList<String> list ,ArrayList<Boolean> checkboxs , ArrayList<Boolean> switbs , String pkgname , int mode , Integer uid ){
+    public void showAppInfoListView(Context context , ListView listView ,ArrayList<String> list ,ArrayList<Boolean> checkboxs , ArrayList<Boolean> switbs , String pkgname , int mode , Integer uid, int type ){
         sort(list,switbs);
-        AppInfoAdapter adapter = new AppInfoAdapter(list, context, checkboxs, switbs,pkgname,mode,uid);
+        AppInfoAdapter adapter = new AppInfoAdapter(list, context, checkboxs, switbs,pkgname,mode,uid, type);
         listView.setAdapter(adapter);
     }
 

@@ -1,39 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:background="#FFFFFF"
-    android:fitsSystemWindows="true">
+    android:orientation="vertical"
+    android:background="@color/background"
+    android:fitsSystemWindows="true"
+    tools:context=".MainActivity">
 
     <!-- 主内容区域 -->
     <FrameLayout
         android:id="@+id/amfl1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/amll1"
-        android:background="#F5F5F5" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/background" />
 
-    <!-- 底部导航栏阴影边框 -->
+    <!-- 底部导航栏阴影 (向上) -->
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_above="@+id/amll1"
-        android:background="#E0E0E0" />
+        android:layout_height="4dp"
+        android:background="@drawable/bottom_nav_shadow" />
 
-    <!-- 底部导航栏 - 简化版 Material Design -->
+    <!-- 底部导航栏 -->
     <LinearLayout
         android:id="@+id/amll1"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_height="56dp"
         android:orientation="horizontal"
-        android:layout_alignParentBottom="true"
-        android:background="#FFFFFF"
-        android:paddingBottom="28dp">
+        android:background="@color/surface"
+        android:gravity="center_vertical">
 
-        <!-- 第一个菜单项 -->
+        <!-- 第一个菜单项: 管理 -->
         <LinearLayout
             android:id="@+id/tab1_container"
             android:layout_width="0dp"
@@ -42,22 +41,25 @@
             android:orientation="vertical"
             android:gravity="center"
             android:clickable="true"
-            android:background="#FFFFFF">
-            <View
-                android:layout_width="64dp"
-                android:layout_height="2dp"
-                android:id="@+id/amv1"
-                android:layout_marginBottom="8dp" />
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground">
+
             <ImageView
                 android:id="@+id/amiv1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:src="@drawable/manager"
                 android:scaleType="centerInside"
-                />
+                android:layout_marginBottom="2dp"/>
+
+            <View
+                android:id="@+id/amv1"
+                android:layout_width="24dp"
+                android:layout_height="2dp"
+                android:background="@android:color/transparent" />
         </LinearLayout>
 
-        <!-- 第二个菜单项（首页，突出显示） -->
+        <!-- 第二个菜单项: 首页 -->
         <LinearLayout
             android:id="@+id/tab2_container"
             android:layout_width="0dp"
@@ -66,32 +68,25 @@
             android:orientation="vertical"
             android:gravity="center"
             android:clickable="true"
-            android:background="#FFFFFF">
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center">
+            <ImageView
+                android:id="@+id/amiv2"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/home"
+                android:scaleType="centerInside"
+                android:layout_marginBottom="2dp"/>
 
-                <!-- 选中指示器 -->
-                <View
-                    android:layout_width="64dp"
-                    android:layout_height="2dp"
-                    android:id="@+id/amv2"
-                    android:layout_marginBottom="8dp" />
-
-                <ImageView
-                    android:id="@+id/amiv2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/home"
-                    android:scaleType="centerInside"
-                     />
-            </LinearLayout>
+            <View
+                android:id="@+id/amv2"
+                android:layout_width="24dp"
+                android:layout_height="2dp"
+                android:background="@android:color/transparent" />
         </LinearLayout>
 
-        <!-- 第三个菜单项 -->
+        <!-- 第三个菜单项: 帮助 -->
         <LinearLayout
             android:id="@+id/tab3_container"
             android:layout_width="0dp"
@@ -100,22 +95,24 @@
             android:orientation="vertical"
             android:gravity="center"
             android:clickable="true"
-            android:background="#FFFFFF">
-            <View
-                android:layout_width="64dp"
-                android:layout_height="2dp"
-                android:id="@+id/amv3"
-                android:layout_marginBottom="8dp" />
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground">
+
             <ImageView
                 android:id="@+id/amiv3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:src="@drawable/help"
                 android:scaleType="centerInside"
-                />
+                android:layout_marginBottom="2dp"/>
 
+            <View
+                android:id="@+id/amv3"
+                android:layout_width="24dp"
+                android:layout_height="2dp"
+                android:background="@android:color/transparent" />
         </LinearLayout>
 
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

@@ -33,7 +33,7 @@ public class DialogBaseUtils {
     }
 
     //显示一个弹窗
-    public void showInfoMsg(Context con,String title , String msg){
+    public AlertDialog showInfoMsg(Context con,String title , String msg){
         View customeDialog = getCustomeDialog(con, title, msg);
         AlertDialog.Builder ab = new AlertDialog.Builder(con);
         ab.setView(customeDialog);
@@ -46,7 +46,7 @@ public class DialogBaseUtils {
 
         AlertDialog alertDialog = ab.create();
         alertDialog.show();
-
+        return alertDialog;
     }
 
     /**

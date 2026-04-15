@@ -28,6 +28,16 @@ public class permissionRequest {
         context.startActivity(intent);
     }
 
+    public static boolean hasStoragePermission(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return Environment.isExternalStorageManager();
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                    checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        }
+        return true;
+    }
+
     public static void getExternalStorageManager(Context context,Activity activity){
         // 通过api判断手机当前版本号
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -37,9 +47,7 @@ public class permissionRequest {
             }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // 安卓6 判断有没有读写权限权限
-            if (checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(context, R.string.permission_storage_grand, Toast.LENGTH_SHORT).show();
-            }else{
+            if (checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 try {
                     intentExternal(context);
                 }catch (Exception e){
@@ -50,9 +58,17 @@ public class permissionRequest {
     }
 
     public static void requestExternalStoragePermission(Activity activity){
-        String p[] = {Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_IMAGES,Manifest.permission.READ_MEDIA_VIDEO, Manifest.permission_group.STORAGE,Manifest.permission.INSTALL_PACKAGES, Manifest.permission.CHANGE_COMPONENT_ENABLED_STATE,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.MANAGE_EXTERNAL_STORAGE,Manifest.permission.REQUEST_COMPANION_PROFILE_WATCH};
+        String p[] = {Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_IMAGES,Manifest.permission.READ_MEDIA_VIDEO, Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            activity.requestPermissions(p,0);
+            java.util.List<String> list = new java.util.ArrayList<>();
+            for (String s : p) {
+                if (checkSelfPermission(activity, s) != PackageManager.PERMISSION_GRANTED) {
+                    list.add(s);
+                }
+            }
+            if (list.size() > 0) {
+                activity.requestPermissions(list.toArray(new String[0]), 0);
+            }
         }
     }
 

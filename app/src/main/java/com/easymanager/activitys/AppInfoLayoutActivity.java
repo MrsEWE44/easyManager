@@ -3,7 +3,10 @@ package com.easymanager.activitys;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,9 +28,12 @@ import com.easymanager.utils.OtherTools;
 import com.easymanager.utils.base.AppCloneUtils;
 import com.easymanager.utils.dialog.HelpDialogUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
-public class AppInfoLayoutActivity extends Activity {
+public class AppInfoLayoutActivity extends BaseActivity {
 
     private ArrayList<String> list = new ArrayList<>();
     private ArrayList<Boolean> checkboxs = new ArrayList<>();
@@ -35,7 +41,8 @@ public class AppInfoLayoutActivity extends Activity {
 
     private ImageView ailappicon;
 
-    private TextView ailappname , ailapppkgname , ailappversion , ailappsize;
+    private TextView ailappname, ailapppkgname, ailappversion, ailappsize, ailappuid, ailapppath;
+    private TextView ailapptargetsdk, ailappminsdk, ailappinstalltime, ailappupdatetime, ailappdatapath, ailappabi, ailappinstaller_header, ailappnativelib, ailappexternaldatapath;
 
     private Spinner ailsp1;
 
@@ -47,7 +54,7 @@ public class AppInfoLayoutActivity extends Activity {
 
     private Activity activity;
 
-    private Boolean isRoot , isADB;
+    private Boolean isRoot , isADB, isDevice;
 
     private String pkgname;
     private int uid;
@@ -74,6 +81,7 @@ public class AppInfoLayoutActivity extends Activity {
         pkgname = (String) intent.getSerializableExtra("pkgname");
         isADB = intent.getBooleanExtra("isADB",false);
         isRoot = intent.getBooleanExtra("isRoot",false);
+        isDevice = intent.getBooleanExtra("isDevice",false);
         uid = intent.getIntExtra("uid",0);
         mode = intent.getIntExtra("mode",-1);
         ailappicon = findViewById(R.id.ailappicon);
@@ -81,6 +89,17 @@ public class AppInfoLayoutActivity extends Activity {
         ailapppkgname = findViewById(R.id.ailapppkgname);
         ailappversion = findViewById(R.id.ailappversion);
         ailappsize = findViewById(R.id.ailappsize);
+        ailappuid = findViewById(R.id.ailappuid);
+        ailapppath = findViewById(R.id.ailapppath);
+        ailapptargetsdk = findViewById(R.id.ailapptargetsdk);
+        ailappminsdk = findViewById(R.id.ailappminsdk);
+        ailappinstalltime = findViewById(R.id.ailappinstalltime);
+        ailappupdatetime = findViewById(R.id.ailappupdatetime);
+        ailappdatapath = findViewById(R.id.ailappdatapath);
+        ailappabi = findViewById(R.id.ailappabi);
+        ailappinstaller_header = findViewById(R.id.ailappinstaller_header);
+        ailappnativelib = findViewById(R.id.ailappnativelib);
+        ailappexternaldatapath = findViewById(R.id.ailappexternaldatapath);
         ailsp1 = findViewById(R.id.ailsp1);
         ailbt1 = findViewById(R.id.ailbt1);
         aillv1 = findViewById(R.id.aillv1);
@@ -92,7 +111,57 @@ public class AppInfoLayoutActivity extends Activity {
         ailapppkgname.setText(pkginfo.getPkgname());
         ailappversion.setText(pkginfo.getAppversionname());
         ailappsize.setText(acu.getUd().ft.getSize(pkginfo.getFilesize(),0));
-        if(isRoot || isADB){
+        ailappuid.setText(pkginfo.getApkuid());
+        ailapppath.setText(pkginfo.getApkpath());
+
+        // Additional detailed info
+        try {
+            PackageInfo packageInfo = getPackageManager().getPackageInfo(pkgname, PackageManager.GET_PERMISSIONS);
+            if (packageInfo != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                    ailappinstalltime.setText(sdf.format(new Date(packageInfo.firstInstallTime)));
+                    ailappupdatetime.setText(sdf.format(new Date(packageInfo.lastUpdateTime)));
+                }
+                if (packageInfo.applicationInfo != null) {
+                    ailapptargetsdk.setText(String.valueOf(packageInfo.applicationInfo.targetSdkVersion));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        ailappminsdk.setText(String.valueOf(packageInfo.applicationInfo.minSdkVersion));
+                    } else {
+                        ailappminsdk.setText("N/A");
+                    }
+                    ailappdatapath.setText(packageInfo.applicationInfo.dataDir);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        String[] abis = Build.SUPPORTED_ABIS;
+                        if (abis != null && abis.length > 0) {
+                            StringBuilder sb = new StringBuilder();
+                            for (int i = 0; i < abis.length; i++) {
+                                sb.append(abis[i]);
+                                if (i < abis.length - 1) sb.append(", ");
+                            }
+                            ailappabi.setText(sb.toString());
+                        } else {
+                            ailappabi.setText("N/A");
+                        }
+                    } else {
+                        ailappabi.setText(Build.CPU_ABI + (Build.CPU_ABI2.equals("unknown") ? "" : ", " + Build.CPU_ABI2));
+                    }
+
+                    String installer = getPackageManager().getInstallerPackageName(pkgname);
+                    String installerText = installer != null ? installer : "System/Direct";
+                    ailappinstaller_header.setText(installerText);
+                    ailappnativelib.setText(packageInfo.applicationInfo.nativeLibraryDir);
+                    
+                    // Construct external data path: /sdcard/Android/data/[pkgname]
+                    String extDataPath = android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/" + pkgname;
+                    ailappexternaldatapath.setText(extDataPath);
+                }
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if(isRoot || isADB || isDevice){
             btClicked();
             new HelpDialogUtils().showHelp(context,HelpDialogUtils.APP_INFO_HELP,mode);
         }else{
@@ -190,6 +259,10 @@ public class AppInfoLayoutActivity extends Activity {
             acu.getPd().showAppInfoReceiverProcessDialog(context,activity,aillv1,list,checkboxs,switbs,pkgname,uid);
         }
 
+        if(itemId == 100){
+            copyAppDetail();
+        }
+
         if(itemId == 4){
             new HelpDialogUtils().showHelp(context,HelpDialogUtils.APP_INFO_HELP,mode);
         }
@@ -205,6 +278,30 @@ public class AppInfoLayoutActivity extends Activity {
     }
     private String[] getAppChoicesOPT(){
         return new String[]{getLanStr(R.string.spin_item_selected),getLanStr(R.string.spin_item_no_selected),getLanStr(R.string.spin_item_all_selected)};
+    }
+
+    private void copyAppDetail() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getLanStr(R.string.app_name)).append(": ").append(ailappname.getText()).append("\n");
+        sb.append("Package: ").append(ailapppkgname.getText()).append("\n");
+        sb.append(getLanStr(R.string.app_info_version)).append(": ").append(ailappversion.getText()).append("\n");
+        sb.append(getLanStr(R.string.app_info_uid)).append(": ").append(ailappuid.getText()).append("\n");
+        sb.append(getLanStr(R.string.app_info_size)).append(": ").append(ailappsize.getText()).append("\n");
+        sb.append(getLanStr(R.string.app_info_target_sdk)).append(": ").append(ailapptargetsdk.getText()).append("\n");
+        sb.append(getLanStr(R.string.app_info_min_sdk)).append(": ").append(ailappminsdk.getText()).append("\n");
+        sb.append(getLanStr(R.string.app_info_abi)).append(": ").append(ailappabi.getText()).append("\n");
+        sb.append(getLanStr(R.string.app_info_installer)).append(": ").append(ailappinstaller_header.getText()).append("\n");
+        sb.append(getLanStr(R.string.app_info_install_time)).append(": ").append(ailappinstalltime.getText()).append("\n");
+        sb.append(getLanStr(R.string.app_info_update_time)).append(": ").append(ailappupdatetime.getText()).append("\n");
+        sb.append(getLanStr(R.string.app_info_path)).append(": ").append(ailapppath.getText()).append("\n");
+        sb.append(getLanStr(R.string.app_info_data_path)).append(": ").append(ailappdatapath.getText()).append("\n");
+        sb.append(getLanStr(R.string.app_info_external_data_path)).append(": ").append(ailappexternaldatapath.getText()).append("\n");
+        sb.append(getLanStr(R.string.app_info_native_lib)).append(": ").append(ailappnativelib.getText());
+
+        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        android.content.ClipData clip = android.content.ClipData.newPlainText("App Detail", sb.toString());
+        clipboard.setPrimaryClip(clip);
+        acu.getUd().showInfoMsg(context, getLanStr(R.string.tips), getLanStr(R.string.is_copy_ok));
     }
 
 }

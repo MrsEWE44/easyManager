@@ -1,59 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:background="#F5F5F5"
+    android:background="@color/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:background="@drawable/card_background"
+        android:padding="16dp"
+        android:orientation="vertical">
 
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:hint="@string/edit_hint_input_file_name"
-            android:id="@+id/cilfilename"/>
+        <!-- File Name Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
 
+            <EditText
+                android:id="@+id/cilfilename"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="2"
+                android:hint="@string/edit_hint_input_file_name"
+                android:background="@drawable/input_field_background"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:textSize="14sp"
+                android:singleLine="true"
+                android:layout_marginRight="8dp"/>
 
-        <Spinner
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:id="@+id/cilnametype"/>
+            <Spinner
+                android:id="@+id/cilnametype"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/input_field_background"/>
+        </LinearLayout>
+
+        <!-- File Size Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="24dp">
+
+            <EditText
+                android:id="@+id/cilsize"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="2"
+                android:inputType="number"
+                android:hint="@string/edit_hint_input_file_size"
+                android:background="@drawable/input_field_background"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:textSize="14sp"
+                android:singleLine="true"
+                android:layout_marginRight="8dp"/>
+
+            <Spinner
+                android:id="@+id/cilsizetype"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/input_field_background"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/cilcreateimg"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="@string/button_start_create"
+            android:textColor="@color/onPrimary"
+            android:background="@drawable/btn_material"/>
 
     </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:inputType="number"
-            android:hint="@string/edit_hint_input_file_size"
-            android:id="@+id/cilsize"/>
-
-
-        <Spinner
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:id="@+id/cilsizetype"/>
-
-    </LinearLayout>
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/button_start_create"
-        android:id="@+id/cilcreateimg"/>
 
 </LinearLayout>

@@ -25,28 +25,45 @@ public class CMD implements Serializable {
      * @param root 是否以root權限運行命令
      * */
     public CMD(String cmd , Boolean root){
-        String cmdhead = root ?"su":"/system/bin/sh" ;
         Log.i("cmdstr ::: ",cmd);
         try{
-            String cmds[] = {cmdhead,"-c",cmd};
-            ProcessBuilder processBuilder = new ProcessBuilder(cmds);
-            processBuilder.redirectErrorStream(true);
-            Process exec = processBuilder.start();
-            DataOutputStream dos  = new DataOutputStream(exec.getOutputStream());
-            dos.writeBytes(cmd + "\n");
-            dos.flush();
-            dos.writeBytes("exit\n");
-            dos.flush();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream(),"UTF-8"));
-            String line="";
-            while((line=reader.readLine()) != null){
-                sb.append(line+"\n");
+            Process exec;
+            if (root) {
+                // 尝试使用 --mount-master 进入全局命名空间，这样才能看到完整的 /data/data
+                // 如果 su 版本不支持 --mount-master，它会自动忽略或报错，所以我们优先尝试
+                exec = Runtime.getRuntime().exec(new String[]{"su", "--mount-master", "-c", cmd});
+            } else {
+                exec = Runtime.getRuntime().exec(new String[]{"/system/bin/sh", "-c", cmd});
             }
-            resultCode = exec.waitFor();
-            reader.close();
+
+            processBuilder(exec);
         }catch (Exception e){
-            e.printStackTrace();
+            // 如果 --mount-master 失败（例如旧版 su），降级使用普通 su
+            if (root) {
+                try {
+                    Process exec = Runtime.getRuntime().exec(new String[]{"su", "-c", cmd});
+                    processBuilder(exec);
+                } catch (Exception e2) {
+                    e2.printStackTrace();
+                }
+            } else {
+                e.printStackTrace();
+            }
         }
+    }
+
+    private void processBuilder(Process exec) throws Exception {
+        processBuilder(exec, "UTF-8");
+    }
+
+    private void processBuilder(Process exec, String charset) throws Exception {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream(), charset));
+        String line = "";
+        while ((line = reader.readLine()) != null) {
+            sb.append(line + "\n");
+        }
+        resultCode = exec.waitFor();
+        reader.close();
     }
 
     //默认以root身份运行命令

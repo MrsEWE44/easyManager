@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme - Dark Mode -->
+    <style name="AppTheme" parent="@android:style/Theme.DeviceDefault">
+        <!-- Customize your theme here. -->
+        <item name="android:colorPrimary">@color/colorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
+
+        <!-- Action Bar Styling -->
+        <item name="android:actionBarStyle">@style/CustomActionBar</item>
+
+        <!-- Menu Styling -->
+        <item name="android:panelBackground">@drawable/card_background</item>
+    </style>
+
+    <style name="CustomActionBar" parent="@android:style/Widget.DeviceDefault.ActionBar">
+        <item name="android:background">@color/surface</item>
+        <item name="android:titleTextStyle">@style/ActionBarTitleText</item>
+    </style>
+
+    <style name="ActionBarTitleText" parent="@android:style/TextAppearance.DeviceDefault.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/onSurface</item>
+    </style>
+
+    <style name="MenuTextAppearance">
+        <item name="android:textColor">@color/onSurface</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+</resources>

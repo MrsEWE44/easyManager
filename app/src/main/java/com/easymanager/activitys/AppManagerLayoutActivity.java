@@ -45,7 +45,7 @@ import com.easymanager.utils.permissionRequest;
 import java.io.File;
 import java.util.ArrayList;
 
-public class AppManagerLayoutActivity extends Activity {
+public class AppManagerLayoutActivity extends BaseActivity {
 
     private ArrayList<PKGINFO> pkginfos = new ArrayList<>();
     private ArrayList<Boolean> checkboxs = new ArrayList<>();
@@ -130,6 +130,7 @@ public class AppManagerLayoutActivity extends Activity {
             amlsp5.setEnabled(false);
             amlsp1.setAdapter(getSpinnerAdapter(getAppBackupAndRestoryOPT()));
             amlsp2.setAdapter(getSpinnerAdapter(APP_BACKUP_AND_RESTORY_OPT2));
+            amlsp2.setSelection(1);
             amlapplybt.setText(getLanStr(R.string.button_backup));
         }
 
@@ -137,6 +138,7 @@ public class AppManagerLayoutActivity extends Activity {
             amlsp5.setEnabled(false);
             amlsp1.setAdapter(getSpinnerAdapter(getAppBackupAndRestoryOPT()));
             amlsp2.setAdapter(getSpinnerAdapter(APP_BACKUP_AND_RESTORY_OPT2));
+            amlsp2.setSelection(1);
             amlapplybt.setText(getLanStr(R.string.button_restory));
         }
         btClicked();

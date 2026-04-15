@@ -30,15 +30,18 @@
             android:orientation="vertical">
 
             <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/onSurface"
                 android:focusable="false"
                 android:id="@+id/alvilappname"/>
             <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/onSurfaceSecondary"
                 android:focusable="false"
                 android:id="@+id/alvilapppkgname"/>
 
@@ -52,22 +55,25 @@
             android:orientation="vertical">
 
             <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/onSurfaceSecondary"
                 android:focusable="false"
                 android:id="@+id/alvilappversion"/>
             <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/onSurfaceSecondary"
                 android:focusable="false"
                 android:id="@+id/alvilappsize"/>
 
             <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/onSurfaceSecondary"
                 android:focusable="false"
                 android:id="@+id/alvilappuid"/>
 

@@ -1,56 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:background="#F5F5F5"
+    android:background="@color/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:background="@drawable/card_background"
+        android:padding="12dp"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
             <TextView
+                android:id="@+id/rcltv1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/rcltv1"></TextView>
+                android:layout_marginRight="8dp"
+                android:textColor="@color/onSurfaceSecondary"
+                android:textSize="14sp" />
 
             <AutoCompleteTextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:id="@+id/rclactv1"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
                 android:completionThreshold="1"
                 android:hint="@string/run_cmd_input_cmd_str_hint"
-                android:id="@+id/rclactv1">
-            </AutoCompleteTextView>
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:text="@string/run_cmd_run_bt"
-                android:id="@+id/rclruncmdbt"></Button>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:text="@string/run_cmd_stop_bt"
-                android:id="@+id/rclstopcmdbt"></Button>
-
+                android:background="@drawable/input_field_background"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:textSize="14sp"
+                android:singleLine="true" />
         </LinearLayout>
 
-        <EditText
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textIsSelectable="true"
-            android:id="@+id/rclet1">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp">
 
-        </EditText>
+            <Button
+                android:id="@+id/rclruncmdbt"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginRight="4dp"
+                android:text="@string/run_cmd_run_bt"
+                android:textColor="@color/onPrimary"
+                android:background="@drawable/btn_material" />
 
+            <Button
+                android:id="@+id/rclstopcmdbt"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginLeft="4dp"
+                android:text="@string/run_cmd_stop_bt"
+                android:textColor="@color/onPrimary"
+                android:background="@drawable/btn_material" />
+        </LinearLayout>
     </LinearLayout>
+
+    <EditText
+        android:id="@+id/rclet1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/card_background"
+        android:padding="12dp"
+        android:gravity="top"
+        android:textSize="14sp"
+        android:textColor="@color/onSurface"
+        android:textIsSelectable="true" />
 
 </LinearLayout>

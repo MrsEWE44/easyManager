@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.webkit.MimeTypeMap;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.easymanager.core.utils.FileUtils;
@@ -195,6 +198,17 @@ public class FileTools extends FileUtils {
             }else{
                 file.delete();
             }
+        }
+    }
+
+    public void setImageViewImg(Context context , String fileName , ImageView imageView)  {
+        try{
+            InputStream is = context.getAssets().open(fileName);
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            imageView.setImageBitmap(bitmap);
+            is.close();
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

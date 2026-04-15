@@ -25,7 +25,7 @@ import com.easymanager.utils.permissionRequest;
 
 import java.util.ArrayList;
 
-public class UsbModeLayoutActivity extends Activity {
+public class UsbModeLayoutActivity extends BaseActivity {
 
     private ArrayList<String> list = new ArrayList<>();
     private ArrayList<Boolean> checkboxs = new ArrayList<>();

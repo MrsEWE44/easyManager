@@ -10,15 +10,15 @@ android {
         applicationId "com.easymanager"
         minSdk 14
         targetSdk 36
-        versionCode 16
-        versionName "1.2.8b"
+        versionCode 17
+        versionName "1.2.9"
 
     }
 
     // 自定义打包名称
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "easyManager_${defaultConfig.versionName}_${buildType.name}.apk"
+            outputFileName = "lightBreeze_${defaultConfig.versionName}_${buildType.name}.apk"
         }
     }
 

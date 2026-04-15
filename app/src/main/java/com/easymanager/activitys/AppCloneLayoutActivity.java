@@ -29,7 +29,7 @@ import com.easymanager.utils.dialog.HelpDialogUtils;
 
 import java.util.ArrayList;
 
-public class AppCloneLayoutActivity extends Activity {
+public class AppCloneLayoutActivity extends BaseActivity {
 
     private ArrayList<String> strlist = new ArrayList<>();
     private ArrayList<Boolean> strcheckboxs = new ArrayList<>();
@@ -41,7 +41,7 @@ public class AppCloneLayoutActivity extends Activity {
     private ListView acmlv1 , acmlv2;
     private Context context;
     private Activity activity;
-    private Boolean isRoot , isADB;
+    private Boolean isRoot , isADB, isDevice;
     private int mode,APP_CHOICES_INDEX,MANAGER_INDEX;
 
     private AppCloneUtils acu = new AppCloneUtils();
@@ -67,6 +67,7 @@ public class AppCloneLayoutActivity extends Activity {
         mode = intent.getIntExtra("mode",-1);
         isRoot = intent.getBooleanExtra("isRoot",false);
         isADB = intent.getBooleanExtra("isADB",false);
+        isDevice = intent.getBooleanExtra("isDevice",false);
         acmet1 = findViewById(R.id.acmet1);
         acmsp1 = findViewById(R.id.acmsp1);
         acmsp2 = findViewById(R.id.acmsp2);
@@ -179,6 +180,7 @@ public class AppCloneLayoutActivity extends Activity {
                 intent.putExtra("mode",mode);
                 intent.putExtra("isRoot",isRoot);
                 intent.putExtra("isADB",isADB);
+                intent.putExtra("isDevice",isDevice);
                 intent.putExtra("uid",Integer.valueOf(strlist.get(i)));
                 startActivity(intent);
             }

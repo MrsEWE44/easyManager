@@ -11,9 +11,9 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 16,
-      "versionName": "1.2.8b",
-      "outputFile": "easyManager_1.2.8b_release.apk"
+      "versionCode": 17,
+      "versionName": "1.2.9",
+      "outputFile": "lightBreeze_1.2.9_release.apk"
     }
   ],
   "elementType": "File",

@@ -1,82 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:background="#F5F5F5"
+    android:background="@color/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:background="@drawable/card_background"
+        android:padding="12dp"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
 
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:hint="@string/edit_hint_share_address"
-            android:id="@+id/fsisharedip"/>
-
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:inputType="number"
-            android:maxLength="6"
-            android:hint="@string/edit_hint_share_port"
-            android:id="@+id/fsisharedport"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:text="@string/button_add_share_file"
-            android:id="@+id/fsladdfile"/>
-
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:text="@string/button_add_share_app"
-            android:id="@+id/fsladdapp"/>
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/button_start_share"
-            android:id="@+id/fslstartshared"/>
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
 
-        <Button
-            android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/fsisharedip"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:hint="@string/edit_hint_share_address"
+                android:background="@drawable/input_field_background"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:textSize="14sp"
+                android:singleLine="true"
+                android:layout_marginRight="4dp"/>
+
+            <EditText
+                android:id="@+id/fsisharedport"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:maxLength="6"
+                android:hint="@string/edit_hint_share_port"
+                android:background="@drawable/input_field_background"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:textSize="14sp"
+                android:singleLine="true"
+                android:layout_marginLeft="4dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/button_stop_share"
-            android:id="@+id/fslstopshared"/>
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
 
+            <Button
+                android:id="@+id/fsladdfile"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginRight="4dp"
+                android:text="@string/button_add_share_file"
+                android:textColor="@color/onPrimary"
+                android:background="@drawable/btn_material"/>
+
+            <Button
+                android:id="@+id/fsladdapp"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginLeft="4dp"
+                android:text="@string/button_add_share_app"
+                android:textColor="@color/onPrimary"
+                android:background="@drawable/btn_material"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/fslstartshared"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginRight="4dp"
+                android:text="@string/button_start_share"
+                android:textColor="@color/onPrimary"
+                android:background="@drawable/btn_material"/>
+
+            <Button
+                android:id="@+id/fslstopshared"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginLeft="4dp"
+                android:text="@string/button_stop_share"
+                android:textColor="@color/onPrimary"
+                android:background="@drawable/btn_material"/>
+        </LinearLayout>
     </LinearLayout>
-
-
 
     <ListView
+        android:id="@+id/fsllv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/fsllv"/>
-
+        android:background="@drawable/card_background"
+        android:divider="@color/divider"
+        android:dividerHeight="1dp"
+        android:padding="4dp"/>
 
 </LinearLayout>

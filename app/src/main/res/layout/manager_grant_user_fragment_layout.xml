@@ -1,50 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
-    >
+    android:background="@color/background"
+    android:padding="16dp">
 
-   <LinearLayout
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:orientation="vertical"
-       android:background="#F5F5F5"
-       >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
 
-       <LinearLayout
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:background="@drawable/text_underline"
-           android:orientation="horizontal">
+        <!-- Status Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:gravity="center">
 
-           <ImageView
-               android:layout_width="50dp"
-               android:layout_height="50dp"
-               android:background="@drawable/manager_grant_app_foreground">
-           </ImageView>
+            <ImageView
+                android:id="@+id/status_icon"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginBottom="24dp"
+                android:src="@drawable/manager_grant_app_foreground"
+                android:contentDescription="@string/app_name"
+                android:tint="@color/colorPrimary" />
 
-           <TextView
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:text="TEST SERVICE"
-               android:textSize="30dp"
-               android:id="@+id/mguflpeekservice"
-               ></TextView>
+            <TextView
+                android:id="@+id/status_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/status_working_mode"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="@color/onSurface"
+                android:layout_marginBottom="8dp"/>
 
-       </LinearLayout>
+            <TextView
+                android:id="@+id/status_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/desc_general"
+                android:textSize="14sp"
+                android:textColor="@color/onSurfaceSecondary"
+                android:gravity="center"
+                android:layout_marginBottom="24dp"/>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginBottom="24dp"/>
 
-       <ListView
-           android:layout_width="match_parent"
-           android:layout_height="match_parent"
-           android:id="@+id/mgufllv"/>
+            <!-- Detail list -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/status_service_running"
+                    android:textColor="@color/onSurface"/>
+                <TextView
+                    android:id="@+id/service_status_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/status_offline"
+                    android:textStyle="bold"
+                    android:textColor="#F44336"/>
+            </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/status_working_mode"
+                    android:textColor="@color/onSurface"/>
+                <TextView
+                    android:id="@+id/working_mode_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mode_general"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"/>
+            </LinearLayout>
 
-   </LinearLayout>
+        </LinearLayout>
 
+        <TextView
+            android:id="@+id/mguflpeekservice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:textColor="@color/onSurfaceSecondary"
+            android:visibility="gone"/>
+
+    </LinearLayout>
 </FrameLayout>
-
-

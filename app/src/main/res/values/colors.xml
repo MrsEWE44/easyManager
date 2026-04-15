@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Material 3 Inspired Soft & Muted Palette -->
+    <color name="colorPrimary">#5A69A6</color>
+    <color name="colorPrimaryDark">#455184</color>
+    <color name="colorPrimaryLight">#DDE1FF</color>
+    <color name="colorAccent">#7986CB</color>
+
+    <color name="background">#FDFBFF</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="error">#BA1A1A</color>
+
+    <color name="onPrimary">#FFFFFF</color>
+    <color name="onSurface">#1B1B1F</color>
+    <color name="onSurfaceSecondary">#46464F</color>
+
+    <color name="black">#1B1B1F</color>
+    <color name="white">#FFFFFF</color>
+
+    <color name="divider">#E1E2EC</color>
+
+    <!-- Soft Button States -->
+    <color name="button_normal">#5A69A6</color>
+    <color name="button_pressed">#455184</color>
+    <color name="button_disabled">#E1E2EC</color>
+
+    <!-- Tab Colors -->
+    <color name="tab_active">#5A69A6</color>
+    <color name="tab_inactive">#00000000</color>
+    <!-- M3 Button Colors - Light (Refined) -->
+    <color name="m3_btn_ready_bg">#D8E2FF</color>      <!-- 柔和淡蓝 -->
+    <color name="m3_btn_ready_text">#001A41</color>    <!-- 深蓝文字 -->
+    <color name="m3_btn_blocked_bg">#F9DEDC</color>    <!-- 柔和淡红 -->
+    <color name="m3_btn_blocked_text">#410002</color>  <!-- 深红文字 -->
 </resources>

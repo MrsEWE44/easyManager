@@ -1,51 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:background="#F5F5F5"
+    android:background="@color/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     android:fitsSystemWindows="true">
 
    <LinearLayout
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
-       android:orientation="horizontal">
-       <Button
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:text="@string/usb_button_scan_local_img"
-           android:id="@+id/umlscanbt"/>
-       <Button
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:text="@string/usb_button_select_local_img"
-           android:id="@+id/umlscanbt2"/>
+       android:background="@drawable/card_background"
+       android:padding="12dp"
+       android:orientation="vertical"
+       android:layout_marginBottom="16dp">
 
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="horizontal"
+           android:layout_marginBottom="8dp">
+           <Button
+               android:id="@+id/umlscanbt"
+               android:layout_width="0dp"
+               android:layout_height="48dp"
+               android:layout_weight="1"
+               android:layout_marginRight="4dp"
+               android:text="@string/usb_button_scan_local_img"
+               android:textColor="@color/onPrimary"
+               android:background="@drawable/btn_material"/>
+           <Button
+               android:id="@+id/umlscanbt2"
+               android:layout_width="0dp"
+               android:layout_height="48dp"
+               android:layout_weight="1"
+               android:layout_marginLeft="4dp"
+               android:text="@string/usb_button_select_local_img"
+               android:textColor="@color/onPrimary"
+               android:background="@drawable/btn_material"/>
+       </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <Spinner
+                android:id="@+id/umlsp"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/input_field_background"
+                android:layout_marginRight="8dp"/>
+
+            <Button
+                android:id="@+id/umlmountbt"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="@string/usb_button_mount_img"
+                android:textColor="@color/onPrimary"
+                android:background="@drawable/btn_material"/>
+        </LinearLayout>
    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Spinner
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:id="@+id/umlsp"/>
-
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:text="@string/usb_button_mount_img"
-            android:id="@+id/umlmountbt"/>
-
-    </LinearLayout>
-
     <ListView
+        android:id="@+id/umllv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/umllv"/>
+        android:background="@drawable/card_background"
+        android:divider="@color/divider"
+        android:dividerHeight="1dp"
+        android:padding="4dp"/>
 
 </LinearLayout>

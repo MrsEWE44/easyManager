@@ -3,431 +3,324 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:background="#F5F5F5"
-    >
-
+    android:background="@color/background">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#F5F5F5"
-        >
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="#F5F5F5"
-            >
+            android:padding="8dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/text_underline"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/manager_grant_app_foreground">
-            </ImageView>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/text_home_app_manage"
-                android:textSize="20dp"
-                ></TextView>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
+            <!-- App Management Card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_margin="8dp"
+                android:padding="16dp"
+                android:background="@drawable/card_background"
+                android:orientation="vertical">
 
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_weight="1"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/text_home_app_manage"
-                    android:id="@+id/hflappmanagerbt">
-                </Button>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/manager_grant_app_foreground" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="12dp"
+                        android:text="@string/text_home_app_manage"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/onSurface" />
+                </LinearLayout>
 
-
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_weight="1"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/button_home_install_local_file"
-                    android:id="@+id/hflinlocalapk">
-                </Button>
-
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/hflappmanagerbt"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="48dp"
+                        android:layout_marginRight="4dp"
+                        android:text="@string/text_home_app_manage"
+                        android:textColor="@color/onPrimary"
+                        android:background="@drawable/btn_material" />
+                    <Button
+                        android:id="@+id/hflinlocalapk"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="48dp"
+                        android:layout_marginLeft="4dp"
+                        android:text="@string/button_home_install_local_file"
+                        android:textColor="@color/onPrimary"
+                        android:background="@drawable/btn_material" />
+                </LinearLayout>
             </LinearLayout>
 
-
-        </LinearLayout>
-
-
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/text_underline"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/backup_foreground">
-            </ImageView>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/text_home_backup_and_restory_manage"
-                android:textSize="20dp"
-                ></TextView>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
+            <!-- Backup Card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_margin="8dp"
+                android:padding="16dp"
+                android:background="@drawable/card_background"
+                android:orientation="vertical">
 
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_weight="1"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/button_home_backup"
-                    android:id="@+id/hflbackupapp">
-                </Button>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/backup_foreground" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="12dp"
+                        android:text="@string/text_home_backup_and_restory_manage"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/onSurface" />
+                </LinearLayout>
 
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_weight="1"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/button_home_restory"
-                    android:id="@+id/hflrestoryapp">
-                </Button>
-
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/hflbackupapp"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="48dp"
+                        android:layout_marginRight="4dp"
+                        android:text="@string/button_home_backup"
+                        android:textColor="@color/onPrimary"
+                        android:background="@drawable/btn_material" />
+                    <Button
+                        android:id="@+id/hflrestoryapp"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="48dp"
+                        android:layout_marginLeft="4dp"
+                        android:text="@string/button_home_restory"
+                        android:textColor="@color/onPrimary"
+                        android:background="@drawable/btn_material" />
+                </LinearLayout>
             </LinearLayout>
 
-        </LinearLayout>
-
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/text_underline"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/appclone_foreground">
-            </ImageView>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/app_clone_menu"
-                android:textSize="20dp"
-                ></TextView>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
+            <!-- App Clone Card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_margin="8dp"
+                android:padding="16dp"
+                android:background="@drawable/card_background"
+                android:orientation="vertical">
 
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_weight="1"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/app_clone_button"
-                    android:id="@+id/hflappclone">
-                </Button>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/appclone_foreground" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="12dp"
+                        android:text="@string/app_clone_menu"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/onSurface" />
+                </LinearLayout>
 
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_weight="1"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/app_clone_manager_button"
-                    android:id="@+id/hflappclonemanage">
-                </Button>
-
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="@string/app_clone_delete_button"
-                    android:id="@+id/hflappcloneremove">
-                </Button>
-
-
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/hflappclone"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="48dp"
+                        android:layout_marginRight="2dp"
+                        android:text="@string/app_clone_button"
+                        android:textColor="@color/onPrimary"
+                        android:background="@drawable/btn_material" />
+                    <Button
+                        android:id="@+id/hflappclonemanage"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="48dp"
+                        android:layout_marginHorizontal="2dp"
+                        android:text="@string/app_clone_manager_button"
+                        android:textColor="@color/onPrimary"
+                        android:background="@drawable/btn_material" />
+                    <Button
+                        android:id="@+id/hflappcloneremove"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="48dp"
+                        android:layout_marginLeft="2dp"
+                        android:text="@string/app_clone_delete_button"
+                        android:textColor="@color/onPrimary"
+                        android:background="@drawable/btn_material" />
+                </LinearLayout>
             </LinearLayout>
 
-        </LinearLayout>
-
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/text_underline"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/usbmode_foreground">
-            </ImageView>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/text_home_usb_flash_drive_mode"
-                android:textSize="20dp"
-                ></TextView>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
+            <!-- USB Mode Card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_margin="8dp"
+                android:padding="16dp"
+                android:background="@drawable/card_background"
+                android:orientation="vertical">
 
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_weight="1"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/button_home_use_usb_mode"
-                    android:id="@+id/hflmountlocalimg">
-                </Button>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/usbmode_foreground" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="12dp"
+                        android:text="@string/text_home_usb_flash_drive_mode"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/onSurface" />
+                </LinearLayout>
 
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_weight="1"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/button_home_create_usb_img_file"
-                    android:id="@+id/hflcreateimg">
-                </Button>
-
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/hflmountlocalimg"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="48dp"
+                        android:layout_marginRight="4dp"
+                        android:text="@string/button_home_use_usb_mode"
+                        android:textColor="@color/onPrimary"
+                        android:background="@drawable/btn_material" />
+                    <Button
+                        android:id="@+id/hflcreateimg"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="48dp"
+                        android:layout_marginLeft="4dp"
+                        android:text="@string/button_home_create_usb_img_file"
+                        android:textColor="@color/onPrimary"
+                        android:background="@drawable/btn_material" />
+                </LinearLayout>
             </LinearLayout>
 
-        </LinearLayout>
-
-
-
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:background="@drawable/text_underline"-->
-<!--            android:orientation="horizontal">-->
-
-<!--            <ImageView-->
-<!--                android:layout_width="30dp"-->
-<!--                android:layout_height="30dp"-->
-<!--                android:background="@drawable/rombuild_foreground">-->
-<!--            </ImageView>-->
-
-<!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="固件工具"-->
-<!--                android:textSize="20dp"-->
-<!--                ></TextView>-->
-
-<!--        </LinearLayout>-->
-
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical">-->
-
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="horizontal">-->
-
-<!--                <Button-->
-<!--                    android:layout_width="fill_parent"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="固件解包"-->
-<!--                    android:id="@+id/hflromunpack">-->
-<!--                </Button>-->
-
-<!--                <Button-->
-<!--                    android:layout_width="fill_parent"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="固件打包"-->
-<!--                    android:id="@+id/hflromrepack">-->
-<!--                </Button>-->
-
-<!--            </LinearLayout>-->
-
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="horizontal">-->
-
-<!--                <Button-->
-<!--                    android:layout_width="fill_parent"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="固件生成"-->
-<!--                    android:id="@+id/hflromgenerate">-->
-<!--                </Button>-->
-
-
-<!--                <Button-->
-<!--                    android:layout_width="fill_parent"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="固件移植"-->
-<!--                    android:id="@+id/hflromgraft">-->
-<!--                </Button>-->
-
-
-<!--            </LinearLayout>-->
-
-
-
-
-
-
-<!--        </LinearLayout>-->
-
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/text_underline"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/othertool_foreground">
-            </ImageView>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/text_home_other_tool"
-                android:textSize="20dp"
-                ></TextView>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
+            <!-- Other Tools Card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_margin="8dp"
+                android:padding="16dp"
+                android:background="@drawable/card_background"
+                android:orientation="vertical">
 
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_weight="1"
-                    android:layout_height="fill_parent"
-                    android:text="@string/button_home_set_ntp"
-                    android:id="@+id/hflsetntp">
-                </Button>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/othertool_foreground" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="12dp"
+                        android:text="@string/text_home_other_tool"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/onSurface" />
+                </LinearLayout>
 
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_weight="1"
-                    android:layout_height="fill_parent"
-                    android:text="@string/button_home_set_rate"
-                    android:id="@+id/hflsetrate">
-                </Button>
-
-
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="2">
+                    <Button
+                        android:id="@+id/hflsetntp"
+                        android:layout_width="0dp"
+                        android:layout_columnWeight="1"
+                        android:layout_height="48dp"
+                        android:layout_margin="4dp"
+                        android:text="@string/button_home_set_ntp"
+                        android:textColor="@color/onPrimary"
+                        android:background="@drawable/btn_material" />
+                    <Button
+                        android:id="@+id/hflsetrate"
+                        android:layout_width="0dp"
+                        android:layout_columnWeight="1"
+                        android:layout_height="48dp"
+                        android:layout_margin="4dp"
+                        android:text="@string/button_home_set_rate"
+                        android:textColor="@color/onPrimary"
+                        android:background="@drawable/btn_material" />
+                    <Button
+                        android:id="@+id/hfldelx"
+                        android:layout_width="0dp"
+                        android:layout_columnWeight="1"
+                        android:layout_height="48dp"
+                        android:layout_margin="4dp"
+                        android:text="@string/button_home_del_x"
+                        android:textColor="@color/onPrimary"
+                        android:background="@drawable/btn_material" />
+                    <Button
+                        android:id="@+id/hflfileshared"
+                        android:layout_width="0dp"
+                        android:layout_columnWeight="1"
+                        android:layout_height="48dp"
+                        android:layout_margin="4dp"
+                        android:text="@string/button_home_file_share"
+                        android:textColor="@color/onPrimary"
+                        android:background="@drawable/btn_material" />
+                    <Button
+                        android:id="@+id/hflruncmd"
+                        android:layout_width="0dp"
+                        android:layout_columnWeight="1"
+                        android:layout_height="48dp"
+                        android:layout_margin="4dp"
+                        android:text="@string/button_home_run_cmd"
+                        android:textColor="@color/onPrimary"
+                        android:background="@drawable/btn_material" />
+                </GridLayout>
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_weight="1"
-                    android:layout_height="fill_parent"
-                    android:text="@string/button_home_del_x"
-                    android:id="@+id/hfldelx">
-                </Button>
-
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_weight="1"
-                    android:layout_height="fill_parent"
-                    android:text="@string/button_home_file_share"
-                    android:id="@+id/hflfileshared">
-                </Button>
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_weight="1"
-                    android:layout_height="fill_parent"
-                    android:text="@string/button_home_run_cmd"
-                    android:id="@+id/hflruncmd">
-                </Button>
-
-
-
-
-            </LinearLayout>
-
 
         </LinearLayout>
-
-        </LinearLayout>
-
     </ScrollView>
-
-
-
-
 </FrameLayout>
-

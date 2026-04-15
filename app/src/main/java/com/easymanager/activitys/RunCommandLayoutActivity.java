@@ -28,7 +28,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class RunCommandLayoutActivity extends Activity {
+public class RunCommandLayoutActivity extends BaseActivity {
 
     private Context context;
     private Activity activity;
@@ -36,7 +36,7 @@ public class RunCommandLayoutActivity extends Activity {
     private ArrayList<String> mycmd = new ArrayList<>();
 
     private String cmdresult;
-    private boolean isRoot,isADB;
+    private boolean isRoot,isADB,isDevice;
     private boolean isStop;
     private int mode,uid;
     private AutoCompleteTextView rclactv1;
@@ -62,6 +62,7 @@ public class RunCommandLayoutActivity extends Activity {
         mode = intent.getIntExtra("mode",-1);
         isRoot = intent.getBooleanExtra("isRoot",false);
         isADB = intent.getBooleanExtra("isADB",false);
+        isDevice = intent.getBooleanExtra("isDevice",false);
         uid = intent.getIntExtra("uid",0);
         rclactv1 = findViewById(R.id.rclactv1);
         rclruncmdbt = findViewById(R.id.rclruncmdbt);
@@ -72,7 +73,7 @@ public class RunCommandLayoutActivity extends Activity {
         rclet1.setKeyListener(null);
         isStop = false;
         btClicked();
-        if(isRoot || isADB){
+        if(isRoot || isADB || isDevice){
             scanLocalCMDFile();
         }
         new HelpDialogUtils().showHelp(context,HelpDialogUtils.RUN_COMMAND_HELP,mode);
@@ -106,7 +107,7 @@ public class RunCommandLayoutActivity extends Activity {
                                 du.sendHandlerMSG(handler,1);
                             }else{
                                 System.out.println("RunCommandLayoutActivity cmdstr ::: " + cmdstr);
-                                if(isADB || isRoot){
+                                if(isADB || isRoot || isDevice){
                                     cmdresult = eu.runCMD(cmdstr).getResult();
                                     du.sendHandlerMSG(handler,0);
                                 }else{

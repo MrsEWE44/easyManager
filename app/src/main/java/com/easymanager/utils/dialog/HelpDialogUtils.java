@@ -13,9 +13,10 @@ public class HelpDialogUtils extends DialogBaseUtils {
     public final static int APP_INFO_HELP=2;
     public final static int RUN_COMMAND_HELP=3;
 
-    public void showHelp(Context  context, int mode1 , int mode2){
+    public android.app.AlertDialog showHelp(Context  context, int mode1 , int mode2){
+        android.app.AlertDialog dialog = null;
         if(mode1 == MAIN_HELP){
-            showInfoMsg(context,tu.getLanguageString(context, R.string.show_help_title),tu.getLanguageString(context, R.string.show_help_getMainHelp));
+            dialog = showInfoMsg(context,tu.getLanguageString(context, R.string.show_help_title),tu.getLanguageString(context, R.string.show_help_getMainHelp));
         }
 
         if(mode1 == APP_MANAGE_HELP){
@@ -76,17 +77,17 @@ public class HelpDialogUtils extends DialogBaseUtils {
                     msg = tu.getLanguageString(context,R.string.show_help_getAppCloneRemoveHELP);
                     break;
             }
-            showInfoMsg(context,tu.getLanguageString(context, R.string.show_help_title),msg);
+            dialog = showInfoMsg(context,tu.getLanguageString(context, R.string.show_help_title),msg);
         }
 
         if(mode1 == APP_INFO_HELP){
-            showInfoMsg(context,tu.getLanguageString(context, R.string.show_help_title),tu.getLanguageString(context,R.string.show_help_getAppInfoHELP));
+            dialog = showInfoMsg(context,tu.getLanguageString(context, R.string.show_help_title),tu.getLanguageString(context,R.string.show_help_getAppInfoHELP));
         }
 
         if(mode1 == RUN_COMMAND_HELP){
-            showInfoMsg(context,tu.getLanguageString(context, R.string.show_help_title),context.getString(R.string.show_help_getRunCmdHELP));
+            dialog = showInfoMsg(context,tu.getLanguageString(context, R.string.show_help_title),context.getString(R.string.show_help_getRunCmdHELP));
         }
-
+        return dialog;
     }
 
 }

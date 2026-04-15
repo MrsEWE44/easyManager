@@ -2,26 +2,58 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:minHeight="68dp"
+    android:gravity="center_vertical"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:background="@drawable/card_background"
+    android:layout_marginBottom="4dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp">
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:scaleX="1.7"
-        android:scaleY="1.7"
-        android:id="@+id/aiilcb1"/>
+        android:scaleX="1.2"
+        android:scaleY="1.2"
+        android:id="@+id/aiilcb1"
+        android:layout_marginRight="8dp"/>
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textIsSelectable="true"
-        android:id="@+id/aiiltv1"/>
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/aiiltv1_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@color/onSurface"
+            android:ellipsize="end"
+            android:maxLines="1"/>
+
+        <TextView
+            android:id="@+id/aiiltv1_sub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="11sp"
+            android:textColor="@color/onSurfaceSecondary"
+            android:layout_marginTop="2dp"
+            android:ellipsize="middle"
+            android:singleLine="true"/>
+    </LinearLayout>
 
     <Switch
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/aiilsb1"/>
-
+        android:id="@+id/aiilsb1"
+        android:layout_marginLeft="8dp"/>
 
 </LinearLayout>

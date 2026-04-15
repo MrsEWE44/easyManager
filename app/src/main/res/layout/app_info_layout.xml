@@ -1,91 +1,451 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:background="#F5F5F5"
+    android:background="@color/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="12dp"
     android:fitsSystemWindows="true">
 
+    <!-- App Info Header Card -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:background="@drawable/card_background"
+        android:padding="16dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
 
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:id="@+id/ailappicon"/>
+            android:id="@+id/ailappicon"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:scaleType="fitCenter"
+            android:contentDescription="@string/app_name" />
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
 
-            <TextView
+            <!-- Part 2: Name, Pkg, Version -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textIsSelectable="true"
-                android:id="@+id/ailappname"/>
+                android:orientation="vertical"
+                android:layout_marginEnd="12dp"
+                android:layout_marginRight="12dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/ailappname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/onSurface"
+                    android:textIsSelectable="true"
+                    android:ellipsize="end"
+                    android:maxLines="1"/>
+
+                <TextView
+                    android:id="@+id/ailapppkgname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textColor="@color/onSurfaceSecondary"
+                    android:textIsSelectable="true"
+                    android:layout_marginTop="2dp"
+                    android:ellipsize="middle"
+                    android:singleLine="true"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="2dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_info_version_label"
+                        android:textSize="14sp"
+                        android:textColor="@color/onSurfaceSecondary"/>
+                    <TextView
+                        android:id="@+id/ailappversion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/onSurface"
+                        android:ellipsize="end"
+                        android:maxLines="1"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Part 3: Installer, UID, Size, ABI, SDK, InstallTime, UpdateTime -->
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textIsSelectable="true"
-                android:id="@+id/ailapppkgname"/>
+                android:layout_weight="1"
+                android:orientation="vertical">
 
+                <!-- Row 1: Installer & UID -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:baselineAligned="false">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/app_info_sdk_label"
+                            android:textSize="12sp"
+                            android:textColor="@color/onSurfaceSecondary"/>
+                        <TextView
+                            android:id="@+id/ailapptargetsdk"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/onSurface"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="/"
+                            android:textSize="12sp"
+                            android:textColor="@color/onSurfaceSecondary"
+                            android:layout_marginStart="1dp"
+                            android:layout_marginEnd="1dp"/>
+                        <TextView
+                            android:id="@+id/ailappminsdk"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/onSurface"/>
 
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginLeft="4dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/app_info_uid_label"
+                            android:textSize="12sp"
+                            android:textColor="@color/onSurfaceSecondary"/>
+                        <TextView
+                            android:id="@+id/ailappuid"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/onSurface"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Row 2: Size & ABI -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="1dp"
+                    android:baselineAligned="false">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/app_info_size_label"
+                            android:textSize="12sp"
+                            android:textColor="@color/onSurfaceSecondary"/>
+                        <TextView
+                            android:id="@+id/ailappsize"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/onSurface"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginLeft="4dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/app_info_abi_label"
+                            android:textSize="12sp"
+                            android:textColor="@color/onSurfaceSecondary"/>
+                        <TextView
+                            android:id="@+id/ailappabi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/onSurface"
+                            android:ellipsize="end"
+                            android:maxLines="1"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Row 3: SDK -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="1dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_info_installer_label"
+                        android:textSize="12sp"
+                        android:textColor="@color/onSurfaceSecondary"/>
+
+                    <TextView
+                        android:id="@+id/ailappinstaller_header"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/onSurface"
+                        android:ellipsize="end"
+                        android:maxLines="1"/>
+
+                </LinearLayout>
+
+                <!-- Row 4: Install Time -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="1dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_info_install_label"
+                        android:textSize="12sp"
+                        android:textColor="@color/onSurfaceSecondary"/>
+                    <TextView
+                        android:id="@+id/ailappinstalltime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/onSurface"
+                        android:ellipsize="end"
+                        android:maxLines="1"/>
+                </LinearLayout>
+
+                <!-- Row 5: Update Time -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="1dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_info_update_label"
+                        android:textSize="12sp"
+                        android:textColor="@color/onSurfaceSecondary"/>
+                    <TextView
+                        android:id="@+id/ailappupdatetime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/onSurface"
+                        android:ellipsize="end"
+                        android:maxLines="1"/>
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
+    </LinearLayout>
+
+    <!-- Scrollable content for the detail card -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="none">
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <!-- Detailed Info Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textIsSelectable="true"
-                android:id="@+id/ailappversion"/>
+                android:background="@drawable/card_background"
+                android:padding="12dp"
+                android:orientation="vertical"
+                android:layout_marginBottom="8dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+                <!-- Paths - Full width with background -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_info_path"
+                        android:textColor="@color/onSurfaceSecondary"
+                        android:textSize="15sp" />
+                    <TextView
+                        android:id="@+id/ailapppath"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/onSurface"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textIsSelectable="true"
+                        android:padding="8dp"
+                        android:background="#12000000"
+                        android:layout_marginTop="4dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_info_data_path"
+                        android:textColor="@color/onSurfaceSecondary"
+                        android:textSize="15sp" />
+                    <TextView
+                        android:id="@+id/ailappdatapath"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/onSurface"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textIsSelectable="true"
+                        android:padding="8dp"
+                        android:background="#12000000"
+                        android:layout_marginTop="4dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_info_external_data_path"
+                        android:textColor="@color/onSurfaceSecondary"
+                        android:textSize="15sp" />
+                    <TextView
+                        android:id="@+id/ailappexternaldatapath"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/onSurface"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textIsSelectable="true"
+                        android:padding="8dp"
+                        android:background="#12000000"
+                        android:layout_marginTop="4dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_info_native_lib"
+                        android:textColor="@color/onSurfaceSecondary"
+                        android:textSize="15sp" />
+                    <TextView
+                        android:id="@+id/ailappnativelib"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/onSurface"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textIsSelectable="true"
+                        android:padding="8dp"
+                        android:background="#12000000"
+                        android:layout_marginTop="4dp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Controls Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textIsSelectable="true"
-                android:id="@+id/ailappsize"/>
+                android:background="@drawable/card_background"
+                android:padding="8dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+
+                <Spinner
+                    android:id="@+id/ailsp1"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/input_field_background"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"/>
+
+                <Button
+                    android:id="@+id/ailbt1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:paddingStart="16dp"
+                    android:paddingLeft="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingRight="16dp"
+                    android:text="@string/button_apply_chagne"
+                    android:textColor="@color/onPrimary"
+                    android:textSize="15sp"
+                    android:textAllCaps="false"
+                    android:background="@drawable/btn_material"/>
+            </LinearLayout>
+
+            <!-- Content List -->
+            <com.easymanager.utils.view.NoScrollListView
+                android:id="@+id/aillv1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_background"
+                android:divider="@color/divider"
+                android:dividerHeight="1dp"
+                android:padding="4dp"
+                android:layout_marginBottom="16dp"/>
 
         </LinearLayout>
-
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Spinner
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:id="@+id/ailsp1"/>
-
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:id="@+id/ailbt1"
-            android:text="@string/button_apply_chagne"/>
-
-
-    </LinearLayout>
-
-
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/aillv1"/>
+    </ScrollView>
 
 </LinearLayout>

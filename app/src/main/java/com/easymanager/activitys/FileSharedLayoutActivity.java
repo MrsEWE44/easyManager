@@ -55,7 +55,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class FileSharedLayoutActivity extends Activity {
+public class FileSharedLayoutActivity extends BaseActivity {
 
     private ArrayList<String> list = new ArrayList<>();
 

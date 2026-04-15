@@ -3,67 +3,135 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
-    >
+    android:background="@color/background">
 
    <ScrollView
        android:layout_width="match_parent"
        android:layout_height="match_parent"
-       android:fillViewport="true"
-       android:background="#F5F5F5"
-       >
+       android:fillViewport="true">
 
       <LinearLayout
           android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:orientation="vertical">
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:padding="16dp">
 
-         <ExpandableListView
-             android:id="@+id/hflelv"
+          <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:gravity="center"
+              android:layout_marginBottom="24dp">
+
+              <ImageView
+                  android:id="@+id/hfl_app_icon"
+                  android:layout_width="80dp"
+                  android:layout_height="80dp"
+                  android:src="@mipmap/launcher_iconnn"
+                  android:contentDescription="@string/app_name" />
+
+              <TextView
+                  android:id="@+id/hfl_app_name"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/app_name"
+                  android:textSize="20sp"
+                  android:textStyle="bold"
+                  android:textColor="@color/onSurface"
+                  android:layout_marginTop="8dp" />
+
+              <TextView
+                  android:id="@+id/hfl_app_version"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="Version 1.0.0"
+                  android:textSize="14sp"
+                  android:textColor="@color/onSurfaceSecondary" />
+          </LinearLayout>
+
+         <LinearLayout
              android:layout_width="match_parent"
-             android:layout_weight="1"
-             android:layout_height="fill_parent"
-             android:divider="#6200EE"
-             android:dividerHeight="1dp"
-             android:childDivider="#6200EE"
-             />
+             android:layout_height="wrap_content"
+             android:background="@drawable/card_background"
+             android:orientation="vertical"
+             android:padding="4dp"
+             android:layout_marginBottom="16dp">
+
+             <com.easymanager.utils.NonScrollExpandableListView
+                 android:id="@+id/hflelv"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:divider="@color/divider"
+                 android:dividerHeight="1dp"
+                 android:childDivider="@color/divider"
+                 android:groupIndicator="@null" />
+         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
+
            <Button
                android:id="@+id/hflcheckupdate"
                android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:text="@string/help_check_update_button"></Button>
+               android:layout_height="48dp"
+               android:layout_marginBottom="8dp"
+               android:text="@string/help_check_update_button"
+               android:textColor="@color/onPrimary"
+               android:background="@drawable/btn_material" />
+
+           <Button
+               android:id="@+id/hfl_theme_mode"
+               android:layout_width="match_parent"
+               android:layout_height="48dp"
+               android:layout_marginBottom="8dp"
+               android:text="@string/help_theme_mode_button"
+               android:textColor="@color/onPrimary"
+               android:background="@drawable/btn_material" />
 
            <Button
                android:id="@+id/hflcleanfile"
                android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:text="@string/help_clean_app_files_button"></Button>
+               android:layout_height="48dp"
+               android:layout_marginBottom="8dp"
+               android:text="@string/help_clean_app_files_button"
+               android:textColor="@color/onPrimary"
+               android:background="@drawable/btn_material" />
 
            <LinearLayout
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
-              android:orientation="horizontal">
+               android:orientation="horizontal"
+               android:layout_marginBottom="8dp">
               <Button
                   android:id="@+id/hflopengithub"
                   android:layout_weight="1"
-                  android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:text="@string/help_open_source_global_button"></Button>
+                  android:layout_width="0dp"
+                  android:layout_height="48dp"
+                  android:layout_marginRight="4dp"
+                  android:text="@string/help_open_source_global_button"
+                  android:textColor="@color/onPrimary"
+                  android:background="@drawable/btn_material" />
 
               <Button
                   android:id="@+id/hflopengitee"
                   android:layout_weight="1"
-                  android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:text="@string/help_open_source_china_button"></Button>
-
+                  android:layout_width="0dp"
+                  android:layout_height="48dp"
+                  android:layout_marginLeft="4dp"
+                  android:text="@string/help_open_source_china_button"
+                  android:textColor="@color/onPrimary"
+                  android:background="@drawable/btn_material" />
            </LinearLayout>
+
+            <Button
+                android:id="@+id/hfl_donate"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="捐赠支持"
+                android:textColor="@color/onPrimary"
+                android:background="@drawable/btn_material" />
         </LinearLayout>
 
       </LinearLayout>
@@ -71,6 +139,3 @@
    </ScrollView>
 
 </FrameLayout>
-
-
-
