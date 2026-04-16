@@ -85,6 +85,15 @@
                         android:text="@string/button_home_process_clean" />
 
                     <com.google.android.material.button.MaterialButton
+                        android:id="@+id/hflrestorebt"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="4dp"
+                        android:text="@string/button_home_restore_uninstalled" />
+
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/hflinlocalapk"
                         style="@style/Widget.Material3.Button.TonalButton"
                         android:layout_width="0dp"

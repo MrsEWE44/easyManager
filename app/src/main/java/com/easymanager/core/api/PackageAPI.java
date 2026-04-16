@@ -42,7 +42,6 @@ import com.easymanager.entitys.MyActivityInfo;
 import com.easymanager.entitys.MyApplicationInfo;
 import com.easymanager.entitys.MyPackageInfo;
 import com.rosan.dhizuku.api.Dhizuku;
-import com.rosan.dhizuku.api.DhizukuBinderWrapper;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -823,6 +822,8 @@ public class PackageAPI extends  baseAPI implements Serializable {
             MyPackageInfo myPackageInfo = getMyPackageInfo(packageInfo.packageName,userid);
             if(myPackageInfo != null){
                 myPackageInfos.add(myPackageInfo);
+            }else{
+                myPackageInfos.add(copyPkgInfoToMyPkginfo(packageInfo));
             }
         }
         return myPackageInfos;

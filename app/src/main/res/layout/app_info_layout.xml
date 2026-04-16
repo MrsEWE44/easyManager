@@ -71,6 +71,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
+                        android:gravity="center_vertical"
                         android:orientation="horizontal">
 
                         <TextView
@@ -89,6 +90,21 @@
                             android:textAppearance="?attr/textAppearanceBodySmall"
                             android:textColor="?android:attr/textColorSecondary"
                             android:textIsSelectable="true" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/ailbt_details"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minHeight="0dp"
+                            android:padding="4dp"
+                            android:text="@string/app_details_btn"
+                            android:textSize="12sp" />
 
                     </LinearLayout>
 

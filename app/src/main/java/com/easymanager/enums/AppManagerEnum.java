@@ -7,6 +7,7 @@ public class AppManagerEnum {
     public final static int APP_DUMP=5;
     public final static int APP_UNINSTALL=6;
     public final static int APP_CLEAN_PROCESS=7;
+    public final static int APP_RESTORE_UNINSTALLED=8;
     public final static int APP_CLONE=10;
     public final static int APP_CLONE_MANAGE=11;
     public final static int APP_CLONE_REMOVE=12;

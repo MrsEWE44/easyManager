@@ -138,6 +138,8 @@ public class DialogUtils extends DialogBaseUtils {
         sort(list,switbs);
         AppInfoAdapter adapter = new AppInfoAdapter(list, context, checkboxs, switbs,pkgname,mode,uid);
         listView.setAdapter(adapter);
+        // Remove direct long click listener from ListView items if any was set by default/parent
+        listView.setOnItemLongClickListener(null);
     }
 
     //显示检索完毕后的应用列表

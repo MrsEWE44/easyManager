@@ -11,9 +11,9 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 18,
-      "versionName": "2.0.0",
-      "outputFile": "lightBreeze_2.0.0_release.apk"
+      "versionCode": 19,
+      "versionName": "2.0.1",
+      "outputFile": "lightBreeze_NOROOT_2.0.1_release.apk"
     }
   ],
   "elementType": "File",
@@ -22,14 +22,14 @@
       "minApi": 28,
       "maxApi": 30,
       "baselineProfiles": [
-        "baselineProfiles/1/lightBreeze_2.0.0_release.dm"
+        "baselineProfiles/1/lightBreeze_NOROOT_2.0.1_release.dm"
       ]
     },
     {
       "minApi": 31,
       "maxApi": 2147483647,
       "baselineProfiles": [
-        "baselineProfiles/0/lightBreeze_2.0.0_release.dm"
+        "baselineProfiles/0/lightBreeze_NOROOT_2.0.1_release.dm"
       ]
     }
   ],

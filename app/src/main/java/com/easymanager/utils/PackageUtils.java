@@ -246,11 +246,50 @@ public class PackageUtils {
         sortPKGINFOS(pkginfos);
     }
 
-    public void appInfoAdd(PackageManager packageManager,MyPackageInfo packageInfo, ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
-        if(checkboxs != null){
+    public void queryUninstalledPKGSByUID(int uid, Activity activity, ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
+        clearList(pkginfos,checkboxs);
+
+        List<MyPackageInfo> installedPackages = ee.getInstalledPackages(new TransmissionEntity(null,null,activity.getPackageName(),0,uid));
+
+        for (MyPackageInfo packageInfo : installedPackages) {
+            MyApplicationInfo myapplicationInfo = packageInfo.myapplicationInfo;
+            try {
+                PackageInfo p = activity.getPackageManager().getPackageInfo(packageInfo.packageName,0);
+            }catch (Exception e){
+                String apkPathStr = myapplicationInfo.sourceDir;
+                if(apkPathStr != null){
+                    File apkPath = new File(apkPathStr);
+                    if(apkPath.exists()){
+                        try {
+                            PackageInfo packageArchiveInfo = activity.getPackageManager().getPackageArchiveInfo(apkPathStr, 0);
+
+                            appInfoAdd(activity.getPackageManager(), packageInfo, pkginfos, checkboxs);
+                        }catch (Exception e2){
+
+                        }
+                    }
+                }
+            }
+
+        }
+        sortPKGINFOS(pkginfos);
+
+    }
+
+    public void appInfoAdd(PackageManager packageManager, MyPackageInfo packageInfo, ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
+        if (checkboxs != null) {
             checkboxs.add(false);
         }
-        pkginfos.add(getPKGINFOByUID(packageManager,packageInfo.packageName));
+        String appName = packageInfo.packageName;
+        String uid = "";
+        try {
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(packageInfo.packageName, PackageManager.MATCH_UNINSTALLED_PACKAGES);
+            appName = applicationInfo.loadLabel(packageManager).toString();
+            uid = String.valueOf(applicationInfo.uid);
+        } catch (PackageManager.NameNotFoundException ignored) {
+        }
+        PKGINFO pkginfo = new PKGINFO(packageInfo.packageName, appName, packageInfo.myapplicationInfo.sourceDir, uid, packageInfo.versionName, 0L);
+        pkginfos.add(pkginfo);
     }
 
 
@@ -411,5 +450,30 @@ public class PackageUtils {
     }
 
 
+    public void queryUninstalledPKGS(Activity activity, ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, int types) {
+        clearList(pkginfos,checkboxs);
+        PackageManager packageManager = activity.getPackageManager();
+        List<PackageInfo> installedPackages = packageManager.getInstalledPackages(types | PackageManager.MATCH_DISABLED_COMPONENTS | PackageManager.MATCH_UNINSTALLED_PACKAGES);
+        for (PackageInfo packageInfo : installedPackages) {
+            try {
+                PackageInfo p = packageManager.getPackageInfo(packageInfo.packageName,0);
+            }catch (Exception e){
+                String apkPathStr = packageInfo.applicationInfo.sourceDir;
+                if(apkPathStr != null){
+                    File apkPath = new File(apkPathStr);
+                    if(apkPath.exists()){
+                        try {
+                            PackageInfo packageArchiveInfo = packageManager.getPackageArchiveInfo(apkPathStr, 0);
+                            appInfoAdd(packageManager,packageInfo,pkginfos,checkboxs,QUERY_ALL_DEFAULT_PKG);
+                        }catch (Exception e2){
 
+                        }
+                    }
+                }
+            }
+
+
+        }
+        sortPKGINFOS(pkginfos);
+    }
 }

@@ -299,4 +299,27 @@
     <string name="activate_dhizuku">Activate Dhizuku</string>
     <string name="activate_shizuku">Activate Shizuku</string>
     <string name="menu_search_str">search</string>
+    <string name="app_details_btn">Details</string>
+    <string name="app_details_title">Application Details</string>
+    <string name="app_details_uid">UID: %s</string>
+    <string name="app_details_install_time">Installed: %s</string>
+    <string name="app_details_update_time">Updated: %s</string>
+    <string name="app_details_min_sdk">Min SDK: %s</string>
+    <string name="app_details_target_sdk">Target SDK: %s</string>
+    <string name="app_details_abi">ABI: %s</string>
+    <string name="app_details_data_dir">Data: %s</string>
+    <string name="app_details_protected_data_dir">Protected Data: %s</string>
+    <string name="app_details_source_dir">Source: %s</string>
+    <string name="app_details_public_source_dir">Public: %s</string>
+    <string name="app_details_split_source_dirs">Splits:</string>
+    <string name="app_details_process_name">Process: %s</string>
+    <string name="app_details_task_affinity">Affinity: %s</string>
+    <string name="menu_copy_adb_pc">Copy as PC ADB command</string>
+    <string name="menu_copy_adb">Copy as ADB command</string>
+    <string name="menu_copy_text_permission">Copy text and permission</string>
+    <string name="button_home_restore_uninstalled">Restore Uninstalled</string>
+    <string name="menu_get_uninstalled_app">Get Uninstalled Apps</string>
+    <string name="show_help_getRestoreUninstalledHELP">\nThis interface is used to restore apps that were uninstalled but kept as existing on the device (usually via ADB \"pm uninstall -k\"). This is supported on Android 8.0 and above.\n\n1. Click "Get Uninstalled Apps" from the top right menu to list apps that can be restored.\n2. The input box and spinner for selecting local files are disabled in this mode as it only deals with already present but uninstalled packages.\n3. Select the apps you want to restore and click the "Restore" button.\n\n</string>
+    <string name="getting_uninstalled_apps">Getting uninstalled apps, please wait...</string>
+    <string name="button_restore">Restore</string>
 </resources>

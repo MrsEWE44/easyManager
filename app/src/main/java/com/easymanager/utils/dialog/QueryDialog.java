@@ -41,6 +41,9 @@ public class QueryDialog extends DialogUtils {
     public void queryUserAllPKGSByAppCloneProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
         queryAppClonePKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_user_apps_by_clone),lv1,pkginfos,checkboxs,3);
     }
+    public void queryUninstalledPKGSProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, int uid) {
+        queryPKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.getting_uninstalled_apps),lv1,pkginfos,checkboxs,8,uid);
+    }
     public void queryLocalBackupProcessDialog(Context context, Activity activity, ListView apllv1, ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, int uid) {
         queryPKGProcessDialog(context,activity,tu.getLanguageString(context, R.string.scan_local_backup_file_msg),apllv1,pkginfos,checkboxs,7,uid);
     }
@@ -169,6 +172,14 @@ public class QueryDialog extends DialogUtils {
                         }
                         packageUtils.sortPKGINFOS(pkginfos);
                     }
+                    break;
+                case 8:
+                    if(uid == currentUserID || easyMUtils.isDeviceOwnerActive(context) || Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+                        packageUtils.queryUninstalledPKGS(activity,pkginfos,checkboxs,0);
+                    }else{
+                        packageUtils.queryUninstalledPKGSByUID(uid,activity,pkginfos,checkboxs);
+                    }
+
                     break;
             }
         }

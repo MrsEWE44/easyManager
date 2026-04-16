@@ -42,7 +42,7 @@ public class AppInfoLayoutActivity extends AppCompatActivity {
 
     private Spinner ailsp1;
 
-    private Button ailbt1;
+    private Button ailbt1, ailbt_details;
 
     private ListView aillv1;
 
@@ -101,6 +101,7 @@ public class AppInfoLayoutActivity extends AppCompatActivity {
         ailappsize = findViewById(R.id.ailappsize);
         ailsp1 = findViewById(R.id.ailsp1);
         ailbt1 = findViewById(R.id.ailbt1);
+        ailbt_details = findViewById(R.id.ailbt_details);
         aillv1 = findViewById(R.id.aillv1);
         ailsp1.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, getAppChoicesOPT()));
         PKGINFO pkginfo = acu.getUd().packageUtils.getPKGINFO(context, pkgname);
@@ -160,8 +161,93 @@ public class AppInfoLayoutActivity extends AppCompatActivity {
             }
         });
 
+        ailbt_details.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDetailedAppInfo();
+            }
+        });
 
+    }
 
+    private void showDetailedAppInfo() {
+        try {
+            android.content.pm.PackageManager pm = getPackageManager();
+            android.content.pm.PackageInfo pi = pm.getPackageInfo(pkgname, android.content.pm.PackageManager.GET_PERMISSIONS);
+            android.content.pm.ApplicationInfo ai = pi.applicationInfo;
+
+            com.google.android.material.dialog.MaterialAlertDialogBuilder builder = new com.google.android.material.dialog.MaterialAlertDialogBuilder(context);
+            View customView = android.view.LayoutInflater.from(context).inflate(R.layout.dialog_app_details, null);
+            
+            android.widget.ImageView iconView = customView.findViewById(R.id.detail_app_icon);
+            android.widget.TextView nameView = customView.findViewById(R.id.detail_app_name);
+            android.widget.TextView pkgView = customView.findViewById(R.id.detail_app_pkg);
+            android.widget.TextView infoView = customView.findViewById(R.id.detail_info_text);
+
+            iconView.setImageDrawable(ai.loadIcon(pm));
+            nameView.setText(ai.loadLabel(pm));
+            pkgView.setText(String.format("%s (%s)", pkgname, pi.versionName));
+
+            StringBuilder sb = new StringBuilder();
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault());
+
+            sb.append(String.format(getLanStr(R.string.app_details_uid), ai.uid)).append("\n");
+            sb.append(String.format(getLanStr(R.string.app_details_install_time), sdf.format(new java.util.Date(pi.firstInstallTime)))).append("\n");
+            sb.append(String.format(getLanStr(R.string.app_details_update_time), sdf.format(new java.util.Date(pi.lastUpdateTime)))).append("\n");
+            
+            sb.append(String.format(getLanStr(R.string.app_details_min_sdk), ai.minSdkVersion)).append("\n");
+            sb.append(String.format(getLanStr(R.string.app_details_target_sdk), ai.targetSdkVersion)).append("\n");
+            
+            String abi = "Unknown";
+            try {
+                java.lang.reflect.Field primaryCpuAbiField = android.content.pm.ApplicationInfo.class.getDeclaredField("primaryCpuAbi");
+                primaryCpuAbiField.setAccessible(true);
+                abi = (String) primaryCpuAbiField.get(ai);
+            } catch (Exception e) {
+                // Fallback for some versions
+            }
+            sb.append(String.format(getLanStr(R.string.app_details_abi), abi)).append("\n");
+
+            sb.append(String.format(getLanStr(R.string.app_details_data_dir), ai.dataDir)).append("\n");
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                sb.append(String.format(getLanStr(R.string.app_details_protected_data_dir), ai.deviceProtectedDataDir)).append("\n");
+            }
+            
+            sb.append(String.format(getLanStr(R.string.app_details_source_dir), ai.sourceDir)).append("\n");
+            if (ai.publicSourceDir != null && !ai.publicSourceDir.equals(ai.sourceDir)) {
+                sb.append(String.format(getLanStr(R.string.app_details_public_source_dir), ai.publicSourceDir)).append("\n");
+            }
+            
+            if (ai.splitSourceDirs != null && ai.splitSourceDirs.length > 0) {
+                sb.append(getLanStr(R.string.app_details_split_source_dirs)).append("\n");
+                for (String split : ai.splitSourceDirs) {
+                    sb.append("  - ").append(split).append("\n");
+                }
+            }
+
+            sb.append(String.format(getLanStr(R.string.app_details_process_name), ai.processName)).append("\n");
+            if (ai.taskAffinity != null) {
+                sb.append(String.format(getLanStr(R.string.app_details_task_affinity), ai.taskAffinity)).append("\n");
+            }
+
+            infoView.setText(sb.toString());
+
+            android.widget.Button btnCopy = customView.findViewById(R.id.btn_copy_details);
+            btnCopy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    acu.getPd().tu.copyText(context, sb.toString());
+                }
+            });
+
+            builder.setTitle(getLanStr(R.string.app_details_title))
+                    .setView(customView)
+                    .setPositiveButton(R.string.dialog_sure_text, null)
+                    .show();
+
+        } catch (android.content.pm.PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 

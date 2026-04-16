@@ -299,4 +299,27 @@
     <string name="activate_dhizuku">啟動Dhizuku</string>
     <string name="activate_shizuku">啟動Shizuku</string>
     <string name="menu_search_str">搜索</string>
+    <string name="app_details_btn">詳情</string>
+    <string name="app_details_title">應用詳情</string>
+    <string name="app_details_uid">使用者ID (UID): %s</string>
+    <string name="app_details_install_time">安裝時間: %s</string>
+    <string name="app_details_update_time">更新時間: %s</string>
+    <string name="app_details_min_sdk">最小 SDK: %s</string>
+    <string name="app_details_target_sdk">目標 SDK: %s</string>
+    <string name="app_details_abi">架構 (ABI): %s</string>
+    <string name="app_details_data_dir">數據路徑: %s</string>
+    <string name="app_details_protected_data_dir">受保護數據: %s</string>
+    <string name="app_details_source_dir">安裝路徑: %s</string>
+    <string name="app_details_public_source_dir">公共路徑: %s</string>
+    <string name="app_details_split_source_dirs">Split 路徑:</string>
+    <string name="app_details_process_name">進程名: %s</string>
+    <string name="app_details_task_affinity">任務親和性: %s</string>
+    <string name="menu_copy_adb_pc">複製為電腦ADB命令</string>
+    <string name="menu_copy_adb">複製為ADB命令</string>
+    <string name="menu_copy_text_permission">複製文本和權限</string>
+    <string name="button_home_restore_uninstalled">還原已解除安裝</string>
+    <string name="menu_get_uninstalled_app">獲取已解除安裝應用</string>
+    <string name="show_help_getRestoreUninstalledHELP">\n該介面主要用於還原那些已解除安裝但仍保留在設備上的應用（通常是通過 ADB \"pm uninstall -k\" 解除安裝的應用）。此功能在 Android 8.0 及以上版本中受支持。\n\n1. 點擊右上角選單中的「獲取已解除安裝應用」來列出可以還原的應用。\n2. 在此模式下，選擇本地檔案的輸入框和下拉框被禁用，因為它只處理已存在但已解除安裝的包。\n3. 選擇您要還原的應用，然後點擊「還原」按鈕。\n\n</string>
+    <string name="getting_uninstalled_apps">正在獲取已解除安裝應用，請稍等...</string>
+    <string name="button_restore">還原</string>
 </resources>

@@ -1,10 +1,8 @@
 package com.easymanager.activitys;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -12,7 +10,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.text.InputType;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,22 +18,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.button.MaterialButton;
+
 import com.easymanager.R;
-import com.easymanager.core.entity.TransmissionEntity;
 import com.easymanager.entitys.PKGINFO;
 import com.easymanager.enums.AppManagerEnum;
-import com.easymanager.enums.easyManagerEnums;
 import com.easymanager.utils.FileTools;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
@@ -167,6 +158,12 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
             amlapplybt.setText(getLanStr(R.string.button_clean));
         }
 
+        if(mode == AppManagerEnum.APP_RESTORE_UNINSTALLED){
+            amlsp1.setEnabled(false);
+            amlsp2.setEnabled(false);
+            amlapplybt.setText(getLanStr(R.string.button_restore));
+        }
+
         if(mode == AppManagerEnum.APP_INSTALL_LOCAL_FILE){
             amlsp1.setEnabled(false);
             amlsp2.setAdapter(getSpinnerAdapter(getAppInstallLocalFileOPT()));
@@ -174,15 +171,12 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
             install_mode=true;
         }
 
-        packageUtils.clearList(pkginfos,checkboxs);
-        acu.getUd().showPKGS(context,apllv1,pkginfos,checkboxs);
-        new HelpDialogUtils().showHelp(context,HelpDialogUtils.APP_MANAGE_HELP,mode);
-
-
-
-
-
-
+        if (mode == AppManagerEnum.APP_RESTORE_UNINSTALLED) {
+            acu.getSd().queryUninstalledPKGSProcessDialog(context, activity, apllv1, pkginfos, checkboxs, uid);
+        } else {
+            acu.getUd().showPKGS(context, apllv1, pkginfos, checkboxs);
+        }
+        new HelpDialogUtils().showHelp(context, HelpDialogUtils.APP_MANAGE_HELP, mode);
     }
 
     private void btClicked(){
@@ -252,6 +246,10 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
 
                     if(mode == AppManagerEnum.APP_CLEAN_PROCESS){
                         acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_CLEAN_PROCESS,APP_PERMIS_OPT_INDEX,getADDCleanRunningAPPOPTSTR(),uid);
+                    }
+
+                    if(mode == AppManagerEnum.APP_RESTORE_UNINSTALLED){
+                        acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_RESTORE_UNINSTALLED,APP_PERMIS_OPT_INDEX,null,uid);
                     }
 
                 }
@@ -372,9 +370,16 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
         OtherTools otherTools = new OtherTools();
-        otherTools.addMenuBase(this,menu,mode);
-        getMenuInflater().inflate(R.menu.main,menu);
+        if (mode == AppManagerEnum.APP_RESTORE_UNINSTALLED) {
+            menu.add(0, 10, 0, getLanStr(R.string.menu_get_uninstalled_app));
+            menu.add(0, 5, 0, getLanStr(R.string.options_menu_help_str));
+            menu.add(0, 6, 0, getLanStr(R.string.options_menu_exit));
+        } else {
+            otherTools.addMenuBase(this, menu, mode);
+        }
+        getMenuInflater().inflate(R.menu.main, menu);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -422,6 +427,10 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
 
         if(itemId == 8){
             acu.getSd().queryAllUserProcessDialog(context,activity,apllv1,pkginfos,checkboxs,uid);
+        }
+
+        if(itemId == 10){
+            acu.getSd().queryUninstalledPKGSProcessDialog(context,activity,apllv1,pkginfos,checkboxs,uid);
         }
 
         if(itemId == 9){

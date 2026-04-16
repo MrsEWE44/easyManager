@@ -28,7 +28,7 @@
             android:layout_weight="1"
             android:ellipsize="end"
             android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textIsSelectable="true" />
+            android:textIsSelectable="false" />
 
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/aiilsb1"

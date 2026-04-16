@@ -127,6 +127,10 @@ public class PackageDialog extends DialogUtils {
                                 easyMUtils.uninstallAPK(context,pkginfo.getPkgname(),uid);
                             }
                             break;
+                        case AppManagerEnum.APP_RESTORE_UNINSTALLED:
+                            easyMUtils.setSkipError(true);
+                            easyMUtils.installExistingPKG(context, pkginfo.getPkgname(), uid);
+                            break;
                     }
                 }
                 mUpdateProgressHandler.sendEmptyMessage(1);
@@ -149,7 +153,7 @@ public class PackageDialog extends DialogUtils {
             msg=tu.getLanguageString(context,R.string.apply_app_compat_msg);
         }
 
-        if(appPermission == AppManagerEnum.APP_INSTALL_LOCAL_FILE){
+        if(appPermission == AppManagerEnum.APP_INSTALL_LOCAL_FILE || appPermission == AppManagerEnum.APP_RESTORE_UNINSTALLED){
             title=tu.getLanguageString(context,R.string.apply_app_install_title);
             msg=tu.getLanguageString(context,R.string.apply_app_install_msg);
         }
