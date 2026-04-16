@@ -208,6 +208,12 @@ public class PackageDialog extends DialogUtils {
             title=tu.getLanguageString(context,R.string.app_clone_delete_clone_title);
             msg=tu.getLanguageString(context,R.string.app_clone_delete_clone_msg);
         }
+
+        if(appPermission == AppManagerEnum.APP_INFO_LAYOUT){
+            title=tu.getLanguageString(context,R.string.apply_app_compat_title);
+            msg=tu.getLanguageString(context,R.string.apply_app_compat_msg);
+        }
+
         showProcessBarDialogByCMD(context,list,appPermission,APP_PERMIS_INDEX,opt_str,title,msg,uid);
     }
 
