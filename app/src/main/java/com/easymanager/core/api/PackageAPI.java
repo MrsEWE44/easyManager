@@ -929,6 +929,8 @@ public class PackageAPI extends  baseAPI implements Serializable {
             MyPackageInfo myPackageInfo = getMyPackageInfo(packageInfo.packageName,userid);
             if(myPackageInfo != null){
                 myPackageInfos.add(myPackageInfo);
+            }else{
+                myPackageInfos.add(copyPkgInfoToMyPkginfo(packageInfo));
             }
         }
         return myPackageInfos;
