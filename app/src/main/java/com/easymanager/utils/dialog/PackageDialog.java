@@ -89,6 +89,9 @@ public class PackageDialog extends DialogUtils {
                         case AppManagerEnum.APP_INSTALL_LOCAL_FILE:
                             easyMUtils.installAPK(new TransmissionEntity(pkginfo.getApkpath(),null,reqpkg,0,uid));
                             break;
+                        case AppManagerEnum.APP_RESTORE_UNINSTALL_APP:
+                            easyMUtils.installExistingPKG(context,pkginfo.getPkgname(),uid);
+                            break;
                         case AppManagerEnum.APP_UNINSTALL:
                             if(!pkginfo.getPkgname().equals(context.getPackageName())){
                                 easyMUtils.uninstallAPK(context,pkginfo.getPkgname(),uid);
@@ -171,7 +174,7 @@ public class PackageDialog extends DialogUtils {
             msg=tu.getLanguageString(context,R.string.apply_app_network_msg);
         }
 
-        if(appPermission == AppManagerEnum.APP_INSTALL_LOCAL_FILE){
+        if(appPermission == AppManagerEnum.APP_INSTALL_LOCAL_FILE || appPermission == AppManagerEnum.APP_RESTORE_UNINSTALL_APP){
             title=tu.getLanguageString(context,R.string.apply_app_install_title);
             msg=tu.getLanguageString(context,R.string.apply_app_install_msg);
         }

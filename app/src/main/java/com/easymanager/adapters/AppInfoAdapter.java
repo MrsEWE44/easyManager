@@ -74,10 +74,7 @@ public class AppInfoAdapter extends BaseAdapter {
         String rawName = list.get(i);
         String label = rawName;
         if (mode == AppInfoEnums.IS_PERMISSION) {
-            label = PermissionUtils.getTranslatePermissionName(rawName);
-            if (label.equals(rawName)) {
-                label = PermissionUtils.getPermissionLabel(context, rawName);
-            }
+            label = PermissionUtils.getPermissionLabel(context, rawName);
             text.setText(label);
             subText.setText(rawName);
             subText.setVisibility(View.VISIBLE);
@@ -91,9 +88,9 @@ public class AppInfoAdapter extends BaseAdapter {
             @Override
             public boolean onLongClick(View v) {
                 String[] options = {
-                        "生成 ADB 命令(带 adb shell)",
-                        "生成 ADB 命令(不带 adb shell)",
-                        "生成命令 (root)"
+                        context.getString(R.string.adb_cmd_with_shell),
+                        context.getString(R.string.adb_cmd_without_shell),
+                        context.getString(R.string.adb_cmd_root)
                 };
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -106,12 +103,12 @@ public class AppInfoAdapter extends BaseAdapter {
                         
                         // Add comment with translated name/type
                         if (mode == AppInfoEnums.IS_PERMISSION) {
-                            sb.append("# 权限：").append(finalLabel).append("\n");
+                            sb.append("# ").append(context.getString(R.string.permission_label)).append("：").append(finalLabel).append("\n");
                         } else {
-                            String typeStr = "组件";
-                            if (type == AppInfoEnums.GET_SERVICES) typeStr = "服务";
-                            else if (type == AppInfoEnums.GET_ACTIVITYS) typeStr = "活动";
-                            else if (type == AppInfoEnums.GET_RECEIVERS) typeStr = "广播接收器";
+                            String typeStr = context.getString(R.string.component_label);
+                            if (type == AppInfoEnums.GET_SERVICES) typeStr = context.getString(R.string.service_label);
+                            else if (type == AppInfoEnums.GET_ACTIVITYS) typeStr = context.getString(R.string.activity_label);
+                            else if (type == AppInfoEnums.GET_RECEIVERS) typeStr = context.getString(R.string.receiver_label);
                             sb.append("# ").append(typeStr).append("：").append(rawName).append("\n");
                         }
 

@@ -14,18 +14,65 @@ If you would like to read the instructions in English, [click here](https://gith
 从V1.2.8b版本开始，该项目分成两个版本，分开维护和更新，分别是 [轻风免root版本](https://github.com/MrsEWE44/easyManager/tree/md5) 和 [轻风完整版](https://github.com/MrsEWE44/easyManager/tree/master)
 
 
-- V1.2.9
+- V1.3.0
 
-1.重构软件界面，提升用户操作体验和观感
+1.优化部分软件界面，提升用户操作体验和观感
 
-2.界面加入黑暗模式支持
+2.加入已卸载软件恢复功能(需要安卓8或者以上系统版本)
 
-3.修改版本号为1.2.9
+3.修改版本号为1.3.0
 
-4.修改软件名字为轻风，英文名字为Light Breeze，软件安装包名字修改为lightBreeze_版本号_发行版类型.apk
+4.修改软件名字为轻风，英文名字为Light Breeze，软件安装包名字修改为lightBreeze_full_版本号_发行版类型.apk
 
 
-软件截图:
+### 软件截图:
 
-![image](images/3.png) ![image](images/4.png) ![image](images/1.png)
-![image](images/2.png) ![image](images/5.png) ![image](images/6.png)
+<table align="center" border="0" cellpadding="10">
+
+  <tr>
+    <td align="center">
+      <img src="images/3.png" width="250"><br>
+      <b>图片1</b>
+    </td>
+    <td align="center">
+      <img src="images/4.png" width="250"><br>
+      <b>图片2</b>
+    </td>
+    <td align="center">
+      <img src="images/1.png" width="250"><br>
+      <b>图片3</b>
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center">
+      <img src="images/2.png" width="250"><br>
+      <b>图片4</b>
+    </td>
+    <td align="center">
+      <img src="images/5.png" width="250"><br>
+      <b>图片5</b>
+    </td>
+    <td align="center">
+      <img src="images/6.png" width="250"><br>
+      <b>图片6</b>
+    </td>
+  </tr>
+</table>
+
+### 捐赠&支持作者
+
+<table align="center" border="0" cellpadding="15">
+  <tr>
+    <td align="center">
+      <img src="app/src/main/assets/wechatqr.jpg" width="200"><br>
+      <b>微信</b>
+    </td>
+    <td align="center">
+      <img src="app/src/main/assets/aliqr.jpg" width="200"><br>
+      <b>支付宝</b>
+    </td>
+  </tr>
+</table>
+
+

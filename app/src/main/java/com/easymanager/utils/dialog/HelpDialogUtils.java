@@ -76,6 +76,9 @@ public class HelpDialogUtils extends DialogBaseUtils {
                 case AppManagerEnum.APP_CLONE_REMOVE:
                     msg = tu.getLanguageString(context,R.string.show_help_getAppCloneRemoveHELP);
                     break;
+                case AppManagerEnum.APP_RESTORE_UNINSTALL_APP:
+                    msg = tu.getLanguageString(context,R.string.show_help_getAppRestoreUninstalledAppHELP);
+                    break;
             }
             dialog = showInfoMsg(context,tu.getLanguageString(context, R.string.show_help_title),msg);
         }

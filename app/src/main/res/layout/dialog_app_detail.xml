@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Basic Info Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="4dp">
+
+            <ImageView
+                android:id="@+id/dialog_app_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:scaleType="fitCenter"
+                android:layout_marginEnd="6dp"
+                android:layout_marginRight="6dp" />
+
+            <TextView
+                android:id="@+id/dialog_header_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/onSurface"
+                android:ellipsize="end"
+                android:maxLines="2"/>
+        </LinearLayout>
+
+        <include layout="@layout/item_detail_row" android:id="@+id/dialog_name_row" />
+        <include layout="@layout/item_detail_row" android:id="@+id/dialog_pkg_row" />
+        <include layout="@layout/item_detail_row" android:id="@+id/dialog_version_row" />
+        <include layout="@layout/item_detail_row" android:id="@+id/dialog_size_row" />
+        <include layout="@layout/item_detail_row" android:id="@+id/dialog_uid_row" />
+        <include layout="@layout/item_detail_row" android:id="@+id/dialog_abi_row" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"/>
+
+        <!-- System Info Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <include layout="@layout/item_detail_row" android:id="@+id/dialog_target_sdk_row" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
+            <include layout="@layout/item_detail_row" android:id="@+id/dialog_min_sdk_row" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
+        </LinearLayout>
+        <include layout="@layout/item_detail_row" android:id="@+id/dialog_installer_row" />
+        <include layout="@layout/item_detail_row" android:id="@+id/dialog_install_time_row" />
+        <include layout="@layout/item_detail_row" android:id="@+id/dialog_update_time_row" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"/>
+
+        <!-- Paths Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_info_path"
+            android:textColor="@color/onSurfaceSecondary"
+            android:textSize="13sp" />
+        <TextView
+            android:id="@+id/dialog_app_path"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/onSurface"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textIsSelectable="true"
+            android:padding="2dp"
+            android:background="#12000000"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="2dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_info_data_path"
+            android:textColor="@color/onSurfaceSecondary"
+            android:textSize="13sp" />
+        <TextView
+            android:id="@+id/dialog_data_path"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/onSurface"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textIsSelectable="true"
+            android:padding="2dp"
+            android:background="#12000000"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="2dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_info_external_data_path"
+            android:textColor="@color/onSurfaceSecondary"
+            android:textSize="13sp" />
+        <TextView
+            android:id="@+id/dialog_external_path"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/onSurface"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textIsSelectable="true"
+            android:padding="2dp"
+            android:background="#12000000"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="2dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_info_native_lib"
+            android:textColor="@color/onSurfaceSecondary"
+            android:textSize="13sp" />
+        <TextView
+            android:id="@+id/dialog_native_lib_path"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/onSurface"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textIsSelectable="true"
+            android:padding="2dp"
+            android:background="#12000000"
+            android:layout_marginTop="1dp"/>
+
+    </LinearLayout>
+</ScrollView>

@@ -41,12 +41,13 @@ public class AppInfoLayoutActivity extends BaseActivity {
 
     private ImageView ailappicon;
 
-    private TextView ailappname, ailapppkgname, ailappversion, ailappsize, ailappuid, ailapppath;
-    private TextView ailapptargetsdk, ailappminsdk, ailappinstalltime, ailappupdatetime, ailappdatapath, ailappabi, ailappinstaller_header, ailappnativelib, ailappexternaldatapath;
+    private TextView ailappname, ailapppkgname, ailappversion, ailappsize, ailappuid, ailappabi;
+
+    private String targetSdk, minSdk, installTime, updateTime, dataPath, installer, nativeLib, externalDataPath, appPath;
 
     private Spinner ailsp1;
 
-    private Button ailbt1;
+    private Button ailbt1, ail_show_details;
 
     private ListView aillv1;
 
@@ -90,18 +91,10 @@ public class AppInfoLayoutActivity extends BaseActivity {
         ailappversion = findViewById(R.id.ailappversion);
         ailappsize = findViewById(R.id.ailappsize);
         ailappuid = findViewById(R.id.ailappuid);
-        ailapppath = findViewById(R.id.ailapppath);
-        ailapptargetsdk = findViewById(R.id.ailapptargetsdk);
-        ailappminsdk = findViewById(R.id.ailappminsdk);
-        ailappinstalltime = findViewById(R.id.ailappinstalltime);
-        ailappupdatetime = findViewById(R.id.ailappupdatetime);
-        ailappdatapath = findViewById(R.id.ailappdatapath);
         ailappabi = findViewById(R.id.ailappabi);
-        ailappinstaller_header = findViewById(R.id.ailappinstaller_header);
-        ailappnativelib = findViewById(R.id.ailappnativelib);
-        ailappexternaldatapath = findViewById(R.id.ailappexternaldatapath);
         ailsp1 = findViewById(R.id.ailsp1);
         ailbt1 = findViewById(R.id.ailbt1);
+        ail_show_details = findViewById(R.id.ail_show_details);
         aillv1 = findViewById(R.id.aillv1);
         ailsp1.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, getAppChoicesOPT()));
         PKGINFO pkginfo = acu.getUd().packageUtils.getPKGINFO(context, pkgname);
@@ -112,7 +105,7 @@ public class AppInfoLayoutActivity extends BaseActivity {
         ailappversion.setText(pkginfo.getAppversionname());
         ailappsize.setText(acu.getUd().ft.getSize(pkginfo.getFilesize(),0));
         ailappuid.setText(pkginfo.getApkuid());
-        ailapppath.setText(pkginfo.getApkpath());
+        appPath = pkginfo.getApkpath();
 
         // Additional detailed info
         try {
@@ -120,17 +113,17 @@ public class AppInfoLayoutActivity extends BaseActivity {
             if (packageInfo != null) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                    ailappinstalltime.setText(sdf.format(new Date(packageInfo.firstInstallTime)));
-                    ailappupdatetime.setText(sdf.format(new Date(packageInfo.lastUpdateTime)));
+                    installTime = sdf.format(new Date(packageInfo.firstInstallTime));
+                    updateTime = sdf.format(new Date(packageInfo.lastUpdateTime));
                 }
                 if (packageInfo.applicationInfo != null) {
-                    ailapptargetsdk.setText(String.valueOf(packageInfo.applicationInfo.targetSdkVersion));
+                    targetSdk = String.valueOf(packageInfo.applicationInfo.targetSdkVersion);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        ailappminsdk.setText(String.valueOf(packageInfo.applicationInfo.minSdkVersion));
+                        minSdk = String.valueOf(packageInfo.applicationInfo.minSdkVersion);
                     } else {
-                        ailappminsdk.setText("N/A");
+                        minSdk = "N/A";
                     }
-                    ailappdatapath.setText(packageInfo.applicationInfo.dataDir);
+                    dataPath = packageInfo.applicationInfo.dataDir;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         String[] abis = Build.SUPPORTED_ABIS;
                         if (abis != null && abis.length > 0) {
@@ -147,14 +140,12 @@ public class AppInfoLayoutActivity extends BaseActivity {
                         ailappabi.setText(Build.CPU_ABI + (Build.CPU_ABI2.equals("unknown") ? "" : ", " + Build.CPU_ABI2));
                     }
 
-                    String installer = getPackageManager().getInstallerPackageName(pkgname);
-                    String installerText = installer != null ? installer : "System/Direct";
-                    ailappinstaller_header.setText(installerText);
-                    ailappnativelib.setText(packageInfo.applicationInfo.nativeLibraryDir);
+                    String inst = getPackageManager().getInstallerPackageName(pkgname);
+                    installer = inst != null ? inst : "System/Direct";
+                    nativeLib = packageInfo.applicationInfo.nativeLibraryDir;
                     
                     // Construct external data path: /sdcard/Android/data/[pkgname]
-                    String extDataPath = android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/" + pkgname;
-                    ailappexternaldatapath.setText(extDataPath);
+                    externalDataPath = android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/" + pkgname;
                 }
             }
         } catch (PackageManager.NameNotFoundException e) {
@@ -181,6 +172,13 @@ public class AppInfoLayoutActivity extends BaseActivity {
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
+            }
+        });
+
+        ail_show_details.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAppDetailsDialog();
             }
         });
 
@@ -263,11 +261,11 @@ public class AppInfoLayoutActivity extends BaseActivity {
             copyAppDetail();
         }
 
-        if(itemId == 4){
+        if(itemId == 5){
             new HelpDialogUtils().showHelp(context,HelpDialogUtils.APP_INFO_HELP,mode);
         }
 
-        if(itemId == 5){
+        if(itemId == 6){
             MyActivityManager.getIns().killall();
         }
 
@@ -280,23 +278,74 @@ public class AppInfoLayoutActivity extends BaseActivity {
         return new String[]{getLanStr(R.string.spin_item_selected),getLanStr(R.string.spin_item_no_selected),getLanStr(R.string.spin_item_all_selected)};
     }
 
+    private void showAppDetailsDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
+        View dialogView = android.view.LayoutInflater.from(context).inflate(R.layout.dialog_app_detail, null);
+
+        // Set app icon and title in dialog header
+        ImageView dialogIcon = dialogView.findViewById(R.id.dialog_app_icon);
+        if (dialogIcon != null) {
+            dialogIcon.setImageDrawable(ailappicon.getDrawable());
+        }
+        TextView headerTitle = dialogView.findViewById(R.id.dialog_header_title);
+        if (headerTitle != null) {
+            headerTitle.setText(ailappname.getText());
+        }
+
+        // Setup rows using item_detail_row.xml
+        setupDialogRow(dialogView, R.id.dialog_name_row, getLanStr(R.string.app_info_name_label), ailappname.getText().toString());
+        setupDialogRow(dialogView, R.id.dialog_pkg_row, getLanStr(R.string.app_info_package_label), ailapppkgname.getText().toString());
+        setupDialogRow(dialogView, R.id.dialog_version_row, getLanStr(R.string.app_info_version_label), ailappversion.getText().toString());
+        setupDialogRow(dialogView, R.id.dialog_size_row, getLanStr(R.string.app_info_size_label), ailappsize.getText().toString());
+        setupDialogRow(dialogView, R.id.dialog_uid_row, getLanStr(R.string.app_info_uid_label), ailappuid.getText().toString());
+        setupDialogRow(dialogView, R.id.dialog_abi_row, getLanStr(R.string.app_info_abi_label), ailappabi.getText().toString());
+        
+        setupDialogRow(dialogView, R.id.dialog_target_sdk_row, getLanStr(R.string.app_info_target_sdk_label), targetSdk);
+        setupDialogRow(dialogView, R.id.dialog_min_sdk_row, getLanStr(R.string.app_info_min_sdk_label), minSdk);
+        setupDialogRow(dialogView, R.id.dialog_installer_row, getLanStr(R.string.app_info_installer_label), installer);
+        setupDialogRow(dialogView, R.id.dialog_install_time_row, getLanStr(R.string.app_info_install_label), installTime);
+        setupDialogRow(dialogView, R.id.dialog_update_time_row, getLanStr(R.string.app_info_update_label), updateTime);
+
+        // Setup paths
+        ((TextView) dialogView.findViewById(R.id.dialog_app_path)).setText(appPath);
+        ((TextView) dialogView.findViewById(R.id.dialog_data_path)).setText(dataPath);
+        ((TextView) dialogView.findViewById(R.id.dialog_external_path)).setText(externalDataPath);
+        ((TextView) dialogView.findViewById(R.id.dialog_native_lib_path)).setText(nativeLib);
+
+        builder.setView(dialogView);
+        builder.setPositiveButton(R.string.dialog_sure_text, null);
+        builder.setNeutralButton(R.string.copy_app_detail, new android.content.DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(android.content.DialogInterface dialogInterface, int i) {
+                copyAppDetail();
+            }
+        });
+        builder.show();
+    }
+
+    private void setupDialogRow(View root, int rowId, String label, String value) {
+        View row = root.findViewById(rowId);
+        ((TextView) row.findViewById(R.id.item_label)).setText(label);
+        ((TextView) row.findViewById(R.id.item_value)).setText(value);
+    }
+
     private void copyAppDetail() {
         StringBuilder sb = new StringBuilder();
-        sb.append(getLanStr(R.string.app_name)).append(": ").append(ailappname.getText()).append("\n");
-        sb.append("Package: ").append(ailapppkgname.getText()).append("\n");
+        sb.append(getLanStr(R.string.app_info_name_label)).append(": ").append(ailappname.getText()).append("\n");
+        sb.append(getLanStr(R.string.app_info_package_label)).append(": ").append(ailapppkgname.getText()).append("\n");
         sb.append(getLanStr(R.string.app_info_version)).append(": ").append(ailappversion.getText()).append("\n");
         sb.append(getLanStr(R.string.app_info_uid)).append(": ").append(ailappuid.getText()).append("\n");
         sb.append(getLanStr(R.string.app_info_size)).append(": ").append(ailappsize.getText()).append("\n");
-        sb.append(getLanStr(R.string.app_info_target_sdk)).append(": ").append(ailapptargetsdk.getText()).append("\n");
-        sb.append(getLanStr(R.string.app_info_min_sdk)).append(": ").append(ailappminsdk.getText()).append("\n");
+        sb.append(getLanStr(R.string.app_info_target_sdk)).append(": ").append(targetSdk).append("\n");
+        sb.append(getLanStr(R.string.app_info_min_sdk)).append(": ").append(minSdk).append("\n");
         sb.append(getLanStr(R.string.app_info_abi)).append(": ").append(ailappabi.getText()).append("\n");
-        sb.append(getLanStr(R.string.app_info_installer)).append(": ").append(ailappinstaller_header.getText()).append("\n");
-        sb.append(getLanStr(R.string.app_info_install_time)).append(": ").append(ailappinstalltime.getText()).append("\n");
-        sb.append(getLanStr(R.string.app_info_update_time)).append(": ").append(ailappupdatetime.getText()).append("\n");
-        sb.append(getLanStr(R.string.app_info_path)).append(": ").append(ailapppath.getText()).append("\n");
-        sb.append(getLanStr(R.string.app_info_data_path)).append(": ").append(ailappdatapath.getText()).append("\n");
-        sb.append(getLanStr(R.string.app_info_external_data_path)).append(": ").append(ailappexternaldatapath.getText()).append("\n");
-        sb.append(getLanStr(R.string.app_info_native_lib)).append(": ").append(ailappnativelib.getText());
+        sb.append(getLanStr(R.string.app_info_installer)).append(": ").append(installer).append("\n");
+        sb.append(getLanStr(R.string.app_info_install_time)).append(": ").append(installTime).append("\n");
+        sb.append(getLanStr(R.string.app_info_update_time)).append(": ").append(updateTime).append("\n");
+        sb.append(getLanStr(R.string.app_info_path)).append(": ").append(appPath).append("\n");
+        sb.append(getLanStr(R.string.app_info_data_path)).append(": ").append(dataPath).append("\n");
+        sb.append(getLanStr(R.string.app_info_external_data_path)).append(": ").append(externalDataPath).append("\n");
+        sb.append(getLanStr(R.string.app_info_native_lib)).append(": ").append(nativeLib);
 
         android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         android.content.ClipData clip = android.content.ClipData.newPlainText("App Detail", sb.toString());

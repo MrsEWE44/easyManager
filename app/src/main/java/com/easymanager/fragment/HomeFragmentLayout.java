@@ -20,7 +20,7 @@ import com.easymanager.utils.OtherTools;
 
 public class HomeFragmentLayout extends Fragment {
 
-    private Button hflinlocalapk,hflappmanagerbt;
+    private Button hflinlocalapk,hflappmanagerbt,hflrestoreapp;
     private Button hflbackupapp,hflrestoryapp;
     private Button hflappclone,hflappclonemanage,hflappcloneremove;
     private Button hflmountlocalimg,hflcreateimg;
@@ -72,12 +72,14 @@ public class HomeFragmentLayout extends Fragment {
         hflappclonemanage = view.findViewById(R.id.hflappclonemanage);
         hflappcloneremove = view.findViewById(R.id.hflappcloneremove);
         hflappmanagerbt = view.findViewById(R.id.hflappmanagerbt);
+        hflrestoreapp = view.findViewById(R.id.hflrestoreapp);
         hflruncmd = view.findViewById(R.id.hflruncmd);
         btClick();
     }
 
     private void btClick(){
 
+        hflrestoreapp.setOnClickListener(clickListener);
         hflinlocalapk.setOnClickListener(clickListener);
         hflbackupapp.setOnClickListener(clickListener);
         hflrestoryapp.setOnClickListener(clickListener);
@@ -98,6 +100,10 @@ public class HomeFragmentLayout extends Fragment {
             hflsetrate.setEnabled(false);
         }
 
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+            hflrestoreapp.setEnabled(false);
+        }
+
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
             hflappclonemanage.setEnabled(false);
             hflappcloneremove.setEnabled(false);
@@ -107,6 +113,7 @@ public class HomeFragmentLayout extends Fragment {
 
     private void initBtColor(){
 
+        ot.setBtColor(hflrestoreapp,true,true,false,isRoot,isADB,isDevice);
         ot.setBtColor(hflinlocalapk,true,true,false,isRoot,isADB,isDevice);
         ot.setBtColor(hflbackupapp,true,false,false,isRoot,isADB,isDevice);
         ot.setBtColor(hflrestoryapp,true,false,false,isRoot,isADB,isDevice);
@@ -155,6 +162,10 @@ public class HomeFragmentLayout extends Fragment {
             int id = view.getId();
             if(id == R.id.hflinlocalapk){
                 jump(AppManagerEnum.APP_INSTALL_LOCAL_FILE);
+            }
+
+            if(id == R.id.hflrestoreapp){
+                jump(AppManagerEnum.APP_RESTORE_UNINSTALL_APP);
             }
 
             if(id == R.id.hflbackupapp){

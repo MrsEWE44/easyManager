@@ -13,18 +13,66 @@ Unlike them, Light Breeze uses Socket-based TCP communication to execute operati
 Starting with version V1.2.8b, this project is divided into two versions, which are maintained and updated separately: [Light Breeze No-Root Version](https://github.com/MrsEWE44/easyManager/tree/md5) and [Light Breeze Full Version](https://github.com/MrsEWE44/easyManager/tree/master).
 
 
-- V1.2.9
+- V1.3.0
 
-1.Redesigned the software interface to improve user experience and visual appeal.
+1.Optimized some software interfaces to improve user experience and visual appeal.
 
-2.Added dark mode support to the interface.
+2.Added uninstalled software recovery function (requires Android 8 or above).
 
-3.Changed the version number to 1.2.9.
+3.Changed version number to 1.3.0.
 
-4.Changed the software name to "轻风" (Qingfeng), the English name to "Light Breeze," and the software installation package name to "lightBreeze_version_release_type.apk."
+4.Changed software name to "轻风" (Qingfeng), English name to "Light Breeze," and software installation package name to "lightBreeze_full_version_type.apk."
 
 
-Software screenshots:
 
-![image](images/3.png) ![image](images/4.png) ![image](images/1.png)
-![image](images/2.png) ![image](images/5.png) ![image](images/6.png)
+### Software screenshots:
+
+<table align="center" border="0" cellpadding="10">
+
+  <tr>
+    <td align="center">
+      <img src="images/3.png" width="250"><br>
+      <b>图片1</b>
+    </td>
+    <td align="center">
+      <img src="images/4.png" width="250"><br>
+      <b>图片2</b>
+    </td>
+    <td align="center">
+      <img src="images/1.png" width="250"><br>
+      <b>图片3</b>
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center">
+      <img src="images/2.png" width="250"><br>
+      <b>图片4</b>
+    </td>
+    <td align="center">
+      <img src="images/5.png" width="250"><br>
+      <b>图片5</b>
+    </td>
+    <td align="center">
+      <img src="images/6.png" width="250"><br>
+      <b>图片6</b>
+    </td>
+  </tr>
+</table>
+
+### Donate & Support Authors
+
+<table align="center" border="0" cellpadding="15">
+  <tr>
+    <td align="center">
+      <img src="app/src/main/assets/wechatqr.jpg" width="200"><br>
+      <b>WechatPay</b>
+    </td>
+    <td align="center">
+      <img src="app/src/main/assets/aliqr.jpg" width="200"><br>
+      <b>AliPay</b>
+    </td>
+  </tr>
+</table>
+
+

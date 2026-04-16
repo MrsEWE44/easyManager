@@ -57,16 +57,34 @@
                         android:text="@string/text_home_app_manage"
                         android:textColor="@color/onPrimary"
                         android:background="@drawable/btn_material" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
                     <Button
                         android:id="@+id/hflinlocalapk"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="48dp"
-                        android:layout_marginLeft="4dp"
+                        android:layout_marginTop="5dp"
                         android:text="@string/button_home_install_local_file"
                         android:textColor="@color/onPrimary"
                         android:background="@drawable/btn_material" />
+                    <Button
+                        android:id="@+id/hflrestoreapp"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="48dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginTop="5dp"
+                        android:text="@string/button_home_restore_app"
+                        android:textColor="@color/onPrimary"
+                        android:background="@drawable/btn_material" />
                 </LinearLayout>
+
             </LinearLayout>
 
             <!-- Backup Card -->

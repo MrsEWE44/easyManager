@@ -125,6 +125,12 @@ public class AppManagerLayoutActivity extends BaseActivity {
             install_mode=true;
         }
 
+        if(mode == AppManagerEnum.APP_RESTORE_UNINSTALL_APP){
+            amlsp1.setEnabled(false);
+            amlsp5.setEnabled(false);
+            amlsp2.setEnabled(false);
+            amlapplybt.setText(getLanStr(R.string.button_restory));
+        }
 
         if(mode == AppManagerEnum.APP_BACKUP){
             amlsp5.setEnabled(false);
@@ -199,6 +205,10 @@ public class AppManagerLayoutActivity extends BaseActivity {
 
                     if(mode == AppManagerEnum.APP_INSTALL_LOCAL_FILE){
                         acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_INSTALL_LOCAL_FILE,APP_PERMIS_OPT_INDEX,null,uid);
+                    }
+
+                    if(mode == AppManagerEnum.APP_RESTORE_UNINSTALL_APP){
+                        acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_RESTORE_UNINSTALL_APP,APP_PERMIS_OPT_INDEX,null,uid);
                     }
 
                     if(mode == AppManagerEnum.APP_DUMP){
@@ -519,6 +529,11 @@ public class AppManagerLayoutActivity extends BaseActivity {
         if(itemId == 6){
             MyActivityManager.getIns().killall();
         }
+
+        if(itemId == 15){
+            acu.getSd().queryUninstalledPKGSProcessDialog(context,activity,apllv1,pkginfos,checkboxs,uid);
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

@@ -116,6 +116,8 @@ public class OtherTools {
             menu.add(Menu.NONE,14,0,tv.getLanguageString(context,R.string.show_clone_unock_max_user));
         }else if(menumode == AppManagerEnum.APP_CLONE_REMOVE){
             menu.add(Menu.NONE,12,0,tv.getLanguageString(context,R.string.show_clone_user_uid));
+        }else if(menumode == AppManagerEnum.APP_RESTORE_UNINSTALL_APP){
+            menu.add(Menu.NONE,15,0,tv.getLanguageString(context,R.string.get_uninstalled_apps));
         }else{
             menu.add(Menu.NONE,0,0,tv.getLanguageString(context,R.string.menu_get_all_app));
             menu.add(Menu.NONE,1,0,tv.getLanguageString(context,R.string.menu_get_all_app2));

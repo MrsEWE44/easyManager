@@ -60,11 +60,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -936,7 +933,6 @@ public class PackageAPI extends  baseAPI implements Serializable {
         }
         return myPackageInfos;
     }
-
 
     public PackageInfo getPackageInfo(String pkgname,int uid,int flags){
         IPackageManager iPackageManager = getIPackageManager();

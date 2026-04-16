@@ -18,6 +18,10 @@ import java.util.HashSet;
 
 public class QueryDialog extends DialogUtils {
 
+    public void queryUninstalledPKGSProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, int uid) {
+        queryPKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_uninstalled_apps_msg),lv1,pkginfos,checkboxs,8,uid);
+    }
+
     public void queryAllPKGSProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, int uid) {
         queryPKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_all_apps),lv1,pkginfos,checkboxs,0,uid);
     }
@@ -168,6 +172,13 @@ public class QueryDialog extends DialogUtils {
                             checkboxs.add(false);
                         }
                         packageUtils.sortPKGINFOS(pkginfos);
+                    }
+                    break;
+                case 8:
+                    if(uid == currentUserID || easyMUtils.isDeviceOwnerActive(context) || Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+                        packageUtils.queryUninstalledPKGS(activity,pkginfos,checkboxs,0);
+                    }else {
+                        packageUtils.queryUninstalledPKGSByUID(uid,activity,pkginfos,checkboxs);
                     }
                     break;
             }

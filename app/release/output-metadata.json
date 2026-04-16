@@ -11,9 +11,9 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 17,
-      "versionName": "1.2.9",
-      "outputFile": "lightBreeze_1.2.9_release.apk"
+      "versionCode": 18,
+      "versionName": "1.3.0",
+      "outputFile": "lightBreeze_full_1.3.0_release.apk"
     }
   ],
   "elementType": "File",
