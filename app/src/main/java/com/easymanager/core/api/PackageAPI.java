@@ -1,5 +1,7 @@
 package com.easymanager.core.api;
 
+import android.accounts.Account;
+import android.accounts.IAccountManager;
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
 import android.app.IActivityManager;
@@ -33,6 +35,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.INetworkManagementService;
 import android.os.IUserManager;
 import android.os.PersistableBundle;
 import android.os.Process;
@@ -40,6 +43,7 @@ import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.permission.IPermissionManager;
 
+import com.easymanager.entitys.MyAccountInfo;
 import com.easymanager.entitys.MyActivityInfo;
 import com.easymanager.entitys.MyApplicationInfo;
 import com.easymanager.entitys.MyPackageInfo;
@@ -108,6 +112,8 @@ public class PackageAPI extends  baseAPI implements Serializable {
     private static final Map<String, IPackageManager> I_PACKAGE_MANAGER_CACHE = new HashMap<>();
     private static final Map<String, IPermissionManager> I_PERMISSION_MANAGER_CACHE = new HashMap<>();
     private static final Map<String, IUserManager> I_USER_MANAGER_CACHE = new HashMap<>();
+    private static final Map<String, IAccountManager> I_ACCOUNT_MANAGER_MAP = new HashMap<>();
+    private static final Map<String, INetworkManagementService> I_NETWORK_MANAGEMENT_SERVICE_MAP = new HashMap<>();
 
 
     private String[] disallowedPackages = null;
@@ -144,6 +150,38 @@ public class PackageAPI extends  baseAPI implements Serializable {
         }
     }
 
+    public IAccountManager getIAccountManager(){
+        IAccountManager iAccountManager = I_ACCOUNT_MANAGER_MAP.get("iamservice");
+        if(iAccountManager != null && iAccountManager.asBinder().isBinderAlive()){
+            return iAccountManager;
+        }
+        Singleton<IAccountManager> iAccountManagerSingleton = new Singleton<IAccountManager>() {
+            @Override
+            protected IAccountManager create() {
+                return IAccountManager.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService(Context.ACCOUNT_SERVICE)));
+            }
+        };
+        iAccountManager = iAccountManagerSingleton.get();
+        I_ACCOUNT_MANAGER_MAP.put("iamservice",iAccountManager);
+        return iAccountManager;
+    }
+
+
+    public INetworkManagementService getiNetworkManagementService(){
+        INetworkManagementService iNetworkManagementService = I_NETWORK_MANAGEMENT_SERVICE_MAP.get("inmservice");
+        if(iNetworkManagementService != null && iNetworkManagementService.asBinder().isBinderAlive()){
+            return iNetworkManagementService;
+        }
+        Singleton<INetworkManagementService> iNetworkManagementServiceSingleton = new Singleton<INetworkManagementService>() {
+            @Override
+            protected INetworkManagementService create() {
+                return INetworkManagementService.Stub.asInterface(new easyManagerBinderWrapper(easyManagerPortService.getSystemService("network_management")));
+            }
+        };
+        iNetworkManagementService = iNetworkManagementServiceSingleton.get();
+        I_NETWORK_MANAGEMENT_SERVICE_MAP.put("inmservice",iNetworkManagementService);
+        return iNetworkManagementService;
+    }
 
     public IPackageManager getIPackageManager(){
         IPackageManager iPackageManager = I_PACKAGE_MANAGER_CACHE.get("ipkgservice");
@@ -209,7 +247,6 @@ public class PackageAPI extends  baseAPI implements Serializable {
     public IPackageInstaller getIPackageInstaller() throws RemoteException {
         return IPackageInstaller.Stub.asInterface(new easyManagerBinderWrapper(getIPackageManager().getPackageInstaller().asBinder()));
     }
-
 
     public void InstallAPK(String apkPath ){
         try{
@@ -993,6 +1030,32 @@ public class PackageAPI extends  baseAPI implements Serializable {
                 myApplicationInfo,myActivityInfo,myServices,myReceivers,packageInfo.requestedPermissions);
     }
 
+
+
+
+    //两个都须与root才行.
+
+    public ArrayList<MyAccountInfo> getAccounts(){
+        ArrayList<MyAccountInfo> myAccountInfos = new ArrayList<>();
+        Account[] accounts = getIAccountManager().getAccountsAsUser(null,getTranslatedUserId(),"com.android.shell");
+        System.out.println(accounts.length);
+        for (Account account : accounts) {
+            myAccountInfos.add(accountTomyAccount(account));
+        }
+
+        //需要root才行。
+        getIAccountManager().removeAccountExplicitly(new Account("quark","quark.account"));
+
+        return myAccountInfos;
+    }
+
+    public Account myAccountToA(MyAccountInfo myAccountInfo){
+        return new Account(myAccountInfo.getName(), myAccountInfo.getType());
+    }
+
+    public MyAccountInfo accountTomyAccount(Account account){
+        return new MyAccountInfo(account.name,account.type);
+    }
 
     class ClearDataObserver extends IPackageDataObserver.Stub {
         boolean finished;

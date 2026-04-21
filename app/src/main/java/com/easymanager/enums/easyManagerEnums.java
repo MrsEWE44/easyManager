@@ -66,4 +66,5 @@ public class easyManagerEnums {
     public static final int GET_ACTIVE_ADMINS = 53;
     public static final int GET_DISALLOWED_PACKAGES = 54;
     public final static  int GET_SYS_PROP=55;
+    public final static  int GET_ACCOUNT=56;
 }

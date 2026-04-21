@@ -1,6 +1,7 @@
 package com.easymanager.mylife;
 
 import android.content.ComponentName;
+import android.os.Build;
 import android.os.Looper;
 import android.os.Process;
 
@@ -41,7 +42,13 @@ public class startAdbService {
                                         case easyManagerEnums.IS_ADB:
                                             return managerAPI.isADB();
                                         case easyManagerEnums.APP_FIREWALL:
-                                            if(managerAPI.isRoot()){
+                                            if(managerAPI.isADB() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+                                                String pkgname = entity.getPkgname();
+                                                String  enable_cmd = "cmd connectivity set-package-networking-enabled true "+pkgname;
+                                                String  disable_cmd = "cmd connectivity set-package-networking-enabled false "+pkgname;
+                                                String firewall_cmdstr = entity.getOpsmode()==0 ? enable_cmd : disable_cmd;
+                                                CMD cmd = sendCMD(firewall_cmdstr);
+                                            }else if(managerAPI.isRoot()){
                                                 int pkguid = managerAPI.getPKGUID(entity.getPkgname(), entity.getUid());
                                                 String  disable_cmd = "iptables -I OUTPUT -m owner --uid-owner "+pkguid+" -j DROP";
                                                 String  enable_cmd = "iptables -I OUTPUT -m owner --uid-owner "+pkguid+" -j ACCEPT";
@@ -62,7 +69,13 @@ public class startAdbService {
                                             break;
                                         case easyManagerEnums.SET_APPOPS:
                                             if(managerAPI.isRoot() || managerAPI.isADB()){
-                                                managerAPI.setAppopsMode(entity);
+                                                if(entity.getOpsmode() == 8 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+                                                    String enable_str = managerAPI.isAppopsAllow(entity.getOpmodestr()) ? "active":"idle";
+                                                    String cmd_str = "cmd sensorservice set-uid-state " +entity.getPkgname() + " " + enable_str+" --user " + entity.getUid();
+                                                    CMD cmd = sendCMD(cmd_str);
+                                                }else{
+                                                    managerAPI.setAppopsMode(entity);
+                                                }
                                             }else {
                                                 return getActiveADB();
                                             }
@@ -320,6 +333,12 @@ public class startAdbService {
                                         case easyManagerEnums.GET_DISALLOWED_PACKAGES:
                                             if(managerAPI.isRoot() || managerAPI.isADB()){
                                                 return managerAPI.getDisallowedPackages();
+                                            }else {
+                                                return getActiveADB();
+                                            }
+                                        case easyManagerEnums.GET_ACCOUNT:
+                                            if(managerAPI.isRoot() || managerAPI.isADB()){
+                                                return managerAPI.getAccounts();
                                             }else {
                                                 return getActiveADB();
                                             }

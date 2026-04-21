@@ -22,7 +22,6 @@ public class FunctionAPI extends baseAPI implements Serializable {
 
     private static final Map<String, IDevicePolicyManager> I_DEVICE_POLICY_MANAGER_CACHE = new HashMap<>();
 
-
     public IDevicePolicyManager getIDevicePolicyManager(){
         IDevicePolicyManager iDevicePolicyManager = I_DEVICE_POLICY_MANAGER_CACHE.get("idpmservice");
         if(iDevicePolicyManager != null && iDevicePolicyManager.asBinder().isBinderAlive()){

@@ -13,16 +13,15 @@ Unlike them, Light Breeze uses Socket-based TCP communication to execute operati
 Starting with version V1.2.8b, this project is divided into two versions, which are maintained and updated separately: [Light Breeze No-Root Version](https://github.com/MrsEWE44/easyManager/tree/md5) and [Light Breeze Full Version](https://github.com/MrsEWE44/easyManager/tree/master).
 
 
-- V1.3.0
+- V1.3.1
 
-1.Optimized some software interfaces to improve user experience and visual appeal.
+1.Fixed the issue of no error messages being returned when executing commands.
 
-2.Added uninstalled software recovery function (requires Android 8 or above).
+2.Enhanced ADB permissions, added shake-to-disable sensors and firewall functionality, integrated sensor and network management options into permission management, fully supporting batch operations and bypassing system restrictions.
 
-3.Changed version number to 1.3.0.
+3.Added application manifest configuration file import and export functions for easier uninstallation and disabling of unnecessary software.
 
-4.Changed software name to "轻风" (Qingfeng), English name to "Light Breeze," and software installation package name to "lightBreeze_full_version_type.apk."
-
+4.Changed the version number to V1.3.1.
 
 
 ### Software screenshots:

@@ -72,6 +72,15 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+<!--            <Button-->
+<!--                android:id="@+id/hfltest"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="48dp"-->
+<!--                android:layout_marginBottom="8dp"-->
+<!--                android:text="Test"-->
+<!--                android:textColor="@color/onPrimary"-->
+<!--                android:background="@drawable/btn_material" />-->
+
            <Button
                android:id="@+id/hflcheckupdate"
                android:layout_width="match_parent"

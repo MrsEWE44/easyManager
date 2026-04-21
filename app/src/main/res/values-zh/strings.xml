@@ -51,18 +51,7 @@
 
     </string>
 
-    <string name="show_help_getAppFirewallHELP">
-        该界面主要是用来管理应用联网的,这里做的一切操作,都是调用命令实现.需要ROOT模式.\n\n
-
-        1.右上角的菜单栏,可以获取到当前用户对应状态下的应用.\n
-        2.右边有个选项,可以选择允许、禁用应用联网.看系统情况,不一定是即时生效.\n
-        3.左下角有个选项,你可以批量选择或者单选应用来进行权限管控.\n
-        4.右下角是生效用的按钮,你点击它就可以让勾选或者未勾选中的应用生效你选择的规则.\n
-        5.当你点击应用的时候,它会跳转到应用详情界面,这部分要root模式才能使用.\n
-        6.上面菜单旁边是一个搜索按钮,可以搜索当前检索出来的应用列表,按回车就会把搜索结果同步到检索列表.\n
-        7.点击最左上角的图标,会回退到上一级菜单.\n\n
-
-    </string>
+    <string name="show_help_getAppFirewallHELP">"\n        该界面主要是用来管理应用联网的,这里做的一切操作,都是调用命令实现.需要ADB或者ROOT权限\n\n\n\n        1.右上角的菜单栏,可以获取到当前用户对应状态下的应用.\n\n        2.右边有个选项,可以选择允许、禁用应用联网.看系统情况,不一定是即时生效.\n\n        3.左下角有个选项,你可以批量选择或者单选应用来进行权限管控.\n\n        4.右下角是生效用的按钮,你点击它就可以让勾选或者未勾选中的应用生效你选择的规则.\n\n        5.当你点击应用的时候,它会跳转到应用详情界面,这部分要root模式才能使用.\n\n        6.上面菜单旁边是一个搜索按钮,可以搜索当前检索出来的应用列表,按回车就会把搜索结果同步到检索列表.\n\n        7.点击最左上角的图标,会回退到上一级菜单.\n\n\n\n    "</string>
 
     <string name="show_help_getAppInstallLocalFileHELP">
         该界面主要是用来安装本地apk文件的,这里做的一切操作,都是在IPackageManager服务实现.\n\n
@@ -264,6 +253,13 @@
     <string name="menu_get_user_all_app">显示用户已安装应用(包括已禁用)</string>
     <string name="menu_get_user_all_app2">显示用户已安装应用</string>
     <string name="menu_get_user_all_disable_app">显示用户已禁用的应用</string>
+    <string name="menu_import_config">导入配置</string>
+    <string name="menu_export_config">导出配置</string>
+    <string name="import_config_tips">请选择配置文件</string>
+    <string name="export_config_ok">已成功导出到 /easyManager/ 文件夹</string>
+    <string name="export_config_error">导出失败</string>
+    <string name="import_config_error">导入失败</string>
+    <string name="import_config_ok">导入成功</string>
     <string name="is_copy_ok">已复制</string>
     <string name="text_home_app_manage">应用管理</string>
     <string name="text_home_process_manage">后台管理</string>

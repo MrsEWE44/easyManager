@@ -10,7 +10,8 @@ import com.easymanager.core.api.FileCompressApi;
 import com.easymanager.core.api.FunctionAPI;
 import com.easymanager.core.api.PackageAPI;
 import com.easymanager.core.api.baseAPI;
-import com.easymanager.core.utils.MyConfigUtils;
+import com.easymanager.utils.ConfigUtils;
+import com.easymanager.entitys.MyAccountInfo;
 import com.easymanager.entitys.MyAppopsInfo;
 import com.easymanager.entitys.MyPackageInfo;
 import com.easymanager.core.entity.TransmissionEntity;
@@ -31,13 +32,16 @@ public class easyManagerAPI extends baseAPI {
     private FunctionAPI functionAPI = new FunctionAPI();
 
     private FileCompressApi fileCompressApi = new FileCompressApi();
-    private MyConfigUtils myConfigUtils = new MyConfigUtils();
+    private ConfigUtils myConfigUtils = new ConfigUtils();
     private FileTools ft = myConfigUtils.ft;
 
     public IBinder getSystemService( String name) {
         return easyManagerPortService.getSystemService(name);
     }
 
+    public boolean isAppopsAllow(String modestr){
+        return appopsAPI.isAllow(modestr);
+    }
 
     public void killpkg(String pkgname,int uid){
         packageAPI.killApp(pkgname,uid);
@@ -497,6 +501,8 @@ public class easyManagerAPI extends baseAPI {
     public List<String> getActiveAdmins(int userid){
         return functionAPI.getActiveAdmins(userid);
     }
-
+    public List<MyAccountInfo> getAccounts(){
+        return packageAPI.getAccounts();
+    }
 
 }

@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Process;
 
 import com.easymanager.core.api.PackageAPI;
+import com.easymanager.entitys.MyAccountInfo;
 import com.easymanager.entitys.MyAppopsInfo;
 import com.easymanager.entitys.MyPackageInfo;
 import com.easymanager.core.entity.TransmissionEntity;
@@ -602,6 +603,16 @@ public class easyManagerUtils {
             easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.GET_ACTIVE_ADMINS);
             putOptionOnServer(adben2);
             return (List<String>) getEasyManagerServiceEntity().getObject();
+        }
+        return null;
+    }
+
+    public List<MyAccountInfo> getAccounts(Context context){
+        if(!isDead || skipError){
+            TransmissionEntity transmissionEntity = new TransmissionEntity(null, null, context.getPackageName(), 0, 0);
+            easyManagerClientEntity adben2 = new easyManagerClientEntity(null,transmissionEntity,easyManagerEnums.GET_ACCOUNT);
+            putOptionOnServer(adben2);
+            return (List<MyAccountInfo>) getEasyManagerServiceEntity().getObject();
         }
         return null;
     }

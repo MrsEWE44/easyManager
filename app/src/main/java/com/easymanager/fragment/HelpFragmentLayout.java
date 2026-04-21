@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -66,6 +65,7 @@ public class HelpFragmentLayout extends Fragment {
         hflopengitee = inflate.findViewById(R.id.hflopengitee);
         hfl_donate = inflate.findViewById(R.id.hfl_donate);
         hfl_app_version = inflate.findViewById(R.id.hfl_app_version);
+//        hfltest = inflate.findViewById(R.id.hfltest);
 
         updateThemeButtonText();
         initAppInfo();
@@ -86,6 +86,19 @@ public class HelpFragmentLayout extends Fragment {
     }
 
     private void btClicked() {
+
+//        hfltest.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                List<MyAccountInfo> accounts = nu.easyMUtils.getAccounts(context);
+//                System.out.println("accounts size : " + accounts.size());
+//                for (MyAccountInfo account : accounts) {
+//                    System.out.println(account.toString());
+//                }
+//
+//            }
+//        });
+
         hflcheckupdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

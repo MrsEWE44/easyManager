@@ -36,9 +36,6 @@ public class AppopsAPI extends baseAPI{
         return iAppOpsService;
     }
 
-
-
-
     public void setModeCore(String pkgname,String modestr,int mode2,int uid){
         int modeInt = getModeInt(modestr);
         if(modeInt == AppOpsManager.MODE_DEFAULT){
@@ -98,6 +95,10 @@ public class AppopsAPI extends baseAPI{
             }catch (Exception e){}
 
         }
+    }
+
+    public boolean isAllow(String modestr){
+        return getModeInt(modestr) == AppOpsManager.MODE_ALLOWED;
     }
 
     public int getModeInt(String modestr){

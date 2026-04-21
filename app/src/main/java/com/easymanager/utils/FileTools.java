@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.easymanager.core.utils.FileUtils;
-import com.easymanager.core.utils.MyConfigUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -189,7 +188,7 @@ public class FileTools extends FileUtils {
     }
 
     public void clearAppFiles(Context context,int uid){
-        String local_adb_path = new MyConfigUtils().getCachePathOnXML();
+        String local_adb_path = new ConfigUtils().getCachePathOnXML();
         String storage_path = getSDPath(uid)+"/easyManager";
         for(String s : new String[]{local_adb_path,storage_path}){
             File file = new File(s);
