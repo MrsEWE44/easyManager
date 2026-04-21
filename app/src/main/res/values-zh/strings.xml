@@ -51,18 +51,7 @@
 
     </string>
 
-    <string name="show_help_getAppFirewallHELP">
-        该界面主要是用来管理应用联网的,这里做的一切操作,都是调用命令实现.需要ROOT模式.\n\n
-
-        1.右上角的菜单栏,可以获取到当前用户对应状态下的应用.\n
-        2.右边有个选项,可以选择允许、禁用应用联网.看系统情况,不一定是即时生效.\n
-        3.左下角有个选项,你可以批量选择或者单选应用来进行权限管控.\n
-        4.右下角是生效用的按钮,你点击它就可以让勾选或者未勾选中的应用生效你选择的规则.\n
-        5.当你点击应用的时候,它会跳转到应用详情界面,这部分要root模式才能使用.\n
-        6.上面菜单旁边是一个搜索按钮,可以搜索当前检索出来的应用列表,按回车就会把搜索结果同步到检索列表.\n
-        7.点击最左上角的图标,会回退到上一级菜单.\n\n
-
-    </string>
+    <string name="show_help_getAppFirewallHELP">"\n        该界面主要是用来管理应用联网的,这里做的一切操作,都是调用命令实现.需要Shizuku模式.\n\n\n\n        1.右上角的菜单栏,可以获取到当前用户对应状态下的应用.\n\n        2.右边有个选项,可以选择允许、禁用应用联网.看系统情况,不一定是即时生效.\n\n        3.左下角有个选项,你可以批量选择或者单选应用来进行权限管控.\n\n        4.右下角是生效用的按钮,你点击它就可以让勾选或者未勾选中的应用生效你选择的规则.\n\n        5.当你点击应用的时候,它会跳转到应用详情界面,这部分要Shizuku模式才能使用.\n\n        6.上面菜单旁边是一个搜索按钮,可以搜索当前检索出来的应用列表,按回车就会把搜索结果同步到检索列表.\n\n        7.点击最左上角的图标,会回退到上一级菜单.\n\n\n\n    "</string>
 
     <string name="show_help_getAppInstallLocalFileHELP">
         该界面主要是用来安装本地apk文件的,这里做的一切操作,都是在IPackageManager服务实现.\n\n
@@ -531,4 +520,6 @@
     <string name="show_help_getRestoreUninstalledHELP">\n该界面主要用于还原那些已卸载但仍保留在设备上的应用（通常是通过 ADB \"pm uninstall -k\" 卸载的应用）。此功能在 Android 8.0 及以上版本中受支持。\n\n1. 点击右上角菜单中的“获取已卸载应用”来列出可以还原的应用。\n2. 在此模式下，选择本地文件的输入框和下拉框被禁用，因为它只处理已存在但已卸载的包。\n3. 选择您要还原的应用，然后点击“还原”按钮。\n\n</string>
     <string name="getting_uninstalled_apps">正在获取已卸载应用，请稍后...</string>
     <string name="button_restore">还原</string>
+    <string name="menu_import_config">导入配置</string>
+    <string name="menu_export_config">导出配置</string>
 </resources>

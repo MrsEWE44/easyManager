@@ -23,7 +23,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 
 public class HomeFragmentLayout extends Fragment {
 
-    private Button hflinlocalapk,hflpermissionbt,hfldisablebt,hfldumpbt,hfluninstallbt,hflcleanbt,hflrestorebt;
+    private Button hflinlocalapk,hflpermissionbt,hfldisablebt,hfldumpbt,hfluninstallbt,hflcleanbt,hflrestorebt,hflnetworkmange;
     //    private Button hflappclone,hflappclonemanage,hflappcloneremove;
     private Button hflsetrate,hfldelx,hflsetntp,hflfileshared,hflruncmd;
 
@@ -95,6 +95,7 @@ public class HomeFragmentLayout extends Fragment {
         hflcleanbt = view.findViewById(R.id.hflcleanbt);
         hflrestorebt = view.findViewById(R.id.hflrestorebt);
         hflruncmd = view.findViewById(R.id.hflruncmd);
+        hflnetworkmange = view.findViewById(R.id.hflnetworkmange);
         btClick();
     }
 
@@ -115,6 +116,8 @@ public class HomeFragmentLayout extends Fragment {
         hflcleanbt.setOnClickListener(clickListener);
         hflrestorebt.setOnClickListener(clickListener);
         hflruncmd.setOnClickListener(clickListener);
+        hflnetworkmange.setOnClickListener(clickListener);
+
         initBtColor();
 
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.P){
@@ -142,6 +145,7 @@ public class HomeFragmentLayout extends Fragment {
             hfldumpbt.setEnabled(true);
             hfluninstallbt.setEnabled(true);
             hflcleanbt.setEnabled(true);
+            hflnetworkmange.setEnabled(true);
             hflrestorebt.setEnabled(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O);
         } else if (isDhizuku && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_DHIZUKU) {
             // Dhizuku 模式下的功能限制 (根据 API 能力调整)
@@ -158,6 +162,7 @@ public class HomeFragmentLayout extends Fragment {
             hfluninstallbt.setEnabled(true);
             hflcleanbt.setEnabled(false);
             hflrestorebt.setEnabled(true);
+            hflnetworkmange.setEnabled(false);
         } else {
             // 未激活任何模式，基本全部禁用
             hflsetrate.setEnabled(false);
@@ -173,6 +178,7 @@ public class HomeFragmentLayout extends Fragment {
             hfluninstallbt.setEnabled(false);
             hflcleanbt.setEnabled(false);
             hflrestorebt.setEnabled(false);
+            hflnetworkmange.setEnabled(false);
         }
 
     }
@@ -194,6 +200,7 @@ public class HomeFragmentLayout extends Fragment {
         ot.setBtColor(hflcleanbt,true,true,isShizuku,isDhizuku);
         ot.setBtColor(hflrestorebt,true,true,isShizuku,isDhizuku);
         ot.setBtColor(hflruncmd,false,false,isShizuku,isDhizuku);
+        ot.setBtColor(hflnetworkmange,true,false,isShizuku,isDhizuku);
 
     }
 
@@ -226,6 +233,10 @@ public class HomeFragmentLayout extends Fragment {
             int id = view.getId();
             if(id == R.id.hflinlocalapk){
                 jump(AppManagerEnum.APP_INSTALL_LOCAL_FILE);
+            }
+
+            if(id == R.id.hflnetworkmange){
+                jump(AppManagerEnum.APP_FIREWALL);
             }
 
             if(id == R.id.hflsetntp){

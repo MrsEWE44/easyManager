@@ -44,6 +44,10 @@ public class easyManagerAPI extends baseAPI {
         appopsAPI.SetMode(pkgname, opstr, opmode,uid);
     }
 
+    public boolean isAppopsAllow(String modestr){
+        return appopsAPI.isAllow(modestr);
+    }
+
     public void setAppopsMode(TransmissionEntity te){
         int opsmode = te.getOpsmode();
         String pkgname = te.getPkgname();

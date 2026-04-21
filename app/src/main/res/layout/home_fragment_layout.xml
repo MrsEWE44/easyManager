@@ -102,6 +102,15 @@
                         android:layout_margin="4dp"
                         android:text="@string/button_home_install_local_file" />
 
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/hflnetworkmange"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="4dp"
+                        android:text="@string/button_home_network" />
+
                 </GridLayout>
             </com.google.android.material.card.MaterialCardView>
 

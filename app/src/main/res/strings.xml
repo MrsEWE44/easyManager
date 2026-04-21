@@ -459,8 +459,6 @@
     <string name="show_clone_user_all_installed_app">显示分身用户所有应用</string>
     <string name="show_clone_user_uid">显示分身用户UID</string>
     <string name="show_start_app_clone_user">启动分身用户</string>
-
-
-
-
+    <string name="menu_import_config">导入配置</string>
+    <string name="menu_export_config">导出配置</string>
 </resources>

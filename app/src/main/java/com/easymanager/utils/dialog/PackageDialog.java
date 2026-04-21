@@ -67,8 +67,9 @@ public class PackageDialog extends DialogUtils {
                                     easyMUtils.setDisablePKG(context,pkginfo.getPkgname(),uid);
                                 }
                             }
-
-
+                        case AppManagerEnum.APP_FIREWALL:
+                            easyMUtils.setSkipError(true);
+                            easyMUtils.setFirewallState(new TransmissionEntity(pkginfo.getPkgname(),null,reqpkg,APP_PERMIS_INDEX,uid));
                             break;
                         case AppManagerEnum.APP_INFO_LAYOUT:
                             if(APP_PERMIS_INDEX == AppInfoEnums.IS_PERMISSION){
@@ -151,6 +152,11 @@ public class PackageDialog extends DialogUtils {
         if(appPermission == AppManagerEnum.APP_DISABLE_COMPENT){
             title=tu.getLanguageString(context,R.string.apply_app_compat_title);
             msg=tu.getLanguageString(context,R.string.apply_app_compat_msg);
+        }
+
+        if(appPermission == AppManagerEnum.APP_FIREWALL){
+            title=tu.getLanguageString(context,R.string.apply_app_network_title);
+            msg=tu.getLanguageString(context,R.string.apply_app_network_msg);
         }
 
         if(appPermission == AppManagerEnum.APP_INSTALL_LOCAL_FILE || appPermission == AppManagerEnum.APP_RESTORE_UNINSTALLED){

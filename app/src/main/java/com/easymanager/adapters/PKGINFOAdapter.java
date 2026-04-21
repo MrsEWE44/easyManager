@@ -53,49 +53,70 @@ public class PKGINFOAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = LayoutInflater.from(context).inflate(R.layout.app_list_view_item_layout,null);
-        ImageView imageView = convertView.findViewById(R.id.alvilappicon);
-        MaterialCheckBox checkBox = convertView.findViewById(R.id.alvilcb1);
-        TextView text = convertView.findViewById(R.id.alvilappname);
-        TextView text2 = convertView.findViewById(R.id.alvilapppkgname);
-        TextView text3 = convertView.findViewById(R.id.alvilappversion);
-        TextView text4 = convertView.findViewById(R.id.alvilappsize);
-        TextView text5 = convertView.findViewById(R.id.alvilappuid);
+        ViewHolder holder;
+        if (convertView == null) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.app_list_view_item_layout, parent, false);
+            holder = new ViewHolder();
+            holder.imageView = convertView.findViewById(R.id.alvilappicon);
+            holder.checkBox = convertView.findViewById(R.id.alvilcb1);
+            holder.text = convertView.findViewById(R.id.alvilappname);
+            holder.text2 = convertView.findViewById(R.id.alvilapppkgname);
+            holder.text3 = convertView.findViewById(R.id.alvilappversion);
+            holder.text4 = convertView.findViewById(R.id.alvilappsize);
+            holder.text5 = convertView.findViewById(R.id.alvilappuid);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
         int size = pkginfos.size();
         int size1 = checkboxs.size();
-        if(size == size1 && position < size && size > 0 ){
+        if (size == size1 && position < size && size > 0) {
             PKGINFO pkginfo = pkginfos.get(position);
-            text.setText(pkginfo.getAppname());
-            text2.setText(pkginfo.getPkgname());
-            text3.setText(pkginfo.getAppversionname());
-            text4.setText(new FileTools().getSize(pkginfo.getFilesize(),0));
-            text5.setText(pkginfo.getApkuid());
-            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            holder.text.setText(pkginfo.getAppname());
+            holder.text2.setText(pkginfo.getPkgname());
+            holder.text3.setText(pkginfo.getAppversionname());
+            holder.text4.setText(new FileTools().getSize(pkginfo.getFilesize(), 0));
+            holder.text5.setText(pkginfo.getApkuid());
+
+            holder.checkBox.setOnCheckedChangeListener(null);
+            holder.checkBox.setChecked(checkboxs.get(position));
+            holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    checkboxs.set(position,b);
+                    checkboxs.set(position, b);
                 }
             });
-            checkBox.setChecked(checkboxs.get(position));
-            int mode=  pkginfo.getIconmode();
-            if(mode == 0){
 
-                try{
-                    imageView.setImageDrawable(pu.getPKGIcon(context,pkginfo.getPkgname()));
-                }catch (Exception e){
-                    imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.manager_grant_app_foreground));
+            int mode = pkginfo.getIconmode();
+            holder.imageView.setTag(pkginfo.getPkgname());
+            if (mode == 1) {
+                holder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.manager_grant_app_foreground));
+            } else {
+                // For mode 0 and 2, we should ideally load asynchronously.
+                // For now, let's at least keep the existing logic but wrapped in a check to avoid flickering
+                // and removing notifyDataSetChanged()
+                try {
+                    if (mode == 0) {
+                        holder.imageView.setImageDrawable(pu.getPKGIcon(context, pkginfo.getPkgname()));
+                    } else if (mode == 2) {
+                        holder.imageView.setImageDrawable(pu.getPKGFileIcon(context, pkginfo.getApkpath()));
+                    }
+                } catch (Exception e) {
+                    holder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.manager_grant_app_foreground));
                 }
             }
-            if(mode == 1){
-                imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.manager_grant_app_foreground));
-            }
-            if(mode == 2){
-                imageView.setImageDrawable(pu.getPKGFileIcon(context,pkginfo.getApkpath()));
-            }
-
-            notifyDataSetChanged();
         }
         return convertView;
     }
 
+    static class ViewHolder {
+        ImageView imageView;
+        MaterialCheckBox checkBox;
+        TextView text;
+        TextView text2;
+        TextView text3;
+        TextView text4;
+        TextView text5;
+    }
 }

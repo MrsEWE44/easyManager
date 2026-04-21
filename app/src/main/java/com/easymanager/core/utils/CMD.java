@@ -29,7 +29,7 @@ public class CMD implements Serializable {
      * @param root 是否以root權限運行命令
      * */
     public CMD(String cmd , Boolean root){
-        Log.i("cmdstr ::: ",cmd);
+        Log.i("cmdstr ::: ", cmd);
         try{
             Process exec;
             boolean isShizuku = ShizukuSystemServerApi.isShizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_SHIZUKU;
@@ -57,13 +57,47 @@ public class CMD implements Serializable {
                     dos.flush();
                 }
             }
-            BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream(),"UTF-8"));
-            String line="";
-            while((line=reader.readLine()) != null){
-                sb.append(line+"\n");
-            }
+            
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream(),"UTF-8"));
+            final BufferedReader errorReader = new BufferedReader(new InputStreamReader(exec.getErrorStream(),"UTF-8"));
+            
+            Thread t1 = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            synchronized (sb) {
+                                sb.append(line).append("\n");
+                            }
+                        }
+                    } catch (Exception e) {}
+                }
+            });
+            
+            Thread t2 = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String line;
+                        while ((line = errorReader.readLine()) != null) {
+                            synchronized (sb) {
+                                sb.append(line).append("\n");
+                            }
+                        }
+                    } catch (Exception e) {}
+                }
+            });
+            
+            t1.start();
+            t2.start();
+            
             resultCode = exec.waitFor();
+            t1.join();
+            t2.join();
+            
             reader.close();
+            errorReader.close();
         }catch (Exception e){
             e.printStackTrace();
         }

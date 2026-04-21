@@ -3,6 +3,7 @@ package com.easymanager.enums;
 public class AppManagerEnum {
     public final static int APP_PERMISSION=1;
     public final static int APP_DISABLE_COMPENT=2;
+    public final static int APP_FIREWALL=3;
     public final static int APP_INSTALL_LOCAL_FILE=4;
     public final static int APP_DUMP=5;
     public final static int APP_UNINSTALL=6;

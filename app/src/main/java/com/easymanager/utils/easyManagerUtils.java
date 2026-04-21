@@ -113,9 +113,36 @@ public class easyManagerUtils {
         }
     }
 
+    public void setFirewallState(TransmissionEntity entity){
+        if(skipError){
+            if(ShizukuSystemServerApi.isShizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_SHIZUKU && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+                String pkgname = entity.getPkgname();
+                String  enable_cmd = "cmd connectivity set-package-networking-enabled true "+pkgname;
+                String  disable_cmd = "cmd connectivity set-package-networking-enabled false "+pkgname;
+                String firewall_cmdstr = entity.getOpsmode()==0 ? enable_cmd : disable_cmd;
+                CMD cmd = runCMD(firewall_cmdstr);
+            }else if(managerAPI.isRoot()){
+                int pkguid = managerAPI.getPKGUID(entity.getPkgname(), entity.getUid());
+                String  disable_cmd = "iptables -I OUTPUT -m owner --uid-owner "+pkguid+" -j DROP";
+                String  enable_cmd = "iptables -I OUTPUT -m owner --uid-owner "+pkguid+" -j ACCEPT";
+                String firewall_cmdstr = entity.getOpsmode()==0 ? enable_cmd : disable_cmd;
+                CMD cmd = runCMD(firewall_cmdstr);
+            }
+        }
+
+    }
+
     public void setAppopsMode(TransmissionEntity entity){
         if(skipError){
-            managerAPI.setAppopsMode(entity);
+            if(managerAPI.isRoot() || (ShizukuSystemServerApi.isShizuku() && ShizukuSystemServerApi.runtimeMode == ShizukuSystemServerApi.MODE_SHIZUKU)){
+                if(entity.getOpsmode() == 8 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+                    String enable_str = managerAPI.isAppopsAllow(entity.getOpmodestr()) ? "active":"idle";
+                    String cmd_str = "cmd sensorservice set-uid-state " +entity.getPkgname() + " " + enable_str+" --user " + entity.getUid();
+                    CMD cmd = runCMD(cmd_str);
+                }else{
+                    managerAPI.setAppopsMode(entity);
+                }
+            }
         }
     }
 

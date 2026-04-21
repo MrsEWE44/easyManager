@@ -14,7 +14,6 @@ import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -28,6 +27,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.easymanager.R;
 import com.easymanager.entitys.PKGINFO;
 import com.easymanager.enums.AppManagerEnum;
+import com.easymanager.utils.ConfigUtils;
 import com.easymanager.utils.FileTools;
 import com.easymanager.utils.MyActivityManager;
 import com.easymanager.utils.OtherTools;
@@ -67,6 +67,7 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
     private AppCloneUtils acu = new AppCloneUtils();
     private PackageUtils packageUtils = acu.getPd().packageUtils;
     private FileTools ft = acu.getPd().ft;
+    private ConfigUtils configUtils = new ConfigUtils();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +144,20 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
             amlsp2.setEnabled(true);
             amlsp2.setAdapter(getSpinnerAdapter(getAppDumpOPT()));
             amlapplybt.setText(getLanStr(R.string.button_dump_app));
+        }
+
+
+        if(mode == AppManagerEnum.APP_FIREWALL){
+            amlsp1.setEnabled(false);
+            amlsp2.setEnabled(true);
+            amlsp2.setAdapter(getSpinnerAdapter(getAppFirewallOPT()));
+            if(isADB && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+                String test_result = acu.getEasyManagerUtils().runCMD("cmd connectivity get-chain3-enabled").toString();
+                if(test_result.indexOf("disable") != -1){
+                    //启用防火墙
+                    String enable_firaw = acu.getEasyManagerUtils().runCMD("cmd connectivity set-chain3-enabled true").toString();
+                }
+            }
         }
 
         if(mode == AppManagerEnum.APP_UNINSTALL){
@@ -222,6 +237,9 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
 
                     if(mode == AppManagerEnum.APP_DISABLE_COMPENT){
                         acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_DISABLE_COMPENT,APP_PERMIS_OPT_INDEX,null,uid);
+                        if (APP_PERMIS_OPT_INDEX == 1) { // 1 is Disable
+                            configUtils.savePkgs(context, list, mode);
+                        }
                     }
 
                     if(mode == AppManagerEnum.APP_INSTALL_LOCAL_FILE){
@@ -234,14 +252,7 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
 
                     if(mode == AppManagerEnum.APP_UNINSTALL){
                         acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_UNINSTALL,APP_PERMIS_OPT_INDEX,null,uid);
-//                        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.M){
-//                            easyManagerUtils ee = new easyManagerUtils();
-//                            if(ee.isROOT()){
-//                                ee.activeRoot(context);
-//                            }else {
-//                                acu.getPd().showInfoMsg(context,getLanStr(R.string.error_tips),getLanStr(R.string.del_app_tips_6));
-//                            }
-//                        }
+                        configUtils.savePkgs(context, list, mode);
                     }
 
                     if(mode == AppManagerEnum.APP_CLEAN_PROCESS){
@@ -250,6 +261,10 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
 
                     if(mode == AppManagerEnum.APP_RESTORE_UNINSTALLED){
                         acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_RESTORE_UNINSTALLED,APP_PERMIS_OPT_INDEX,null,uid);
+                    }
+
+                    if(mode == AppManagerEnum.APP_FIREWALL){
+                        acu.getPd().showProcessBarDialogByCMD(context,list,AppManagerEnum.APP_FIREWALL,APP_PERMIS_OPT_INDEX,null,uid);
                     }
 
                 }
@@ -378,6 +393,10 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
             menu.add(0, 6, 0, getLanStr(R.string.options_menu_exit));
         } else {
             otherTools.addMenuBase(this, menu, mode);
+            if (mode == AppManagerEnum.APP_DISABLE_COMPENT || mode == AppManagerEnum.APP_UNINSTALL) {
+                menu.add(0, 101, 0, getLanStr(R.string.menu_import_config));
+                menu.add(0, 102, 0, getLanStr(R.string.menu_export_config));
+            }
         }
         getMenuInflater().inflate(R.menu.main, menu);
         return super.onPrepareOptionsMenu(menu);
@@ -390,6 +409,16 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
             return true;
         }
         int itemId = item.getItemId();
+        if (itemId == 101) {
+            ft.execFileSelect(context, activity, getLanStr(R.string.menu_import_config), 101);
+            return true;
+        }
+        if (itemId == 102) {
+            permissionRequest.getExternalStorageManager(context, activity);
+            configUtils.exportConfig(context);
+            Toast.makeText(context, "Exported to /easyManager/", Toast.LENGTH_SHORT).show();
+            return true;
+        }
         if(itemId == R.id.actionbarsearch){
             if(mode == AppManagerEnum.APP_CLEAN_PROCESS){
                 acu.getSd().showProcessSearchViewDialog(context,activity,apllv1,pkginfos,null,checkboxs,uid);
@@ -449,30 +478,6 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
 
     public ArrayAdapter getSpinnerAdapter(String s[]){
         return new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, s);
-    }
-
-    public ArrayAdapter getSpinnerAdapterDhizuku(String s[]){
-        return new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, s){
-            @Override
-            public boolean isEnabled(int position) {
-                if(isDevice){
-                    return position == 1 || position == 2 || position == 3;
-                }else{
-                    return true;
-                }
-            }
-
-            @Override
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                if (!isEnabled(position)) {
-                    view.setAlpha(0.5f); // 半透明
-                } else {
-                    view.setAlpha(1f);
-                }
-                return view;
-            }
-        };
     }
 
     private void selectLocalFile(){
@@ -573,6 +578,35 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
             }
         }
 
+        if (requestCode == 101 && data != null && data.getData() != null) {
+            Uri uri = data.getData();
+            String path = ft.uriToFilePath(uri, context);
+            if (path != null) {
+                ArrayList<String> importedPkgs = configUtils.importConfig(context, new File(path), mode);
+                pkgutils.clearList(pkginfos, checkboxs);
+                for (String pkgName : importedPkgs) {
+                    try {
+                        PKGINFO pkginfo = null;
+                        if (mode == AppManagerEnum.APP_RESTORE_UNINSTALLED) {
+                            // For uninstalled apps, we can't get full info from PM if they are truly gone, 
+                            // but usually they are "kept" or we just need the pkg name for the list.
+                            pkginfo = new PKGINFO(pkgName, pkgName, "", "", "", 0L);
+                        } else {
+                            pkginfo = packageUtils.getPKGINFO(context, pkgName);
+                        }
+
+                        if (pkginfo != null) {
+                            pkginfos.add(pkginfo);
+                            checkboxs.add(false);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                acu.getSd().showPKGS(context, apllv1, pkginfos, checkboxs);
+            }
+        }
+
         //安装文件夹里面所有apk文件
         if(requestCode == 43){
             if(data !=null && data.getData() != null) {//只有一个文件咯
@@ -651,16 +685,10 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
     private String[] getAppDumpOPT(){
         return new String[]{getLanStr(R.string.spin_item_dump_pkgname),getLanStr(R.string.spin_item_dump_appname),getLanStr(R.string.spin_item_dump_timename)};
     }
-    private String[] getAppBackupAndRestoryOPT(){
-        return new String[]{getLanStr(R.string.spin_item_app_and_data),getLanStr(R.string.spin_item_data),getLanStr(R.string.spin_item_app)};
-    }
     private String[] getAppChoicesOPT(){
         return new String[]{getLanStr(R.string.spin_item_selected),getLanStr(R.string.spin_item_no_selected),getLanStr(R.string.spin_item_all_selected)};
     }
 
-    private String[] getAppManagerOPT(){
-        return new String[]{getLanStr(R.string.button_home_permission),getLanStr(R.string.button_home_disable),getLanStr(R.string.button_home_dump_app),getLanStr(R.string.button_home_uninstall),getLanStr(R.string.button_home_process_clean)};
-    }
 
     private void addPKGS(PKGINFO pkginfo,ArrayList<PKGINFO> list){
         list.add(pkginfo);

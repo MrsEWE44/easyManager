@@ -27,6 +27,9 @@ public class HelpDialogUtils extends DialogBaseUtils {
                 case AppManagerEnum.APP_DISABLE_COMPENT:
                     msg = tu.getLanguageString(context,R.string.show_help_getAppDsiableCompentHELP);
                     break;
+                case AppManagerEnum.APP_FIREWALL:
+                    msg = tu.getLanguageString(context,R.string.show_help_getAppFirewallHELP);
+                    break;
                  case AppManagerEnum.APP_INSTALL_LOCAL_FILE:
                     msg = tu.getLanguageString(context,R.string.show_help_getAppInstallLocalFileHELP);
                     break;

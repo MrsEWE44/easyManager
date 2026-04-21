@@ -49,9 +49,7 @@ public class SearchDialog extends QueryDialog {
                 }
             });
             t.start();
-            //加入这个，阻塞线程，等待线程运行结束后，才允许下一个线程启动
-            t.join();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -92,7 +90,6 @@ public class SearchDialog extends QueryDialog {
             public boolean onQueryTextSubmit(String s) {
                 if(!s.isEmpty()){
                     showIndexOfPKGSDialog(context,activity,svllv,tu.getLanguageString(context,R.string.now_search_ing_msg),s,pkginfos,strList,checkboxs);
-                    showPKGS(context,lv,pkginfos,checkboxs);
                 }
                 permittedDismissDialog(alertDialog);
                 return false;

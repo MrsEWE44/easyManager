@@ -95,6 +95,10 @@ public class AppopsAPI extends baseAPI{
         }
     }
 
+    public boolean isAllow(String modestr){
+        return getModeInt(modestr) == AppOpsManager.MODE_ALLOWED;
+    }
+
     public int getModeInt(String modestr){
         if(modestr.equals("allow")){
             return AppOpsManager.MODE_ALLOWED;

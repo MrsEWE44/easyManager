@@ -809,22 +809,14 @@ public class PackageAPI extends  baseAPI implements Serializable {
     }
 
     public List<MyPackageInfo> getInstalledPackages(int userid){
-        int flags = 0;
-        long flags2 = 0;
-        //PackageManager.MATCH_UNINSTALLED_PACKAGES;加上这个flags会同步主用户的应用,建议不要添加,除非你需要排查所有应用
-        flags |=  PackageManager.MATCH_DISABLED_COMPONENTS | PackageManager.MATCH_UNINSTALLED_PACKAGES;
-        flags2 |=  PackageManager.MATCH_DISABLED_COMPONENTS | PackageManager.MATCH_UNINSTALLED_PACKAGES;
+        int flags = PackageManager.GET_PERMISSIONS|PackageManager.GET_ACTIVITIES|PackageManager.GET_DISABLED_COMPONENTS|PackageManager.GET_SERVICES|PackageManager.GET_RECEIVERS | PackageManager.MATCH_UNINSTALLED_PACKAGES;
+        long flags2 = flags;
         IPackageManager iPackageManager = getIPackageManager();
         ArrayList<MyPackageInfo> myPackageInfos = new ArrayList<>();
         ParceledListSlice<PackageInfo> slice = Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU?iPackageManager.getInstalledPackages(flags2,userid):iPackageManager.getInstalledPackages(flags,userid);
         List<PackageInfo> list = slice.getList();
         for (PackageInfo packageInfo : list) {
-            MyPackageInfo myPackageInfo = getMyPackageInfo(packageInfo.packageName,userid);
-            if(myPackageInfo != null){
-                myPackageInfos.add(myPackageInfo);
-            }else{
-                myPackageInfos.add(copyPkgInfoToMyPkginfo(packageInfo));
-            }
+            myPackageInfos.add(copyPkgInfoToMyPkginfo(packageInfo));
         }
         return myPackageInfos;
     }
@@ -854,7 +846,10 @@ public class PackageAPI extends  baseAPI implements Serializable {
 
     public MyPackageInfo copyPkgInfoToMyPkginfo(PackageInfo packageInfo){
         ApplicationInfo applicationInfo = packageInfo.applicationInfo;
-        MyApplicationInfo myApplicationInfo = new MyApplicationInfo(applicationInfo.flags, applicationInfo.enabled,applicationInfo.sourceDir);
+        MyApplicationInfo myApplicationInfo = null;
+        if (applicationInfo != null) {
+            myApplicationInfo = new MyApplicationInfo(applicationInfo.flags, applicationInfo.enabled, applicationInfo.sourceDir);
+        }
         ActivityInfo activities[] = packageInfo.activities;
         ServiceInfo[] services = packageInfo.services;
         ActivityInfo[] receivers = packageInfo.receivers;
