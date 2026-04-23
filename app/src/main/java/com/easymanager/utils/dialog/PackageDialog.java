@@ -195,12 +195,12 @@ public class PackageDialog extends DialogUtils {
     public void showIndexOfAppInfoDialog(Context context, Activity activity, ListView svllv, String msg, String s1, String pkgname, int app_info_mode, Integer uid, ArrayList<String> list, ArrayList<Boolean> checkboxs, ArrayList<Boolean> switbs) {
 
         AlertDialog show = showMyDialog(context, msg);
-        Handler handler = new Handler() {
+        Handler handler = new Handler(android.os.Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 if(msg.what==0){
                     showAppInfoListView(context,svllv,list,checkboxs,switbs,pkgname,app_info_mode,uid);
-                    show.dismiss();
+                    permittedDismissDialog(show);
                 }
             }
         };
@@ -222,44 +222,93 @@ public class PackageDialog extends DialogUtils {
         ListView svllv = vvv.findViewById(R.id.svllv);
         svllv.setTextFilterEnabled(true);
         svlsv.setSubmitButtonEnabled(true);
+
+        // 备份原始列表数据，用于在清空搜索框时恢复
+        final ArrayList<String> originalList = (list != null) ? new ArrayList<>(list) : null;
+        final ArrayList<Boolean> originalCheckboxs = (checkboxs != null) ? new ArrayList<>(checkboxs) : null;
+        final ArrayList<Boolean> originalSwitbs = (switbs != null) ? new ArrayList<>(switbs) : null;
+
         builder.setView(vvv);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
         preventDismissDialog(alertDialog);
+
+        // 继承主Activity列表的点击监听器
+        if (aillv1 != null) {
+            svllv.setOnItemClickListener(aillv1.getOnItemClickListener());
+            svllv.setOnItemLongClickListener(aillv1.getOnItemLongClickListener());
+        }
+
+        // 初始显示列表
+        showAppInfoListView(context, svllv, list, checkboxs, switbs, pkgname, app_info_mode, uid);
+
         svlsv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                showAppInfoListView(context,aillv1,list,checkboxs,switbs,pkgname,app_info_mode,uid);
+                performSearch(s);
                 permittedDismissDialog(alertDialog);
-                return false;
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                if(!s.isEmpty()){
-                    showIndexOfAppInfoDialog(context,activity,svllv,tu.getLanguageString(context,R.string.now_search_ing_msg),s,pkgname,app_info_mode,uid,list,checkboxs,switbs);
-                }else{
-                    if(app_info_mode2 == AppInfoEnums.GET_ACTIVITYS){
-                        showAppInfoActivityProcessDialog(context,activity,aillv1,list,checkboxs,switbs,pkgname,uid);
-                    }
+                performSearch(s);
+                return true;
+            }
 
-                    if(app_info_mode2 == AppInfoEnums.GET_SERVICES){
-                        showAppInfoServiceProcessDialog(context,activity,aillv1,list,checkboxs,switbs,pkgname,uid);
+            private void performSearch(String s) {
+                if (s.isEmpty()) {
+                    // 恢复原始列表
+                    if (list != null && originalList != null) {
+                        list.clear();
+                        list.addAll(originalList);
                     }
-
-                    if(app_info_mode2 == AppInfoEnums.GET_PERMISSIOSN){
-                        showAppInfoPermissionProcessDialog(context,activity,aillv1,list,checkboxs,switbs,pkgname,uid);
+                    if (checkboxs != null && originalCheckboxs != null) {
+                        checkboxs.clear();
+                        checkboxs.addAll(originalCheckboxs);
                     }
-
-                    if(app_info_mode2 == AppInfoEnums.GET_RECEIVERS){
-                        showAppInfoReceiverProcessDialog(context,activity,aillv1,list,checkboxs,switbs,pkgname,uid);
+                    if (switbs != null && originalSwitbs != null) {
+                        switbs.clear();
+                        switbs.addAll(originalSwitbs);
+                    }
+                } else {
+                    // 执行搜索逻辑
+                    if (originalList != null && originalCheckboxs != null) {
+                        list.clear();
+                        list.addAll(originalList);
+                        checkboxs.clear();
+                        checkboxs.addAll(originalCheckboxs);
+                        if (switbs != null && originalSwitbs != null) {
+                            switbs.clear();
+                            switbs.addAll(originalSwitbs);
+                            tu.indexOfLIST(list, checkboxs, switbs, s);
+                        } else {
+                            tu.indexOfLIST(list, checkboxs, null, s);
+                        }
                     }
                 }
-                return false;
+
+                // 更新对话框中的 ListView
+                showAppInfoListView(context, svllv, list, checkboxs, switbs, pkgname, app_info_mode, uid);
+
+                // 同步更新主界面的 ListView
+                if (aillv1 != null) {
+                    showAppInfoListView(context, aillv1, list, checkboxs, switbs, pkgname, app_info_mode, uid);
+                }
             }
         });
 
+        // 监听对话框关闭
+        vvv.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View v) {}
 
+            @Override
+            public void onViewDetachedFromWindow(View v) {
+                // Remove to avoid crash
+                // permittedDismissDialog(alertDialog);
+            }
+        });
     }
 
 
@@ -282,15 +331,13 @@ public class PackageDialog extends DialogUtils {
 
     public void showAppInfoProcessDialog(Context context, Activity activity, String msg, ListView lv1, ArrayList<String> list, ArrayList<Boolean> checkboxs, ArrayList<Boolean> switbs, String pkgname, int mode, Integer uid, int mode2) {
         AlertDialog show = showMyDialog(context, msg);
-        Handler handler = new Handler() {
+        Handler handler = new Handler(android.os.Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 if(msg.what==0){
                     showAppInfoListView(context,lv1,list,checkboxs,switbs,pkgname,mode,uid);
-                    show.dismiss();
-                }else{
-                    show.dismiss();
                 }
+                permittedDismissDialog(show);
             }
         };
 

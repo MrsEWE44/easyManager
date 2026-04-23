@@ -39,11 +39,11 @@ public class DialogUtils extends DialogBaseUtils {
 
     public void findLocalImgDialog(Context context, Activity activity, ListView lv1 , ArrayList<String> strings, ArrayList<Boolean> checkboxs){
         AlertDialog show = showMyDialog(context,tu.getLanguageString(context,R.string.scanner_local_img));
-        Handler handler = new Handler(){
+        Handler handler = new Handler(android.os.Looper.getMainLooper()){
             @Override
             public void handleMessage(Message msg) {
                 if(msg.what==0){
-                    show.dismiss();
+                    permittedDismissDialog(show);
                     showUsers(context,lv1,strings,checkboxs);
                 }
             }
@@ -111,31 +111,43 @@ public class DialogUtils extends DialogBaseUtils {
         GeneralAdapter userAdapter = new GeneralAdapter(userList, context, checkboxsByUser);
         listView.setAdapter(userAdapter);
     }
-    private void sort(ArrayList<String> list , ArrayList<Boolean> switbs ){
+    private void sort(ArrayList<String> list, ArrayList<Boolean> switbs, ArrayList<Boolean> checkboxs) {
         ArrayList<String> list2 = new ArrayList<>();
         ArrayList<String> list3 = new ArrayList<>();
-        for (int i = 0; i < switbs.size(); i++) {
-            if(switbs.get(i)){
+        ArrayList<Boolean> cb2 = new ArrayList<>();
+        ArrayList<Boolean> cb3 = new ArrayList<>();
+        
+        int size = Math.min(list.size(), Math.min(switbs.size(), checkboxs.size()));
+        
+        for (int i = 0; i < size; i++) {
+            if (switbs.get(i)) {
                 list2.add(list.get(i));
-            }else{
+                cb2.add(checkboxs.get(i));
+            } else {
                 list3.add(list.get(i));
+                cb3.add(checkboxs.get(i));
             }
         }
         list.clear();
         switbs.clear();
+        checkboxs.clear();
+        
+        // Add disabled items first
         for (int i = 0; i < list3.size(); i++) {
             list.add(list3.get(i));
             switbs.add(false);
+            checkboxs.add(cb3.get(i));
         }
+        // Add enabled items second
         for (int i = 0; i < list2.size(); i++) {
             list.add(list2.get(i));
             switbs.add(true);
+            checkboxs.add(cb2.get(i));
         }
-
     }
 
     public void showAppInfoListView(Context context , ListView listView ,ArrayList<String> list ,ArrayList<Boolean> checkboxs , ArrayList<Boolean> switbs , String pkgname , int mode , Integer uid ){
-        sort(list,switbs);
+        sort(list, switbs, checkboxs);
         AppInfoAdapter adapter = new AppInfoAdapter(list, context, checkboxs, switbs,pkgname,mode,uid);
         listView.setAdapter(adapter);
         // Remove direct long click listener from ListView items if any was set by default/parent
@@ -149,7 +161,7 @@ public class DialogUtils extends DialogBaseUtils {
     }
 
     public Handler getProcessBarDialogHandler(Context context , ProgressBar mProgressBar, AlertDialog alertDialog, TextView dpbtv1, TextView dpbtv2, TextView dpbtv3, String text){
-        return new Handler() {
+        return new Handler(android.os.Looper.getMainLooper()) {
 
             public void handleMessage(Message msg) {
                 switch (msg.what) {
@@ -202,11 +214,11 @@ public class DialogUtils extends DialogBaseUtils {
     }
 
     public Handler dismissDialogHandler(int value, AlertDialog show) {
-        return new Handler() {
+        return new Handler(android.os.Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 if (msg.what == value) {
-                    show.dismiss();
+                    permittedDismissDialog(show);
                 }
             }
         };

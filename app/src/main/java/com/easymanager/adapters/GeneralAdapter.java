@@ -20,7 +20,7 @@ public class GeneralAdapter extends BaseAdapter {
     public GeneralAdapter(ArrayList<String> list, Context context, ArrayList<Boolean> checkboxs) {
         this.list = (ArrayList<String>) list.clone();
         this.context = context;
-        this.checkboxs = checkboxs;
+        this.checkboxs = (ArrayList<Boolean>) checkboxs.clone();
         notifyDataSetChanged();
     }
 
@@ -57,32 +57,30 @@ public class GeneralAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        int size = list.size();
-        int size1 = checkboxs.size();
-        view = LayoutInflater.from(context).inflate(R.layout.general_listview_item_layout,null);
-        CheckBox checkBox=view.findViewById(R.id.glilcb);
+        if (view == null) {
+            view = LayoutInflater.from(context).inflate(R.layout.general_listview_item_layout, viewGroup, false);
+        }
+        CheckBox checkBox = view.findViewById(R.id.glilcb);
         TextView text = view.findViewById(R.id.gliltv);
         TextView text2 = view.findViewById(R.id.gliltv2);
-        if(i < size){
+
+        if (i < list.size()) {
             text.setText(list.get(i));
             File file = new File(list.get(i));
-            if(file == null){
-                text2.setText("");
-            }else{
-                text2.setText(getSize(file.length(),0));
-            }
+            text2.setText(getSize(file.length(), 0));
 
-            if(i < size1){
+            if (i < checkboxs.size()) {
+                checkBox.setOnCheckedChangeListener(null);
+                checkBox.setChecked(checkboxs.get(i));
                 checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        checkboxs.set(i,b);
+                        if (i >= 0 && i < checkboxs.size()) {
+                            checkboxs.set(i, b);
+                        }
                     }
                 });
-                checkBox.setChecked(checkboxs.get(i));
             }
-
-
         }
         return view;
     }

@@ -324,4 +324,8 @@
     <string name="button_restore">還原</string>
     <string name="menu_import_config">匯入配置</string>
     <string name="menu_export_config">匯出配置</string>
+    <string name="get_system_apps">正在獲取系統應用(包括禁用，請稍等...)</string>
+    <string name="get_system_apps2">正在獲取系統應用(請稍等...)</string>
+    <string name="menu_get_system_all_app">顯示系統所有程序(包括禁止)</string>
+    <string name="menu_get_system_all_app2">顯示系統程序</string>
 </resources>

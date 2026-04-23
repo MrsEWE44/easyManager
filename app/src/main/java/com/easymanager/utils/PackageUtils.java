@@ -30,6 +30,8 @@ public class PackageUtils {
     public  Integer QUERY_ALL_USER_PKG=3;
     public  Integer QUERY_ALL_DISABLE_PKG=1;
     public  Integer QUERY_ALL_DEFAULT_PKG=4;
+    public  Integer QUERY_ALL_SYSTEM_PKG=5;
+    public  Integer QUERY_ALL_SYSTEM_ENABLE_PKG=6;
 
     private easyManagerUtils ee = new easyManagerUtils();
 
@@ -175,6 +177,18 @@ public class PackageUtils {
 
         if(state.equals(QUERY_ALL_DEFAULT_PKG)){
             checkBoxs(pkginfos,checkboxs,packageInfo,packageManager);
+        }
+
+        if(state.equals(QUERY_ALL_SYSTEM_PKG)){
+            if((applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0){
+                checkBoxs(pkginfos,checkboxs,packageInfo,packageManager);
+            }
+        }
+
+        if(state.equals(QUERY_ALL_SYSTEM_ENABLE_PKG)){
+            if((applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0 && applicationInfo.enabled){
+                checkBoxs(pkginfos,checkboxs,packageInfo,packageManager);
+            }
         }
 
     }
@@ -449,6 +463,46 @@ public class PackageUtils {
         getPKGInfoCore(context,pkgname,list,checkboxs,switbs,3,uid);
     }
 
+
+    public void queryAllPKGSByAppClone(Activity activity, ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
+        clearList(pkginfos, checkboxs);
+        String[] appCloneUsers = ee.getAppCloneUsers();
+        if (appCloneUsers != null) {
+            for (String user : appCloneUsers) {
+                try {
+                    int uid = Integer.parseInt(user);
+                    if (uid != ee.getCurrentUserID()) {
+                        queryPKGSCoreByUID(uid, activity, pkginfos, checkboxs, false, false, false, false);
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+        }
+    }
+
+    public void queryUserAllPKGSByAppClone(Activity activity, ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
+        clearList(pkginfos, checkboxs);
+        String[] appCloneUsers = ee.getAppCloneUsers();
+        if (appCloneUsers != null) {
+            for (String user : appCloneUsers) {
+                try {
+                    int uid = Integer.parseInt(user);
+                    if (uid != ee.getCurrentUserID()) {
+                        queryPKGSCoreByUID(uid, activity, pkginfos, checkboxs, false, false, false, true);
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+        }
+    }
+
+    public void querySystemAllPKGS(Activity activity, ArrayList<PKGINFO> pkginfos , ArrayList<Boolean> checkboxs,Integer types){
+        queryPKGSCore(activity,pkginfos,checkboxs,types,QUERY_ALL_SYSTEM_PKG);
+    }
+
+    public void querySystemEnablePKGS(Activity activity, ArrayList<PKGINFO> pkginfos , ArrayList<Boolean> checkboxs,Integer types){
+        queryPKGSCore(activity,pkginfos,checkboxs,types,QUERY_ALL_SYSTEM_ENABLE_PKG);
+    }
 
     public void queryUninstalledPKGS(Activity activity, ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, int types) {
         clearList(pkginfos,checkboxs);

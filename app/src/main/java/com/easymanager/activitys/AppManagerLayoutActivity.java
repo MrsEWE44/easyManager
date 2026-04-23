@@ -332,10 +332,6 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
         return super.onContextItemSelected(item);
     }
 
-    private void createLVMenu() {
-        // Method replaced by registerForContextMenu
-    }
-
     private void spinnerChange(Spinner s, int app_opt_mode){
         s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -388,6 +384,8 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
         menu.clear();
         OtherTools otherTools = new OtherTools();
         if (mode == AppManagerEnum.APP_RESTORE_UNINSTALLED) {
+            String search = getLanStr(R.string.menu_search_str);
+            menu.add(Menu.NONE, R.id.actionbarsearch, 0, search).setIcon(R.drawable.search_foreground).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
             menu.add(0, 10, 0, getLanStr(R.string.menu_get_uninstalled_app));
             menu.add(0, 5, 0, getLanStr(R.string.options_menu_help_str));
             menu.add(0, 6, 0, getLanStr(R.string.options_menu_exit));
@@ -398,7 +396,6 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
                 menu.add(0, 102, 0, getLanStr(R.string.menu_export_config));
             }
         }
-        getMenuInflater().inflate(R.menu.main, menu);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -416,14 +413,20 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
         if (itemId == 102) {
             permissionRequest.getExternalStorageManager(context, activity);
             configUtils.exportConfig(context);
-            Toast.makeText(context, "Exported to /easyManager/", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Exported to /easyManager/", Toast.LENGTH_LONG).show();
             return true;
         }
         if(itemId == R.id.actionbarsearch){
             if(mode == AppManagerEnum.APP_CLEAN_PROCESS){
                 acu.getSd().showProcessSearchViewDialog(context,activity,apllv1,pkginfos,null,checkboxs,uid);
-            }else {
-                acu.getSd().showSearchViewDialog(context,activity,apllv1,pkginfos,null,checkboxs,uid);
+            }else if(mode == AppManagerEnum.APP_RESTORE_UNINSTALLED){
+                acu.getSd().showUninstalledSearchViewDialog(context,activity,apllv1,pkginfos,null,checkboxs,uid);
+            } else {
+                if(mode == AppManagerEnum.APP_INSTALL_LOCAL_FILE){
+                    Toast.makeText(context, "No Support", Toast.LENGTH_SHORT).show();
+                }else{
+                    acu.getSd().showSearchViewDialog(context,activity,apllv1,pkginfos,null,checkboxs,uid);
+                }
             }
 
         }
@@ -464,6 +467,14 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
 
         if(itemId == 9){
             acu.getSd().queryLocalBackupProcessDialog(context,activity,apllv1,pkginfos,checkboxs,uid);
+        }
+
+        if(itemId == 11){
+            acu.getSd().querySystemAllPKGSProcessDialog(context,activity,apllv1,pkginfos,checkboxs,uid);
+        }
+
+        if(itemId == 12){
+            acu.getSd().querySystemEnablePKGSProcessDialog(context,activity,apllv1,pkginfos,checkboxs,uid);
         }
 
         if(itemId == 5){

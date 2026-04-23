@@ -7,18 +7,18 @@ Starting with version V1.2.8b, this project is divided into two versions, which 
 
 Light Breeze supports powerfully deleting useless system software, freezing software, one-click silent installation of software, batch processing of software, system software recovery, and many more features in Shizuku mode. Download and experience it now!
 
-The latest version supports Android 10 and above. In Shizuku mode without root access, it can control the phone's network and manage the permissions of the shake sensor, precisely controlling individual applications and also supporting batch management.
+The software supports Android 10 and above, and allows for network management in Shizuku mode without root access. It can also manage the permissions of the shake sensor, precisely control individual applications, and supports batch management.
 
 
-- V2.0.2
+- V2.0.2a
 
-1.Fixed the issue of no error messages being returned when executing commands.
+1.Fixed the issue where selecting a checkbox would return to the homepage.
 
-2.Enhanced ADB permissions, added shake-to-disable sensors and firewall functionality, integrated sensor and network management options into permission management, fully supporting batch operations and bypassing system restrictions.
+2.Fixed the search function and moved the search button to the left of the menu options.
 
-3.Added application manifest configuration file import and export functions for easier uninstallation and disabling of unnecessary software.
+3.Added the ability to display system application menu options and functions.
 
-4.Changed the version number to V2.0.2.
+4.Changed the version number to V2.0.2a.
 
 
 

@@ -1,12 +1,13 @@
 package com.easymanager.utils.dialog;
 
 import android.app.Activity;
-import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.ListView;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.easymanager.R;
 import com.easymanager.entitys.PKGINFO;
@@ -14,7 +15,6 @@ import com.easymanager.utils.base.DialogUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public class QueryDialog extends DialogUtils {
 
@@ -41,6 +41,15 @@ public class QueryDialog extends DialogUtils {
     public void queryUserAllPKGSByAppCloneProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs) {
         queryAppClonePKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_user_apps_by_clone),lv1,pkginfos,checkboxs,3);
     }
+
+    public void querySystemAllPKGSProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, int uid) {
+        queryPKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_system_apps),lv1,pkginfos,checkboxs,9,uid);
+    }
+
+    public void querySystemEnablePKGSProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, int uid) {
+        queryPKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_system_apps2),lv1,pkginfos,checkboxs,10,uid);
+    }
+
     public void queryUninstalledPKGSProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, int uid) {
         queryPKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.getting_uninstalled_apps),lv1,pkginfos,checkboxs,8,uid);
     }
@@ -61,42 +70,31 @@ public class QueryDialog extends DialogUtils {
     }
 
     public void queryAllUserProcessDialog(Context context, Activity activity, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, int uid) {
-        queryPKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_user_process_app),lv1,pkginfos,checkboxs,6,uid);
+        queryPKGProcessDialog(context,activity,tu.getLanguageString(context,R.string.get_all_user_process_app),lv1,pkginfos,checkboxs,6,uid);
     }
 
     public void queryAppClonePKGProcessDialog(Context context, Activity activity, String msg, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, Integer mode){
         AlertDialog show = showMyDialog(context,msg);
-        Handler handler = new Handler(){
+        Handler handler = new Handler(android.os.Looper.getMainLooper()){
             @Override
             public void handleMessage(Message msg) {
                 if(msg.what==0){
-                    show.dismiss();
+                    permittedDismissDialog(show);
                     showPKGS(context,lv1,pkginfos,checkboxs);
                 }
             }
         };
-        int currentUserID = easyMUtils.getCurrentUserID();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String[] users = easyMUtils.getAppCloneUsers();
-                ArrayList<PKGINFO> list = new ArrayList<>();
-                for (String user : users) {
-                    if(!user.equals(String.valueOf(currentUserID))){
-                        queryPKGProcessDialogCore(mode,Integer.valueOf(user),currentUserID,context,activity,pkginfos,checkboxs);
-                        list.addAll(pkginfos);
-                    }
-                }
-                HashSet<String> set = new HashSet<>();
-                for (PKGINFO pkginfo : list) {
-                    set.add(pkginfo.getPkgname());
-                }
                 packageUtils.clearList(pkginfos,checkboxs);
-                list.clear();
-                for (String s : set) {
-                    pkginfos.add(packageUtils.getPKGINFO(context,s));
-                    checkboxs.add(false);
+                if(mode == 0){
+                    packageUtils.queryAllPKGSByAppClone(activity,pkginfos,checkboxs);
+                }else if(mode == 3){
+                    packageUtils.queryUserAllPKGSByAppClone(activity,pkginfos,checkboxs);
                 }
+
                 sendHandlerMSG(handler,0);
             }
         }).start();
@@ -181,6 +179,20 @@ public class QueryDialog extends DialogUtils {
                     }
 
                     break;
+                case 9:
+                    if(uid == currentUserID || easyMUtils.isDeviceOwnerActive(context) || Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+                        packageUtils.querySystemAllPKGS(activity, pkginfos, checkboxs, 0);
+                    }else{
+                        packageUtils.querySystemPKGSByUID(uid,activity,pkginfos,checkboxs);
+                    }
+                    break;
+                case 10:
+                    if(uid == currentUserID || easyMUtils.isDeviceOwnerActive(context) || Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+                        packageUtils.querySystemEnablePKGS(activity, pkginfos, checkboxs, 0);
+                    }else{
+                        packageUtils.querySystemEnablePKGSByUID(uid,activity,pkginfos,checkboxs);
+                    }
+                    break;
             }
         }
 
@@ -189,11 +201,11 @@ public class QueryDialog extends DialogUtils {
 
     public void queryPKGProcessDialog(Context context, Activity activity, String msg, ListView lv1 , ArrayList<PKGINFO> pkginfos, ArrayList<Boolean> checkboxs, Integer mode, Integer uid){
         AlertDialog show = showMyDialog(context,msg);
-        Handler handler = new Handler(){
+        Handler handler = new Handler(android.os.Looper.getMainLooper()){
             @Override
             public void handleMessage(Message msg) {
                 if(msg.what==0){
-                    show.dismiss();
+                    permittedDismissDialog(show);
                     showPKGS(context,lv1,pkginfos,checkboxs);
                 }
             }
@@ -208,5 +220,4 @@ public class QueryDialog extends DialogUtils {
         }).start();
 
     }
-
 }

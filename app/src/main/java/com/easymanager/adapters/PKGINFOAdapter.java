@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,7 +23,7 @@ public class PKGINFOAdapter extends BaseAdapter {
     public PKGINFOAdapter(ArrayList<PKGINFO> pkginfos, Context context, ArrayList<Boolean> checkboxs, PackageUtils pu) {
         this.pkginfos = (ArrayList<PKGINFO>) pkginfos.clone();
         this.context = context;
-        this.checkboxs = checkboxs;
+        this.checkboxs = (ArrayList<Boolean>) checkboxs.clone();
         this.pu = pu;
         notifyDataSetChanged();
     }
@@ -84,7 +83,9 @@ public class PKGINFOAdapter extends BaseAdapter {
             holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    checkboxs.set(position, b);
+                    if (position >= 0 && position < checkboxs.size()) {
+                        checkboxs.set(position, b);
+                    }
                 }
             });
 

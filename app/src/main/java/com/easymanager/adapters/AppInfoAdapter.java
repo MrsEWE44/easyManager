@@ -25,8 +25,8 @@ public class AppInfoAdapter extends BaseAdapter {
     public AppInfoAdapter(ArrayList<String> list, Context context, ArrayList<Boolean> checkboxs, ArrayList<Boolean> switbs, String pkgname, int mode,Integer uid) {
         this.list = (ArrayList<String>) list.clone();
         this.context = context;
-        this.checkboxs = checkboxs;
-        this.switbs = switbs;
+        this.checkboxs = (ArrayList<Boolean>) checkboxs.clone();
+        this.switbs = (ArrayList<Boolean>) switbs.clone();
         this.pkgname = pkgname;
         this.mode = mode;
         this.uid = uid;
@@ -57,10 +57,16 @@ public class AppInfoAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        view = LayoutInflater.from(context).inflate(R.layout.app_info_item_layout,null);
+        if (view == null) {
+            view = LayoutInflater.from(context).inflate(R.layout.app_info_item_layout, viewGroup, false);
+        }
         MaterialCheckBox checkBox = view.findViewById(R.id.aiilcb1);
         TextView text = view.findViewById(R.id.aiiltv1);
         MaterialSwitch switchbbb = view.findViewById(R.id.aiilsb1);
+
+        if (i >= list.size() || i >= switbs.size() || i >= checkboxs.size()) {
+            return view;
+        }
         
         String originalItem = list.get(i);
         String displayItem = originalItem;
@@ -69,6 +75,7 @@ public class AppInfoAdapter extends BaseAdapter {
         }
         text.setText(displayItem);
 
+        switchbbb.setOnCheckedChangeListener(null);
         switchbbb.setChecked(switbs.get(i));
         switchbbb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

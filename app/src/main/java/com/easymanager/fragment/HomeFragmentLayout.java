@@ -161,7 +161,7 @@ public class HomeFragmentLayout extends Fragment {
             hfldumpbt.setEnabled(true);
             hfluninstallbt.setEnabled(true);
             hflcleanbt.setEnabled(false);
-            hflrestorebt.setEnabled(true);
+            hflrestorebt.setEnabled(false);
             hflnetworkmange.setEnabled(false);
         } else {
             // 未激活任何模式，基本全部禁用
@@ -198,7 +198,7 @@ public class HomeFragmentLayout extends Fragment {
         ot.setBtColor(hfldumpbt,true,true,isShizuku,isDhizuku);
         ot.setBtColor(hfluninstallbt,true,true,isShizuku,isDhizuku);
         ot.setBtColor(hflcleanbt,true,true,isShizuku,isDhizuku);
-        ot.setBtColor(hflrestorebt,true,true,isShizuku,isDhizuku);
+        ot.setBtColor(hflrestorebt,true,false,isShizuku,isDhizuku);
         ot.setBtColor(hflruncmd,false,false,isShizuku,isDhizuku);
         ot.setBtColor(hflnetworkmange,true,false,isShizuku,isDhizuku);
 

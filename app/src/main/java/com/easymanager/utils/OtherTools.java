@@ -2,8 +2,8 @@ package com.easymanager.utils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 
 import com.easymanager.R;
@@ -58,6 +58,8 @@ public class OtherTools {
         menu.clear();
         String help = tv.getLanguageString(context, R.string.menu_help);
         String exit = tv.getLanguageString(context, R.string.menu_exit);
+        String search = tv.getLanguageString(context, R.string.menu_search_str);
+        menu.add(Menu.NONE, R.id.actionbarsearch, 0, search).setIcon(R.drawable.search_foreground).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         if(menumode == AppManagerEnum.RUN_CMD ||menumode == AppManagerEnum.APP_INSTALL_LOCAL_FILE ||  menumode == AppManagerEnum.SET_NTP || menumode == AppManagerEnum.SET_RATE || menumode == AppManagerEnum.DEL_X || menumode == AppManagerEnum.FILE_SHARED){
             menu.add(Menu.NONE,5,0,help);
             menu.add(Menu.NONE,6,0,exit);
@@ -96,6 +98,8 @@ public class OtherTools {
             menu.add(Menu.NONE,2,0,tv.getLanguageString(context,R.string.menu_get_user_all_app));
             menu.add(Menu.NONE,3,0,tv.getLanguageString(context,R.string.menu_get_user_all_app2));
             menu.add(Menu.NONE,4,0,tv.getLanguageString(context,R.string.menu_get_user_all_disable_app));
+            menu.add(Menu.NONE,11,0,tv.getLanguageString(context,R.string.menu_get_system_all_app));
+            menu.add(Menu.NONE,12,0,tv.getLanguageString(context,R.string.menu_get_system_all_app2));
             menu.add(Menu.NONE,5,0,help);
             menu.add(Menu.NONE,6,0,exit);
         }

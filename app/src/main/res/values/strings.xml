@@ -28,11 +28,14 @@
     <string name="show_help_getMainHelp">Light Breeze is a lightweight, core-based, and easy-to-use Android utility application, suitable for use with customized systems by Chinese OEMs. It supports both Shizuku and Dhizuku modes, is stable and reliable, and easy to learn.\n\nJust like its name suggests, Light Breeze arrives gently and departs quietly, without disruption or overstepping boundaries, focusing solely on its core function with restraint and purity.\n\nThe homepage features three large buttons at the bottom.\n\nThe first button on the left is used to manage Shizuku and Dhizuku authorizations.\n\nThe middle button is the function area, used to operate local applications and other functions.\n\nThe third button is the help interface.\n\nFor more help information, please click the \"Help\" button in the upper right corner. Help for all functions and some function implementations are located in the upper right corner.\n\nClicking \"Exit\" in the upper right corner only terminates the application\'s process, not the SDK service process. Reactivation is not required the next time you open it (without restarting the phone).\n\nClicking \"Complete Exit\" in the upper right corner will terminate the SDK service process, the application\'s process, and device administrator privileges simultaneously. Reactivation is required the next time you open it.</string>
     <string name="get_all_apps">Getting all apps installed by the host administrator (including those that have been disabled by the organization, please wait...)</string>
     <string name="get_all_apps2">Fetching all apps installed by Host Manager (please wait...)</string>
+    <string name="get_system_apps">Getting all system apps (including disabled, please wait...)</string>
+    <string name="get_system_apps2">Getting system apps (please wait...)</string>
     <string name="get_user_apps">Getting apps installed by the host administrator (including those that have been disabled by the organization, please wait...)</string>
     <string name="get_user_apps2">Getting host manager installed apps (please wait...)</string>
     <string name="get_all_disable_apps">Getting apps that are blocked by the host administrator (please wait...)</string>
     <string name="get_local_apps">Fetching the host\'s app (please wait...)</string>
     <string name="get_all_process_app">Fetching all running applications (including host system programs) from the host administrator, please wait...)</string>
+    <string name="get_all_user_process_app">Fetching user running applications from the host administrator (please wait...)</string>
     <string name="get_user_process_app">Fetching all running apps from the host administrator (please wait...)</string>
     <string name="scanner_local_img">Retrieving image files owned by the host administrator (please wait...)</string>
     <string name="execute_cmd">Running command for host manager (please wait...)</string>
@@ -76,6 +79,8 @@
     <string name="menu_get_user_all_app">Get user app (include disable app)</string>
     <string name="menu_get_user_all_app2">Get user app</string>
     <string name="menu_get_user_all_disable_app">Get disable app</string>
+    <string name="menu_get_system_all_app">Get system app (include disable app)</string>
+    <string name="menu_get_system_all_app2">Get system app</string>
     <string name="is_copy_ok">Copied</string>
     <string name="text_home_app_manage">Application management</string>
     <string name="text_home_process_manage">Background process management</string>

@@ -10,8 +10,6 @@ import android.widget.TextView;
 import com.easymanager.R;
 import com.easymanager.utils.TextUtils;
 
-import java.lang.reflect.Field;
-
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class DialogBaseUtils {
@@ -37,16 +35,12 @@ public class DialogBaseUtils {
     }
 
     /**
-     * 通过反射 阻止关闭对话框
+     * 阻止关闭对话框
      */
     public void preventDismissDialog(AlertDialog ddd) {
-        try {
-            Field field = ddd.getClass().getSuperclass().getDeclaredField("mShowing");
-            field.setAccessible(true);
-            //设置mShowing值，欺骗android系统
-            field.set(ddd, false);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (ddd != null) {
+            ddd.setCancelable(false);
+            ddd.setCanceledOnTouchOutside(false);
         }
     }
 
@@ -54,13 +48,16 @@ public class DialogBaseUtils {
      * 关闭对话框
      */
     public void permittedDismissDialog(AlertDialog ddd) {
-        try {
-            Field field = ddd.getClass().getSuperclass().getDeclaredField("mShowing");
-            field.setAccessible(true);
-            field.set(ddd, true);
-        } catch (Exception e) {
+        if (ddd != null) {
+            try {
+                ddd.setCancelable(true);
+                if (ddd.isShowing()) {
+                    ddd.dismiss();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        ddd.dismiss();
     }
 
 
