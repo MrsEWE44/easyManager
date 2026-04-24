@@ -507,18 +507,18 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
             PKGINFO pkginfo = pkginfos.get(i);
             if(APP_CHOICES_INDEX == 0){
                 if(checkboxs.get(i)){
-                    addPKGS(pkginfo,list);
+                    list.add(pkginfo);
                 }
             }
 
             if(APP_CHOICES_INDEX == 1){
                 if(!checkboxs.get(i)){
-                    addPKGS(pkginfo,list);
+                    list.add(pkginfo);
                 }
             }
 
             if(APP_CHOICES_INDEX == 2){
-                addPKGS(pkginfo,list);
+                list.add(pkginfo);
             }
 
         }
@@ -698,11 +698,6 @@ public class AppManagerLayoutActivity extends AppCompatActivity {
     }
     private String[] getAppChoicesOPT(){
         return new String[]{getLanStr(R.string.spin_item_selected),getLanStr(R.string.spin_item_no_selected),getLanStr(R.string.spin_item_all_selected)};
-    }
-
-
-    private void addPKGS(PKGINFO pkginfo,ArrayList<PKGINFO> list){
-        list.add(pkginfo);
     }
 
     private String getADDCleanRunningAPPOPTSTR(){

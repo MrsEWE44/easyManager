@@ -25,8 +25,8 @@ public class AppInfoAdapter extends BaseAdapter {
     public AppInfoAdapter(ArrayList<String> list, Context context, ArrayList<Boolean> checkboxs, ArrayList<Boolean> switbs, String pkgname, int mode,Integer uid) {
         this.list = (ArrayList<String>) list.clone();
         this.context = context;
-        this.checkboxs = (ArrayList<Boolean>) checkboxs.clone();
-        this.switbs = (ArrayList<Boolean>) switbs.clone();
+        this.checkboxs = checkboxs;
+        this.switbs = switbs;
         this.pkgname = pkgname;
         this.mode = mode;
         this.uid = uid;

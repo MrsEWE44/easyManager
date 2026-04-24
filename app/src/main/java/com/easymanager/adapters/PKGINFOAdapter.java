@@ -23,7 +23,7 @@ public class PKGINFOAdapter extends BaseAdapter {
     public PKGINFOAdapter(ArrayList<PKGINFO> pkginfos, Context context, ArrayList<Boolean> checkboxs, PackageUtils pu) {
         this.pkginfos = (ArrayList<PKGINFO>) pkginfos.clone();
         this.context = context;
-        this.checkboxs = (ArrayList<Boolean>) checkboxs.clone();
+        this.checkboxs = checkboxs;
         this.pu = pu;
         notifyDataSetChanged();
     }

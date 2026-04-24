@@ -20,7 +20,7 @@ public class GeneralAdapter extends BaseAdapter {
     public GeneralAdapter(ArrayList<String> list, Context context, ArrayList<Boolean> checkboxs) {
         this.list = (ArrayList<String>) list.clone();
         this.context = context;
-        this.checkboxs = (ArrayList<Boolean>) checkboxs.clone();
+        this.checkboxs = checkboxs;
         notifyDataSetChanged();
     }
 
