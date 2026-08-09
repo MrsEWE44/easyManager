@@ -1,0 +1,57 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.easymanager'
+    compileSdk 37
+
+    defaultConfig {
+        applicationId "com.easymanager"
+        minSdk 26
+        targetSdk 37
+        versionCode 26
+        versionName "2.0.5"
+
+    }
+
+    // 自定义打包名称
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "lightBreeze_NOROOT_${defaultConfig.versionName}_${buildType.name}.apk"
+        }
+    }
+
+    buildTypes {
+        release {
+            //不能开启这个，不然会导致软件闪退，无法使用。2026年4月10日19点30分
+//            minifyEnabled true
+//            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildFeatures {
+        buildConfig = true
+        aidl true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+
+}
+
+dependencies {
+
+    implementation "dev.rikka.shizuku:api:13.1.5"
+
+// Add this line if you want to support Shizuku
+    implementation "dev.rikka.shizuku:provider:13.1.5"
+    implementation "io.github.iamr0s:Dhizuku-API:2.5.4"
+    implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:6.1'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
+
+}

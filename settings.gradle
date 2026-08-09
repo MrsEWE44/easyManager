@@ -1,0 +1,30 @@
+pluginManagement {
+    repositories {
+        // 阿里云镜像
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://maven.aliyun.com/repository/maven-central' }
+
+        // 必须加这个，解决 tensorflow-lite 找不到
+        maven { url 'https://jitpack.io' }
+
+        // 官方源（必须保留，否则 TF 依赖会缺失）
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        // 阿里云镜像
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/maven-central' }
+
+        // ↓↓↓ 关键：必须加官方 mavenCentral，否则 tensorflow 找不到
+        mavenCentral()
+        google()
+    }
+}
+rootProject.name = "easyManager"
+include ':app'
