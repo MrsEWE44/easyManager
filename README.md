@@ -379,7 +379,7 @@ Root 环境下：
 ---
 
 # 更新日志
-从V1.2.8b版本开始，该项目分成两个版本，分开维护和更新，分别是 [轻风免root版本](https://github.com/MrsEWE44/lightBreeze/tree/md5) 和 [轻风完整版](https://github.com/MrsEWE44/lightBreeze/tree/master)
+从V1.2.8b版本开始，该项目分成两个版本，分开维护和更新，分别是 [轻风免root版本](https://github.com/MrsEWE44/easyManager/tree/md5) 和 [轻风完整版](https://github.com/MrsEWE44/easyManager/tree/master)
 
 ## V1.3.5a
 
