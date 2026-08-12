@@ -11,17 +11,17 @@
 
 <p align="center">
 
-<a href="https://github.com/MrsEWE44/LightBreeze/releases">
-<img alt="GitHub Release" src="https://img.shields.io/github/v/release/MrsEWE44/LightBreeze">
+<a href="https://github.com/MrsEWE44/easyManager/releases">
+<img alt="GitHub Release" src="https://img.shields.io/github/v/release/MrsEWE44/easyManager">
 </a>
 
-<img alt="GitHub Stars" src="https://img.shields.io/github/stars/MrsEWE44/LightBreeze">
+<img alt="GitHub Stars" src="https://img.shields.io/github/stars/MrsEWE44/easyManager">
 
-<img alt="GitHub Forks" src="https://img.shields.io/github/forks/MrsEWE44/LightBreeze">
+<img alt="GitHub Forks" src="https://img.shields.io/github/forks/MrsEWE44/easyManager">
 
-<img alt="GitHub Downloads" src="https://img.shields.io/github/downloads/MrsEWE44/LightBreeze/total">
+<img alt="GitHub Downloads" src="https://img.shields.io/github/downloads/MrsEWE44/easyManager/total">
 
-<img alt="GitHub Watchers" src="https://img.shields.io/github/watchers/MrsEWE44/LightBreeze">
+<img alt="GitHub Watchers" src="https://img.shields.io/github/watchers/MrsEWE44/easyManager">
 
 </p>
 
@@ -189,7 +189,7 @@
 # 更新日志
 
 > [!IMPORTANT]
-> 从 V1.2.8b 版本开始，项目分为 [免 ROOT 版本](https://github.com/MrsEWE44/LightBreeze/tree/md5) 和 [完整版(Root)](https://github.com/MrsEWE44/LightBreeze/tree/master) 分开维护。
+> 从 V1.2.8b 版本开始，项目分为 [免 ROOT 版本](https://github.com/MrsEWE44/easyManager/tree/md5) 和 [完整版(Root)](https://github.com/MrsEWE44/easyManager/tree/master) 分开维护。
 
 ## V2.0.5
 
