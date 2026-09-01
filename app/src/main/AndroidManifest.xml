@@ -22,24 +22,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activitys.AppManagerLayoutActivity"/>
-        <activity android:name=".activitys.AppInfoLayoutActivity"/>
-        <activity android:name=".activitys.FileSharedLayoutActivity"/>
-        <activity android:name=".activitys.AppCloneLayoutActivity"/>
-        <activity android:name=".activitys.RunCommandLayoutActivity"/>
-        <activity android:name=".activitys.CreateImgLayoutActivity"/>
-        <activity android:name=".activitys.runShortcutProxyActivity"/>
-
-        <provider
-            android:name="rikka.shizuku.ShizukuProvider"
-            android:authorities="${applicationId}.shizuku"
-            android:multiprocess="false"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
-
-        <!-- android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" is to protect this provider from accessing by normal apps -->
-
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
