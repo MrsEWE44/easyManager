@@ -11,17 +11,17 @@ A lightweight, core-focused, simple and easy-to-use Android system toolbox.
 
 <p align="center">
 
-<a href="https://github.com/MrsEWE44/lightBreeze/releases">
-<img alt="GitHub Release" src="https://img.shields.io/github/v/release/MrsEWE44/lightBreeze">
+<a href="https://github.com/MrsEWE44/easyManager/releases">
+<img alt="GitHub Release" src="https://img.shields.io/github/v/release/MrsEWE44/easyManager">
 </a>
 
-<img alt="GitHub Stars" src="https://img.shields.io/github/stars/MrsEWE44/lightBreeze">
+<img alt="GitHub Stars" src="https://img.shields.io/github/stars/MrsEWE44/easyManager">
 
-<img alt="GitHub Forks" src="https://img.shields.io/github/forks/MrsEWE44/lightBreeze">
+<img alt="GitHub Forks" src="https://img.shields.io/github/forks/MrsEWE44/easyManager">
 
-<img alt="GitHub Downloads" src="https://img.shields.io/github/downloads/MrsEWE44/lightBreeze/total">
+<img alt="GitHub Downloads" src="https://img.shields.io/github/downloads/MrsEWE44/easyManager/total">
 
-<img alt="GitHub Watchers" src="https://img.shields.io/github/watchers/MrsEWE44/lightBreeze">
+<img alt="GitHub Watchers" src="https://img.shields.io/github/watchers/MrsEWE44/easyManager">
 
 </p>
 
