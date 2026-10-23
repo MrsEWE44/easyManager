@@ -52,7 +52,7 @@ Light Breeze No ROOT currently integrates:
 - **App Twin Management**: Deeply manage system clones and multi-user environments.
 - **Network Access Control**: Implement basic network control functions in a No Root environment.
 - **System Toolbox**: Includes practical functions such as app component management and NTP time synchronization optimization.
-
+- **Device Permission Management**: Provides useful functions such as the ability to disable the installation or uninstallation of software on the system.
 
 ---
 
@@ -166,6 +166,8 @@ One-click to start a LAN sharing server, allowing access to files on the phone f
 ## 4. App Clones and Multi-user Management
 Break system limits, manage and create independent user spaces, achieving app multi-instance and isolation.
 
+## 5. Device Permission Management
+Strengthening system security can effectively prevent elderly users from accidentally tapping the screen and inadvertently installing numerous ad-supported applications.
 
 ---
 
@@ -191,13 +193,21 @@ Break system limits, manage and create independent user spaces, achieving app mu
 > [!IMPORTANT]
 > Since version V1.2.8b, the project has been divided into [No ROOT Version](https://github.com/MrsEWE44/LightBreeze/tree/md5) and [Full Version (Root)](https://github.com/MrsEWE44/LightBreeze/tree/master), maintained separately.
 
-## V2.0.5
+## LightBreeze Full V1.3.6 Update
 
-1. Added Dhizuku environment detection and activation features.
-2. Optimized help information.
-3. Improved the functionality of obtaining local apps.
-4. Upgraded target SDK to 37, supporting Android 17.
-5. Updated version number to 2.0.5.
+1.Added device permission management functionality, allowing for more convenient control over device permissions—such as disabling software installation, restricting USB connections, etc.
+
+2.Refined the application and optimized its logic.
+
+3.Updated the version number to 1.3.6.
+
+## LightBreeze NoROOT V2.0.6 Update
+
+1.Added device permission management functionality, allowing for more convenient control over device permissions—such as disabling software installation, restricting USB connections, etc.
+
+2.Refined the application and optimized its logic.
+
+3.Updated the version number to 2.0.6.
 
 
 ---
