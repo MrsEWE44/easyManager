@@ -60,6 +60,7 @@ Light Breeze currently integrates:
 - File Compression and Recovery
 - LAN File Sharing
 - ADB / Root Shell Command Execution
+- Device Permission Management
 
 
 Also provided for some Android systems:
@@ -384,14 +385,13 @@ Via WiFi:
 # Changelog
 Starting from version V1.2.8b, the project is divided into two versions, maintained and updated separately: [Light Breeze No-root Version](https://github.com/MrsEWE44/lightBreeze/tree/md5) and [Light Breeze Full Version](https://github.com/MrsEWE44/lightBreeze/tree/master)
 
-## V1.3.5a
+## V1.3.6
 
-1. Optimized the one-click automatic authorization function.
+1.Added device permission management functionality, allowing for more convenient control over device permissions—such as disabling software installation, restricting USB connections, etc.
 
-2. Optimized the app list retrieval function.
+2.Refined the application and optimized its logic.
 
-3. Updated the version number to 1.3.5a.
-
+3.Updated the version number to 1.3.6.
 
 ---
 

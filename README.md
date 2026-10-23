@@ -60,6 +60,7 @@
 - 文件压缩与恢复
 - 局域网文件共享
 - ADB / Root Shell 命令执行
+- 设备权限管理
 
 
 同时针对部分 Android 系统提供：
@@ -379,15 +380,15 @@ Root 环境下：
 ---
 
 # 更新日志
-从V1.2.8b版本开始，该项目分成两个版本，分开维护和更新，分别是 [轻风免root版本](https://github.com/MrsEWE44/easyManager/tree/md5) 和 [轻风完整版](https://github.com/MrsEWE44/easyManager/tree/master)
+从V1.2.8b版本开始，该项目分成两个版本，分开维护和更新，分别是 [轻风免root版本](https://github.com/MrsEWE44/lightBreeze/tree/md5) 和 [轻风完整版](https://github.com/MrsEWE44/lightBreeze/tree/master)
 
-## V1.3.5a
+## V1.3.6
 
-1.优化一键自动授权功能。
+1.添加设备权限管理功能。可以更加方便的管理设备的权限，比如禁用软件安装、禁止usb连接等等。
 
-2.优化获取应用列表功能。
+2.完善程序，优化逻辑。
 
-3.修改版本号为1.3.5a.
+3.修改版本号为1.3.6.
 
 
 
